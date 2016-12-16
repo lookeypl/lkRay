@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Common">
+      <UniqueIdentifier>{5fb5685d-9f6c-415b-90fe-40b6992528fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Geometry">
+      <UniqueIdentifier>{d91cf2ae-55bd-4af2-8cb5-37d715a587ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Math">
+      <UniqueIdentifier>{47da5254-ef45-4d74-8617-00af1f15e8ae}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Common\Logger.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\Util.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\Window.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="PCH.cpp" />
+    <ClCompile Include="Geometry\Sphere.cpp">
+      <Filter>Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="Geometry\Primitive.cpp">
+      <Filter>Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\Vector.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Common\Logger.hpp">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\Util.hpp">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\Window.hpp">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="PCH.hpp" />
+    <ClInclude Include="Geometry\Sphere.hpp">
+      <Filter>Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Geometry\Primitive.hpp">
+      <Filter>Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Vector.hpp">
+      <Filter>Math</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
