@@ -60,7 +60,7 @@ public:
 
     // Products
     float Dot(const Vector& other);
-    Vector Cross(const Vector& other) const;
+    Vector& Cross(const Vector& other);
 
     // Comparison
     bool operator==(const Vector& other) const;

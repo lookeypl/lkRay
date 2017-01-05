@@ -21,7 +21,7 @@ Vector::Vector(const float x, const float y, const float z, const float w)
 
 Vector::Vector(const float* v)
 {
-    _mm_load_ps(v);
+   value.m = _mm_load_ps(v);
 }
 
 Vector::Vector(__m128 v)
@@ -31,11 +31,12 @@ Vector::Vector(__m128 v)
 
 Vector::Vector(const Vector& other)
 {
-
+    value.m = _mm_load_ps(other.value.f);
 }
 
 Vector::Vector(Vector&& other)
 {
+    value.m = _mm_load_ps(other.value.f);
 }
 
 Vector& Vector::operator=(const Vector& other)
@@ -160,29 +161,43 @@ Vector& Vector::operator/=(float value)
 
 const Vector Vector::operator/(const Vector& other) const
 {
-    return Vector(*this) *= other;
+    return Vector(*this) /= other;
 }
 
 const Vector Vector::operator/(float value) const
 {
-    return Vector(*this) *= value;
+    return Vector(*this) /= value;
 }
 
 // Power
 Vector& Vector::operator^(float value)
 {
+    __m128 exp = _mm_set_ps1(value);
+    
     return *this;
 }
 
 // Products
 float Vector::Dot(const Vector& other)
 {
-    return 0.0f;
+    __m128 result = _mm_dp_ps(value.m, other.value.m, 0xF1);
+    return result.m128_f32[0];
 }
 
-Vector Vector::Cross(const Vector& other) const
+Vector& Vector::Cross(const Vector& other)
 {
-    return Vector();
+    __m128 test = _mm_set_ps(1.0f, 2.0f, 3.0f, 4.0f);
+    __m128 test2 = _mm_shuffle_ps(test, test, _MM_SHUFFLE(3, 1, 0, 2));
+
+    __m128 shufa1 = _mm_shuffle_ps(value.m, value.m, _MM_SHUFFLE(3, 0, 2, 1));
+    __m128 shufb1 = _mm_shuffle_ps(other.value.m, other.value.m, _MM_SHUFFLE(3, 1, 0, 2));
+    __m128 shufa2 = _mm_shuffle_ps(value.m, value.m, _MM_SHUFFLE(3, 1, 0, 2));
+    __m128 shufb2 = _mm_shuffle_ps(other.value.m, other.value.m, _MM_SHUFFLE(3, 0, 2, 1));
+
+    __m128 mul1 = _mm_mul_ps(shufa1, shufb1);
+    __m128 mul2 = _mm_mul_ps(shufa2, shufb2);
+    value.m = _mm_sub_ps(mul1, mul2);
+    return *this;
 }
 
 // Comparison
