@@ -101,13 +101,6 @@ TEST(Vector, DivideFloat)
     EXPECT_TRUE(resultDiv2 == (a / 2.0f));
 }
 
-TEST(Vector, Power)
-{
-    Vector a(2.0f);
-
-    EXPECT_TRUE(resultPow == (a ^ 3.0f));
-}
-
 TEST(Vector, Dot)
 {
     Vector a(1.0f, 2.0f, 3.0f, 4.0f);

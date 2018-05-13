@@ -16,7 +16,7 @@ Vector::Vector(const float x)
 
 Vector::Vector(const float x, const float y, const float z, const float w)
 {
-    value.m = _mm_set_ps(x, y, z, w);
+    value.m = _mm_set_ps(w, z, y, x);
 }
 
 Vector::Vector(const float* v)
@@ -60,11 +60,13 @@ const float* Vector::Data() const
 
 float Vector::Length() const
 {
-    return 0.0f;
+    return sqrt(value.f[0] * value.f[0] + value.f[1] * value.f[1] + value.f[2] * value.f[2] + value.f[3] * value.f[3]);
 }
 
 void Vector::Normalize()
 {
+    float coeff = 1.0f / Length();
+    *this *= coeff;
 }
 
 // Access operator
@@ -80,7 +82,7 @@ Vector& Vector::operator+=(const Vector& other)
     return *this;
 }
 
-Vector& Vector::operator+=(float value)
+Vector& Vector::operator+=(const float value)
 {
     __m128 v = _mm_set_ps1(value);
     this->value.m = _mm_add_ps(this->value.m, v);
@@ -92,7 +94,7 @@ const Vector Vector::operator+(const Vector& other) const
     return Vector(*this) += other;
 }
 
-const Vector Vector::operator+(float value) const
+const Vector Vector::operator+(const float value) const
 {
     return Vector(*this) += value;
 }
@@ -104,7 +106,7 @@ Vector& Vector::operator-=(const Vector& other)
     return *this;
 }
 
-Vector& Vector::operator-=(float value)
+Vector& Vector::operator-=(const float value)
 {
     __m128 v = _mm_set_ps1(value);
     this->value.m = _mm_sub_ps(this->value.m, v);
@@ -116,7 +118,7 @@ const Vector Vector::operator-(const Vector& other) const
     return Vector(*this) -= other;
 }
 
-const Vector Vector::operator-(float value) const
+const Vector Vector::operator-(const float value) const
 {
     return Vector(*this) -= value;
 }
@@ -128,7 +130,7 @@ Vector& Vector::operator*=(const Vector& other)
     return *this;
 }
 
-Vector& Vector::operator*=(float value)
+Vector& Vector::operator*=(const float value)
 {
     __m128 v = _mm_set_ps1(value);
     this->value.m = _mm_mul_ps(this->value.m, v);
@@ -140,7 +142,7 @@ const Vector Vector::operator*(const Vector& other) const
     return Vector(*this) *= other;
 }
 
-const Vector Vector::operator*(float value) const
+const Vector Vector::operator*(const float value) const
 {
     return Vector(*this) *= value;
 }
@@ -152,7 +154,7 @@ Vector& Vector::operator/=(const Vector& other)
     return *this;
 }
 
-Vector& Vector::operator/=(float value)
+Vector& Vector::operator/=(const float value)
 {
     __m128 v = _mm_set_ps1(value);
     this->value.m = _mm_div_ps(this->value.m, v);
@@ -164,17 +166,9 @@ const Vector Vector::operator/(const Vector& other) const
     return Vector(*this) /= other;
 }
 
-const Vector Vector::operator/(float value) const
+const Vector Vector::operator/(const float value) const
 {
     return Vector(*this) /= value;
-}
-
-// Power
-Vector& Vector::operator^(float value)
-{
-    __m128 exp = _mm_set_ps1(value);
-    
-    return *this;
 }
 
 // Products

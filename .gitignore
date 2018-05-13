@@ -1,5 +1,5 @@
 #
-# nfEngine project - ignored files list
+# lkRay project - ignored files list
 #
 
 # Documentation
@@ -33,6 +33,7 @@ Makefile
 # Visual Studio Performance Analysis Results
 *.vsp
 *.psess
+.vs
 
 # Other useless folders and file patterns
 /Logs

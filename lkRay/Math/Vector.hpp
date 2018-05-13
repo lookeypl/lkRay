@@ -1,5 +1,8 @@
 #pragma once
 
+#include <xmmintrin.h>
+
+
 namespace lkRay {
 namespace Math {
 
@@ -33,30 +36,27 @@ public:
 
     // Addition
     Vector& operator+=(const Vector& other);
-    Vector& operator+=(float value);
+    Vector& operator+=(const float value);
     const Vector operator+(const Vector& other) const;
-    const Vector operator+(float value) const;
+    const Vector operator+(const float value) const;
 
     // Subtraction
     Vector& operator-=(const Vector& other);
-    Vector& operator-=(float value);
+    Vector& operator-=(const float value);
     const Vector operator-(const Vector& other) const;
-    const Vector operator-(float value) const;
+    const Vector operator-(const float value) const;
 
     // Multiplication
     Vector& operator*=(const Vector& other);
-    Vector& operator*=(float value);
+    Vector& operator*=(const float value);
     const Vector operator*(const Vector& other) const;
-    const Vector operator*(float value) const;
+    const Vector operator*(const float value) const;
 
     // Division
     Vector& operator/=(const Vector& other);
-    Vector& operator/=(float value);
+    Vector& operator/=(const float value);
     const Vector operator/(const Vector& other) const;
-    const Vector operator/(float value) const;
-
-    // Power
-    Vector& operator^(float value);
+    const Vector operator/(const float value) const;
 
     // Products
     float Dot(const Vector& other);
