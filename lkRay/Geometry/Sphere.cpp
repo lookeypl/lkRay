@@ -1,10 +1,11 @@
 #include "../PCH.hpp"
 #include "Sphere.hpp"
 
+
 namespace lkRay {
 namespace Geometry {
 
-Sphere::Sphere(const Math::Vector& origin, int r)
+Sphere::Sphere(const lkCommon::Math::Vector4& origin, int r)
 {
 }
 

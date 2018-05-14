@@ -1,8 +1,5 @@
 #pragma once
 
-// WinAPI & other Windows internals
-#include <Windows.h>
-
 // STL
 #include <string>
 #include <sstream>

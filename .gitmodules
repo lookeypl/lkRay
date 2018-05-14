@@ -1,0 +1,6 @@
+[submodule "Deps/lkCommon"]
+	path = Deps/lkCommon
+	url = git@github.com:LKostyra/lkCommon
+[submodule "Deps/googletest"]
+	path = Deps/googletest
+	url = git@github.com:google/googletest

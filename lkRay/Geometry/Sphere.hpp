@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Primitive.hpp"
-#include "Math/Vector.hpp"
+#include <lkCommon/Math/Vector4.hpp>
 
 namespace lkRay {
 namespace Geometry {
@@ -9,7 +9,7 @@ namespace Geometry {
 class Sphere: public Primitive
 {
 public:
-    Sphere(const Math::Vector& origin, int r);
+    Sphere(const lkCommon::Math::Vector4& origin, int r);
     ~Sphere();
 
     void Intersect();
