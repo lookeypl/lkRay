@@ -92,7 +92,7 @@
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
       <AdditionalIncludeDirectories>$(SolutionDir)lkRay\;$(SolutionDir)Deps\lkCommon\</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>../PCH.hpp</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile>PCH.hpp</PrecompiledHeaderFile>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <PreprocessorDefinitions>WIN32;_UNICODE;UNICODE;_DEBUG%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
@@ -109,7 +109,7 @@
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
       <AdditionalIncludeDirectories>$(SolutionDir)lkRay\;$(SolutionDir)Deps\lkCommon\</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>../PCH.hpp</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile>PCH.hpp</PrecompiledHeaderFile>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <PreprocessorDefinitions>WIN32;_UNICODE;UNICODE;_DEBUG%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
@@ -128,7 +128,7 @@
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
       <AdditionalIncludeDirectories>$(SolutionDir)lkRay\;$(SolutionDir)Deps\lkCommon\</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>../PCH.hpp</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile>PCH.hpp</PrecompiledHeaderFile>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PreprocessorDefinitions>WIN32;_UNICODE;UNICODE;NDEBUG%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
@@ -149,7 +149,7 @@
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
       <AdditionalIncludeDirectories>$(SolutionDir)lkRay\;$(SolutionDir)Deps\lkCommon\</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>../PCH.hpp</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile>PCH.hpp</PrecompiledHeaderFile>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PreprocessorDefinitions>WIN32;_UNICODE;UNICODE;NDEBUG%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
@@ -162,6 +162,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Geometry\Primitive.cpp" />
+    <ClCompile Include="Geometry\Ray.cpp" />
     <ClCompile Include="Geometry\Sphere.cpp" />
     <ClCompile Include="Main.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">PCH.hpp</PrecompiledHeaderFile>
@@ -179,11 +180,20 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">PCH.hpp</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="Renderer\Renderer.cpp" />
+    <ClCompile Include="Scene\Camera.cpp" />
+    <ClCompile Include="Scene\Light.cpp" />
+    <ClCompile Include="Scene\Scene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Geometry\Primitive.hpp" />
+    <ClInclude Include="Geometry\Ray.hpp" />
     <ClInclude Include="Geometry\Sphere.hpp" />
     <ClInclude Include="PCH.hpp" />
+    <ClInclude Include="Renderer\Renderer.hpp" />
+    <ClInclude Include="Scene\Camera.hpp" />
+    <ClInclude Include="Scene\Light.hpp" />
+    <ClInclude Include="Scene\Scene.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

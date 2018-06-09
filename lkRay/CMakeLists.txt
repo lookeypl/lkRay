@@ -1,5 +1,5 @@
 PKG_CHECK_MODULES(LKRAY_PKG_DEPS REQUIRED
-                  xcb
+                  xcb xcb-image
                   )
 
 SET(LKRAY_SRCS PCH.cpp

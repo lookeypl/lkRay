@@ -4,6 +4,12 @@
     <Filter Include="Geometry">
       <UniqueIdentifier>{d91cf2ae-55bd-4af2-8cb5-37d715a587ab}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Scene">
+      <UniqueIdentifier>{aa526120-d71a-4697-9123-23d468baa37e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Renderer">
+      <UniqueIdentifier>{131d3b5f-9eae-4f5d-b8ba-a101ff474f43}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
@@ -14,6 +20,21 @@
     <ClCompile Include="Geometry\Primitive.cpp">
       <Filter>Geometry</Filter>
     </ClCompile>
+    <ClCompile Include="Geometry\Ray.cpp">
+      <Filter>Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\Scene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\Renderer.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\Camera.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\Light.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PCH.hpp" />
@@ -22,6 +43,21 @@
     </ClInclude>
     <ClInclude Include="Geometry\Primitive.hpp">
       <Filter>Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Geometry\Ray.hpp">
+      <Filter>Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\Scene.hpp">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\Renderer.hpp">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\Camera.hpp">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\Light.hpp">
+      <Filter>Scene</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
