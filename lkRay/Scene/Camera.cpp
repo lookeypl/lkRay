@@ -7,43 +7,117 @@
 namespace lkRay {
 namespace Scene {
 
-Camera::Camera(const lkCommon::Math::Vector4& pos, const lkCommon::Math::Vector4& dir, const lkCommon::Math::Vector4& up, const float horizontalFov, const float aspect)
+Camera::Camera(const lkCommon::Math::Vector4& pos, const lkCommon::Math::Vector4& worldUp,
+               const float angleAzim, const float anglePolar,
+               const float horizontalFov, const float aspect)
     : mPosition(pos)
-    , mDirection(dir)
-    , mUp(up)
-    , mHalfFovRad(LKCOMMON_DEG_TO_RADF(horizontalFov))
+    , mForwardDir()
+    , mSideDir()
+    , mUpDir()
+    , mWorldUp(worldUp)
+    , mHalfFovRad(LKCOMMON_DEG_TO_RADF(horizontalFov * 0.5f))
     , mAspectRatio(aspect)
+    , mAnglePhi(LKCOMMON_DEG_TO_RADF(anglePolar))
+    , mAngleTheta(LKCOMMON_DEG_TO_RADF(angleAzim))
     , mNeedsUpdate(true)
 {
-    mDirection.Normalize();
+    mWorldUp.Normalize();
+    CalculateCameraAxes();
     UpdateCorners();
 }
 
-// TODO pass information about updated corners to Renderer
+void Camera::CalculateCameraAxes()
+{
+    // convert spehrical coordinates (angles) to cartesian
+    mForwardDir = lkCommon::Math::Vector4(
+        sinf(mAnglePhi) * cosf(mAngleTheta),
+        sinf(mAngleTheta),
+        cosf(mAnglePhi) * cosf(mAngleTheta),
+        0.0f
+    );
+    mForwardDir.Normalize();
+
+    // calculate rest of Camera's axes
+    mSideDir = mWorldUp;
+    mSideDir.Cross(mForwardDir);
+    mSideDir.Normalize();
+
+    mUpDir = mForwardDir;
+    mUpDir.Cross(mSideDir);
+    mUpDir.Normalize();
+}
+
 void Camera::UpdateCorners()
 {
-    if (!mNeedsUpdate)
-        return;
-
-    mNeedsUpdate = false;
-
-    // first, grab camera's axes, assuming mDirection is a Z axis
-    lkCommon::Math::Vector4 xAxis = mUp;
-    xAxis.Cross(mDirection);
-    xAxis.Normalize();
-    lkCommon::Math::Vector4 yAxis = mDirection;
-    yAxis.Cross(xAxis);
-    yAxis.Normalize();
-
     // assume we calculate image's plane 1.0f away from Camera's origin
-    // the distance doesn't actually matter, it just makes the calculations easier
+    // the distance doesn't actually matter, it just simplifies the calculations
     float halfWidth = tanf(mHalfFovRad);
     float halfHeight = halfWidth / mAspectRatio;
 
-    mCameraCorners[Corners::TOP_L] = mPosition + mDirection + yAxis * halfHeight - xAxis * halfWidth;
-    mCameraCorners[Corners::TOP_R] = mPosition + mDirection + yAxis * halfHeight + xAxis * halfWidth;
-    mCameraCorners[Corners::BOT_L] = mPosition + mDirection - yAxis * halfHeight - xAxis * halfWidth;
-    mCameraCorners[Corners::BOT_R] = mPosition + mDirection - yAxis * halfHeight + xAxis * halfWidth;
+    mCameraCorners[Corners::TOP_L] = mPosition + mForwardDir + mUpDir * halfHeight - mSideDir * halfWidth;
+    mCameraCorners[Corners::TOP_R] = mPosition + mForwardDir + mUpDir * halfHeight + mSideDir * halfWidth;
+    mCameraCorners[Corners::BOT_L] = mPosition + mForwardDir - mUpDir * halfHeight - mSideDir * halfWidth;
+    mCameraCorners[Corners::BOT_R] = mPosition + mForwardDir - mUpDir * halfHeight + mSideDir * halfWidth;
+}
+
+void Camera::Update()
+{
+    if (mNeedsUpdate)
+    {
+        CalculateCameraAxes();
+        UpdateCorners();
+        mNeedsUpdate = false;
+    }
+}
+
+void Camera::MoveForward(float distance)
+{
+    mPosition += mForwardDir * distance;
+    mNeedsUpdate = true;
+}
+
+void Camera::MoveSideways(float distance)
+{
+    mPosition += mSideDir * distance;
+    mNeedsUpdate = true;
+}
+
+void Camera::MoveUp(float distance)
+{
+    mPosition += mUpDir * distance;
+    mNeedsUpdate = true;
+}
+
+void Camera::MoveWorldUp(float distance)
+{
+    mPosition += mWorldUp * distance;
+    mNeedsUpdate = true;
+}
+
+void Camera::RotateLeftRight(float angleRad)
+{
+    mAnglePhi += angleRad;
+
+    // wrap values
+    if (mAnglePhi > 2 * LKCOMMON_PIF)
+        mAnglePhi -= 2 * LKCOMMON_PIF;
+    if (mAnglePhi < 0.0f)
+        mAnglePhi += 2 * LKCOMMON_PIF;
+
+    mNeedsUpdate = true;
+}
+
+void Camera::RotateUpDown(float angleRad)
+{
+    mAngleTheta += angleRad;
+
+    // limit values
+    if (mAngleTheta > (LKCOMMON_PIF / 2.0f) - 0.1f)
+        mAngleTheta = (LKCOMMON_PIF / 2.0f) - 0.1f;
+    if (mAngleTheta < (-LKCOMMON_PIF / 2.0f) + 0.1f)
+        mAngleTheta = (-LKCOMMON_PIF / 2.0f) + 0.1f;
+
+    mNeedsUpdate = true;
 }
 
 } // namespace Scene

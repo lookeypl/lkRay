@@ -19,30 +19,33 @@ public:
 
 private:
     lkCommon::Math::Vector4 mPosition;
-    lkCommon::Math::Vector4 mDirection;
-    lkCommon::Math::Vector4 mUp;
+    lkCommon::Math::Vector4 mForwardDir;
+    lkCommon::Math::Vector4 mSideDir;
+    lkCommon::Math::Vector4 mUpDir;
+    lkCommon::Math::Vector4 mWorldUp;
     lkCommon::Math::Vector4 mCameraCorners[4];
     float mHalfFovRad;
     float mAspectRatio;
+    float mAnglePhi; // rotation along world Y axis
+    float mAngleTheta; // rotation along camera's X axis
     bool mNeedsUpdate;
 
-public:
-    Camera(const lkCommon::Math::Vector4& pos, const lkCommon::Math::Vector4& dir, const lkCommon::Math::Vector4& up, const float horizontalFov, const float aspect);
-    ~Camera() = default;
-
+    void CalculateCameraAxes();
     void UpdateCorners();
 
-    LKCOMMON_INLINE void SetPosition(const lkCommon::Math::Vector4& pos)
-    {
-        mPosition = pos;
-        mNeedsUpdate = true;
-    }
+public:
+    Camera(const lkCommon::Math::Vector4& pos, const lkCommon::Math::Vector4& worldUp,
+           const float angleAzim, const float anglePolar,
+           const float horizontalFov, const float aspect);
+    ~Camera() = default;
 
-    LKCOMMON_INLINE void SetDirection(const lkCommon::Math::Vector4& dir)
-    {
-        mDirection = dir;
-        mNeedsUpdate = true;
-    }
+    void Update();
+    void MoveForward(float distance);
+    void MoveSideways(float distance);
+    void MoveUp(float distance);
+    void MoveWorldUp(float distance);
+    void RotateLeftRight(float angleRad);
+    void RotateUpDown(float angleRad);
 
     LKCOMMON_INLINE const lkCommon::Math::Vector4& GetCameraCorner(Corners corner) const
     {

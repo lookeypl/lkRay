@@ -18,14 +18,13 @@ using namespace lkRay;
 
 Scene::Scene gScene;
 Scene::Camera gCamera(
-    lkCommon::Math::Vector4(0.0f, 0.0f, -2.0f, 1.0f),
-    lkCommon::Math::Vector4(0.0f, 0.0f, 1.0f, 0.0f),
+    lkCommon::Math::Vector4(0.0f, 0.0f, -3.0f, 1.0f),
     lkCommon::Math::Vector4(0.0f, 1.0f, 0.0f, 0.0f),
-    60.0f,
-    static_cast<float>(WINDOW_WIDTH) / static_cast<float>(WINDOW_HEIGHT)
+    0.0f, 0.0f,
+    60.0f, static_cast<float>(WINDOW_WIDTH) / static_cast<float>(WINDOW_HEIGHT)
 );
 
-lkCommon::Math::RingAverage<float, 20> gFPS;
+lkCommon::Math::RingAverage<float, 20> gFrameTime;
 
 
 class lkRayWindow: public lkCommon::System::Window
@@ -33,9 +32,32 @@ class lkRayWindow: public lkCommon::System::Window
 protected:
     void OnUpdate(float deltaTime) override
     {
-        // blah blah move camera
-        LOGI("Frame time: " << gFPS.Get() << " seconds");
-        gCamera.UpdateCorners();
+        SetTitle("lkRay - " + std::to_string(gFrameTime.Get()) + " ms");
+
+        if (IsMouseKeyPressed(0))
+        {
+            float speed = 5.0f * deltaTime;
+            if (IsKeyPressed(lkCommon::System::KeyCode::W)) gCamera.MoveForward(speed);
+            if (IsKeyPressed(lkCommon::System::KeyCode::S)) gCamera.MoveForward(-speed);
+            if (IsKeyPressed(lkCommon::System::KeyCode::D)) gCamera.MoveSideways(speed);
+            if (IsKeyPressed(lkCommon::System::KeyCode::A)) gCamera.MoveSideways(-speed);
+            if (IsKeyPressed(lkCommon::System::KeyCode::R)) gCamera.MoveWorldUp(speed);
+            if (IsKeyPressed(lkCommon::System::KeyCode::F)) gCamera.MoveWorldUp(-speed);
+
+            gCamera.Update();
+        }
+    }
+
+    void OnMouseMove(int x, int y, int deltaX, int deltaY) override
+    {
+        if (IsMouseKeyPressed(0))
+        {
+            float shiftX = static_cast<float>(deltaX) * 0.005f;
+            float shiftY = static_cast<float>(deltaY) * 0.005f;
+
+            gCamera.RotateLeftRight(shiftX);
+            gCamera.RotateUpDown(-shiftY);
+        }
     }
 };
 
@@ -91,7 +113,7 @@ int main()
         t.Start();
 
         if (time > 0.001f)
-            gFPS.Add(time);
+            gFrameTime.Add(time);
 
         gWindow.Update(time);
         renderer.Draw(gScene, gCamera);
