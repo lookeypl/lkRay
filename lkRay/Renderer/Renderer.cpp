@@ -20,9 +20,9 @@ lkCommon::Math::Vector4 Renderer::LerpPoints(const lkCommon::Math::Vector4& p1, 
     return p1 * (1.0f - factor) + p2 * factor;
 }
 
-lkCommon::Utils::Image::Pixel Renderer::CastRay(const Scene::Scene& scene, const Geometry::Ray& ray, int rayCounter)
+lkCommon::Utils::Pixel<float, 4> Renderer::CastRay(const Scene::Scene& scene, const Geometry::Ray& ray, int rayCounter)
 {
-    lkCommon::Utils::Image::Pixel resultColor;
+    lkCommon::Utils::Pixel<float, 4> resultColor;
 
     if (rayCounter > 0)
         return resultColor;
@@ -47,13 +47,13 @@ lkCommon::Utils::Image::Pixel Renderer::CastRay(const Scene::Scene& scene, const
                     lightCoeff = 0.0f;
             }
 
-            resultColor.r = static_cast<uint8_t>(255.0f * lightCoeff);
+            resultColor.mColors[0] = lightCoeff;
         }
         else
         {
-            resultColor.b = 20;
-            resultColor.g = 20;
-            resultColor.r = 20;
+            resultColor.mColors[0] = 0.1f;
+            resultColor.mColors[1] = 0.1f;
+            resultColor.mColors[2] = 0.1f;
         }
     }
 

@@ -18,7 +18,7 @@ class Renderer final
     uint32_t mRenderHeight;
 
     lkCommon::Math::Vector4 LerpPoints(const lkCommon::Math::Vector4& p1, const lkCommon::Math::Vector4& p2, float factor);
-    lkCommon::Utils::Image::Pixel CastRay(const Scene::Scene& scene, const Geometry::Ray& ray, int rayCounter);
+    lkCommon::Utils::Pixel<float, 4> CastRay(const Scene::Scene& scene, const Geometry::Ray& ray, int rayCounter);
 
 public:
     Renderer(const uint32_t width, const uint32_t height);
