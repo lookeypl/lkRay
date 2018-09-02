@@ -4,6 +4,8 @@
 
 #include "Ray.hpp"
 
+#include <memory>
+
 
 namespace lkRay {
 namespace Geometry {

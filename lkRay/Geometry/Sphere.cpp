@@ -1,5 +1,6 @@
 #include "PCH.hpp"
 #include "Sphere.hpp"
+#include <cmath>
 
 
 namespace lkRay {

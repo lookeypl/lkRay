@@ -2,6 +2,7 @@
 
 #include <lkCommon/Math/Vector4.hpp>
 #include <lkCommon/Utils/Image.hpp>
+#include <lkCommon/Utils/ThreadPool.hpp>
 
 #include "Scene/Scene.hpp"
 #include "Scene/Camera.hpp"
@@ -14,6 +15,7 @@ namespace Renderer {
 class Renderer final
 {
     lkCommon::Utils::Image mOutputImage;
+    lkCommon::Utils::ThreadPool mThreadPool;
     uint32_t mRenderWidth;
     uint32_t mRenderHeight;
 
@@ -24,6 +26,7 @@ public:
     Renderer(const uint32_t width, const uint32_t height);
     ~Renderer() = default;
 
+    void DrawThread(const Scene::Scene& scene, const Scene::Camera& camera, uint32_t widthPos, uint32_t heightPos, uint32_t xCount, uint32_t yCount);
     void Draw(const Scene::Scene& scene, const Scene::Camera& camera);
     bool ResizeOutput(const uint32_t width, const uint32_t height);
 

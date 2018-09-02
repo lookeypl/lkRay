@@ -4,11 +4,19 @@
 #include <lkCommon/Utils/Logger.hpp>
 
 
+namespace {
+
+const uint32_t PIXELS_PER_THREAD = 32;
+
+} // namespace
+
+
 namespace lkRay {
 namespace Renderer {
 
 Renderer::Renderer(const uint32_t renderWidth, const uint32_t renderHeight)
     : mOutputImage()
+    , mThreadPool()
     , mRenderWidth(renderWidth)
     , mRenderHeight(renderHeight)
 {
@@ -60,12 +68,16 @@ lkCommon::Utils::Pixel<float, 4> Renderer::CastRay(const Scene::Scene& scene, co
     return resultColor;
 }
 
-void Renderer::Draw(const Scene::Scene& scene, const Scene::Camera& camera)
+void Renderer::DrawThread(const Scene::Scene& scene, const Scene::Camera& camera, uint32_t widthPos, uint32_t heightPos, uint32_t xCount, uint32_t yCount)
 {
-    for (uint32_t x = 0; x < mRenderWidth; ++x)
+    for (uint32_t x = widthPos; x < widthPos + xCount; ++x)
     {
-        for (uint32_t y = 0; y < mRenderHeight; ++y)
+        for (uint32_t y = heightPos; y < heightPos + yCount; ++y)
         {
+            // don't go out of bounds
+            if (x >= mRenderWidth || y >= mRenderHeight)
+                continue;
+
             // calculate where our ray will shoot
             float xFactor = static_cast<float>(x) / static_cast<float>(mRenderWidth);
             float yFactor = static_cast<float>(y) / static_cast<float>(mRenderHeight);
@@ -89,6 +101,19 @@ void Renderer::Draw(const Scene::Scene& scene, const Scene::Camera& camera)
             mOutputImage.SetPixel(x, y, CastRay(scene, ray, 0));
         }
     }
+}
+
+void Renderer::Draw(const Scene::Scene& scene, const Scene::Camera& camera)
+{
+    for (uint32_t x = 0; x < mRenderWidth; x += PIXELS_PER_THREAD)
+    {
+        for (uint32_t y = 0; y < mRenderHeight; y += PIXELS_PER_THREAD)
+        {
+            mThreadPool.AddTask(std::bind(&Renderer::DrawThread, this, scene, camera, x, y, PIXELS_PER_THREAD, PIXELS_PER_THREAD));
+        }
+    }
+
+    mThreadPool.WaitForTasks();
 }
 
 bool Renderer::ResizeOutput(const uint32_t width, const uint32_t height)

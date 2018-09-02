@@ -3,6 +3,8 @@
 
 #include <lkCommon/Math/Constants.hpp>
 
+#include <cmath>
+
 
 namespace lkRay {
 namespace Scene {

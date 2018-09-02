@@ -11,8 +11,8 @@
 #include "Scene/Camera.hpp"
 #include "Geometry/Sphere.hpp"
 
-const uint32_t WINDOW_WIDTH = 1024;
-const uint32_t WINDOW_HEIGHT = 768;
+const uint32_t WINDOW_WIDTH = 800;
+const uint32_t WINDOW_HEIGHT = 600;
 
 using namespace lkRay;
 
@@ -32,7 +32,7 @@ class lkRayWindow: public lkCommon::System::Window
 protected:
     void OnUpdate(float deltaTime) override
     {
-        SetTitle("lkRay - " + std::to_string(gFrameTime.Get()) + " ms");
+        SetTitle("lkRay - " + std::to_string(gFrameTime.Get() * 1000.0f) + " ms");
 
         if (IsMouseKeyPressed(0))
         {
@@ -64,7 +64,13 @@ protected:
 
 int main()
 {
-    if (!lkCommon::System::FS::SetCWD(lkCommon::System::FS::JoinPaths(lkCommon::System::FS::GetExecutablePath(), "../../../..")))
+    if (!lkCommon::System::FS::SetCWD(
+            lkCommon::System::FS::JoinPaths(
+                lkCommon::System::FS::GetParentDir(lkCommon::System::FS::GetExecutablePath()),
+                "../../.."
+                )
+            )
+        )
     {
         return -1;
     }
@@ -84,16 +90,18 @@ int main()
 
     Renderer::Renderer renderer(WINDOW_WIDTH, WINDOW_HEIGHT);
 
-    Geometry::Sphere::Ptr sphere = std::make_shared<Geometry::Sphere>(
-        lkCommon::Math::Vector4(0.0f, 0.0f, 1.0f, 1.0f),
-        1.0f
+    Geometry::Primitive::Ptr sphere = std::dynamic_pointer_cast<Geometry::Primitive>(
+        std::make_shared<Geometry::Sphere>(
+            lkCommon::Math::Vector4(0.0f, 0.0f, 1.0f, 1.0f),
+            1.0f
+        )
     );
     if (!sphere)
     {
         return -1;
     }
 
-    gScene.AddPrimitive(std::dynamic_pointer_cast<Geometry::Primitive>(sphere));
+    gScene.AddPrimitive(sphere);
 
     Scene::Light::Ptr light = std::make_shared<Scene::Light>(
         lkCommon::Math::Vector4(2.0f, 3.0f, -2.0f, 1.0f)
