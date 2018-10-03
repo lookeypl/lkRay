@@ -3,7 +3,7 @@
 REM TODO:
 REM  * Discover CPU count
 
-echo | set /p=Checking for cmake... 
+echo | set /p=Checking for cmake...
 for %%X in (cmake.exe) do (set FOUND=%%~$PATH:X)
 if defined FOUND (
     echo FOUND
@@ -14,7 +14,7 @@ if defined FOUND (
     exit /b
 )
 
-echo | set /p=Checking for msbuild... 
+echo | set /p=Checking for msbuild...
 for %%X in (msbuild.exe) do (set FOUND=%%~$PATH:X)
 if defined FOUND (
     echo FOUND
@@ -25,6 +25,15 @@ if defined FOUND (
     exit /b
 )
 
+set arg1=%1
+
+if "%arg1%" == "rebuild" (
+    echo REBUILDING
+    set target=":Rebuild"
+) else (
+    echo BUILDING
+    set target=""
+)
 
 pushd .
 
@@ -35,10 +44,10 @@ REM ========== lkCommon build ===========
 
 cd lkCommon
 
-msbuild lkCommon.sln /t:lkCommon:Rebuild /p:Configuration=Debug;Platform=x86
-msbuild lkCommon.sln /t:lkCommon:Rebuild /p:Configuration=Release;Platform=x86
-msbuild lkCommon.sln /t:lkCommon:Rebuild /p:Configuration=Debug;Platform=x64
-msbuild lkCommon.sln /t:lkCommon:Rebuild /p:Configuration=Release;Platform=x64
+msbuild lkCommon.sln /t:lkCommon%target% /p:Configuration=Debug;Platform=x86
+msbuild lkCommon.sln /t:lkCommon%target% /p:Configuration=Release;Platform=x86
+msbuild lkCommon.sln /t:lkCommon%target% /p:Configuration=Debug;Platform=x64
+msbuild lkCommon.sln /t:lkCommon%target% /p:Configuration=Release;Platform=x64
 
 echo.
 echo Script is done

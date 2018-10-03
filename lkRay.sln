@@ -5,6 +5,11 @@ VisualStudioVersion = 15.0.27703.2000
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lkRay", "lkRay\lkRay.vcxproj", "{603E5503-19CD-4A47-AF94-3F934985EF21}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Deps", "Deps", "{A599B856-BAD0-41E8-B295-71C0E3CE5667}"
+	ProjectSection(SolutionItems) = preProject
+		Deps\prepare_deps.bat = Deps\prepare_deps.bat
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64

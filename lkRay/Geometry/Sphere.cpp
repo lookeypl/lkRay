@@ -39,8 +39,7 @@ bool Sphere::TestCollision(const Ray& ray, float& distance, lkCommon::Math::Vect
     }
 
     lkCommon::Math::Vector4 collisionPoint = ray.mOrigin + ray.mDirection * distance;
-    normal = collisionPoint - mPosition;
-    normal.Normalize();
+    normal = (collisionPoint - mPosition).Normalize();
 
     return true;
 }

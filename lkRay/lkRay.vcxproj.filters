@@ -35,6 +35,15 @@
     <ClCompile Include="Scene\Light.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
+    <ClCompile Include="Geometry\Mesh.cpp">
+      <Filter>Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="Geometry\Triangle.cpp">
+      <Filter>Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="Geometry\Plane.cpp">
+      <Filter>Geometry</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PCH.hpp" />
@@ -58,6 +67,15 @@
     </ClInclude>
     <ClInclude Include="Scene\Light.hpp">
       <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Geometry\Mesh.hpp">
+      <Filter>Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Geometry\Plane.hpp">
+      <Filter>Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Geometry\Triangle.hpp">
+      <Filter>Geometry</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

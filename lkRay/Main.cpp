@@ -10,6 +10,8 @@
 #include "Scene/Scene.hpp"
 #include "Scene/Camera.hpp"
 #include "Geometry/Sphere.hpp"
+#include "Geometry/Plane.hpp"
+#include "Geometry/Mesh.hpp"
 
 const uint32_t WINDOW_WIDTH = 800;
 const uint32_t WINDOW_HEIGHT = 600;
@@ -92,26 +94,41 @@ int main()
 
     Geometry::Primitive::Ptr sphere = std::dynamic_pointer_cast<Geometry::Primitive>(
         std::make_shared<Geometry::Sphere>(
-            lkCommon::Math::Vector4(0.0f, 0.0f, 1.0f, 1.0f),
+            lkCommon::Math::Vector4(0.0f,-0.5f, 1.0f, 1.0f),
             1.0f
         )
     );
-    if (!sphere)
-    {
-        return -1;
-    }
-
     gScene.AddPrimitive(sphere);
 
-    Scene::Light::Ptr light = std::make_shared<Scene::Light>(
-        lkCommon::Math::Vector4(2.0f, 3.0f, -2.0f, 1.0f)
+    Geometry::Primitive::Ptr sphere2 = std::dynamic_pointer_cast<Geometry::Primitive>(
+        std::make_shared<Geometry::Sphere>(
+            lkCommon::Math::Vector4(2.0f, 0.0f, 3.0f, 1.0f),
+            1.5f
+        )
     );
-    if (!light)
-    {
-        return -1;
-    }
+    gScene.AddPrimitive(sphere2);
 
+    Geometry::Primitive::Ptr mesh = std::dynamic_pointer_cast<Geometry::Primitive>(
+        std::make_shared<Geometry::Mesh>(
+            lkCommon::Math::Vector4(0.0f, 0.0f, 0.0f, 1.0f)
+        )
+    );
+    gScene.AddPrimitive(mesh);
+
+    Scene::Light::Ptr light = std::make_shared<Scene::Light>(
+        lkCommon::Math::Vector4(2.0f, 3.0f, -2.0f, 1.0f),
+        static_cast<lkCommon::Utils::PixelFloat4>(lkCommon::Utils::PixelUint4({0x85, 0xBE, 0x3C, 0xFF})),
+        0.1f
+    );
     gScene.AddLight(light);
+
+    Scene::Light::Ptr light2 = std::make_shared<Scene::Light>(
+        lkCommon::Math::Vector4(-1.0f, 2.0f, 0.0f, 1.0f),
+        lkCommon::Utils::PixelFloat4({0.3f, 0.7f, 1.0f, 1.0f}),
+        0.1f
+    );
+    gScene.AddLight(light2);
+
 
     lkCommon::Utils::Timer t;
     t.Start();

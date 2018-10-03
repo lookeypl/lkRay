@@ -4,9 +4,11 @@ PKG_CHECK_MODULES(LKRAY_PKG_DEPS REQUIRED
 
 SET(LKRAY_SRCS PCH.cpp
                Main.cpp
+               Geometry/Mesh.cpp
                Geometry/Primitive.cpp
                Geometry/Ray.cpp
                Geometry/Sphere.cpp
+               Geometry/Triangle.cpp
                Renderer/Renderer.cpp
                Scene/Camera.cpp
                Scene/Light.cpp
@@ -14,9 +16,11 @@ SET(LKRAY_SRCS PCH.cpp
                )
 
 SET(LKRAY_HDRS PCH.hpp
+               Geometry/Mesh.hpp
                Geometry/Primitive.hpp
                Geometry/Ray.hpp
                Geometry/Sphere.hpp
+               Geometry/Triangle.hpp
                Renderer/Renderer.hpp
                Scene/Camera.hpp
                Scene/Light.hpp

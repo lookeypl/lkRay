@@ -16,14 +16,13 @@ Camera::Camera(const lkCommon::Math::Vector4& pos, const lkCommon::Math::Vector4
     , mForwardDir()
     , mSideDir()
     , mUpDir()
-    , mWorldUp(worldUp)
+    , mWorldUp(worldUp.Normalize())
     , mHalfFovRad(LKCOMMON_DEG_TO_RADF(horizontalFov * 0.5f))
     , mAspectRatio(aspect)
     , mAnglePhi(LKCOMMON_DEG_TO_RADF(anglePolar))
     , mAngleTheta(LKCOMMON_DEG_TO_RADF(angleAzim))
     , mNeedsUpdate(true)
 {
-    mWorldUp.Normalize();
     CalculateCameraAxes();
     UpdateCorners();
 }
@@ -36,17 +35,11 @@ void Camera::CalculateCameraAxes()
         sinf(mAngleTheta),
         cosf(mAnglePhi) * cosf(mAngleTheta),
         0.0f
-    );
-    mForwardDir.Normalize();
+    ).Normalize();
 
     // calculate rest of Camera's axes
-    mSideDir = mWorldUp;
-    mSideDir.Cross(mForwardDir);
-    mSideDir.Normalize();
-
-    mUpDir = mForwardDir;
-    mUpDir.Cross(mSideDir);
-    mUpDir.Normalize();
+    mSideDir = mWorldUp.Cross(mForwardDir).Normalize();
+    mUpDir = mForwardDir.Cross(mSideDir).Normalize();
 }
 
 void Camera::UpdateCorners()

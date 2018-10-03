@@ -90,7 +90,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
-      <AdditionalIncludeDirectories>$(SolutionDir)lkRay\;$(SolutionDir)Deps\lkCommon\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)lkRay\;$(SolutionDir)Deps\lkCommon\lkCommon\include</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>PCH.hpp</PrecompiledHeaderFile>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -107,7 +107,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
-      <AdditionalIncludeDirectories>$(SolutionDir)lkRay\;$(SolutionDir)Deps\lkCommon\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)lkRay\;$(SolutionDir)Deps\lkCommon\lkCommon\include</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>PCH.hpp</PrecompiledHeaderFile>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -126,7 +126,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
-      <AdditionalIncludeDirectories>$(SolutionDir)lkRay\;$(SolutionDir)Deps\lkCommon\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)lkRay\;$(SolutionDir)Deps\lkCommon\lkCommon\include</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>PCH.hpp</PrecompiledHeaderFile>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -147,7 +147,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
-      <AdditionalIncludeDirectories>$(SolutionDir)lkRay\;$(SolutionDir)Deps\lkCommon\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)lkRay\;$(SolutionDir)Deps\lkCommon\lkCommon\include</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>PCH.hpp</PrecompiledHeaderFile>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -161,9 +161,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Geometry\Mesh.cpp" />
+    <ClCompile Include="Geometry\Plane.cpp" />
     <ClCompile Include="Geometry\Primitive.cpp" />
     <ClCompile Include="Geometry\Ray.cpp" />
     <ClCompile Include="Geometry\Sphere.cpp" />
+    <ClCompile Include="Geometry\Triangle.cpp" />
     <ClCompile Include="Main.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">PCH.hpp</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">PCH.hpp</PrecompiledHeaderFile>
@@ -186,9 +189,12 @@
     <ClCompile Include="Scene\Scene.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Geometry\Mesh.hpp" />
+    <ClInclude Include="Geometry\Plane.hpp" />
     <ClInclude Include="Geometry\Primitive.hpp" />
     <ClInclude Include="Geometry\Ray.hpp" />
     <ClInclude Include="Geometry\Sphere.hpp" />
+    <ClInclude Include="Geometry\Triangle.hpp" />
     <ClInclude Include="PCH.hpp" />
     <ClInclude Include="Renderer\Renderer.hpp" />
     <ClInclude Include="Scene\Camera.hpp" />
