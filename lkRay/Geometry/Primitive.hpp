@@ -3,6 +3,7 @@
 #include <lkCommon/Math/Vector4.hpp>
 
 #include "Ray.hpp"
+#include "Scene/Material.hpp"
 
 #include <memory>
 
@@ -23,6 +24,7 @@ public:
 
 protected:
     lkCommon::Math::Vector4 mPosition;
+    Scene::Material mMaterial;
 
 public:
     Primitive();
@@ -32,6 +34,18 @@ public:
     // returns closest positive distance to ray origin as argument and surface normal at collision point
     // false if there's no collision (ray missed the sphere), then both distance and normal are unmodified
     virtual bool TestCollision(const Ray& ray, float& distance, lkCommon::Math::Vector4& normal) = 0;
+
+
+    LKCOMMON_INLINE void SetMaterial(const Scene::Material& material)
+    {
+        mMaterial = material;
+    }
+
+
+    LKCOMMON_INLINE const Scene::Material& GetMaterial() const
+    {
+        return mMaterial;
+    }
 };
 
 } // namespace Geometry

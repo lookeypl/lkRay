@@ -186,6 +186,7 @@
     <ClCompile Include="Renderer\Renderer.cpp" />
     <ClCompile Include="Scene\Camera.cpp" />
     <ClCompile Include="Scene\Light.cpp" />
+    <ClCompile Include="Scene\Material.cpp" />
     <ClCompile Include="Scene\Scene.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -199,6 +200,7 @@
     <ClInclude Include="Renderer\Renderer.hpp" />
     <ClInclude Include="Scene\Camera.hpp" />
     <ClInclude Include="Scene\Light.hpp" />
+    <ClInclude Include="Scene\Material.hpp" />
     <ClInclude Include="Scene\Scene.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

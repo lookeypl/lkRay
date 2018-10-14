@@ -18,8 +18,6 @@ public:
 
 private:
     lkCommon::Math::Vector4 mPoints[3];
-    lkCommon::Math::Vector4 mNormal;
-    float mD;
 
 public:
     Triangle(const lkCommon::Math::Vector4& a, const lkCommon::Math::Vector4& b, const lkCommon::Math::Vector4& c);

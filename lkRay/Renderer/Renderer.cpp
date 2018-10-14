@@ -27,57 +27,72 @@ lkCommon::Math::Vector4 Renderer::LerpPoints(const lkCommon::Math::Vector4& p1, 
     return p1 * (1.0f - factor) + p2 * factor;
 }
 
-lkCommon::Utils::PixelFloat4 Renderer::CastRay(const Scene::Scene& scene, const Geometry::Ray& ray, int rayCounter)
+// -1 if no object hit, otherwise index of hit primitive
+int32_t Renderer::CastRay(const Scene::Scene::PrimitiveContainer& prims, const Geometry::Ray& ray, int rayCounter,
+                          int skipObjID, float& distance, lkCommon::Math::Vector4& normal)
+{
+    if (rayCounter > 0)
+        return -1;
+
+    int32_t hitID = -1;
+    float rayDistance = 0.0f;
+    distance = std::numeric_limits<float>::max();
+    lkCommon::Math::Vector4 colNormal;
+
+    for (int i = 0; i < prims.size(); ++i)
+    {
+        if (skipObjID == i)
+            continue;
+
+        if (prims[i]->TestCollision(ray, rayDistance, colNormal) && rayDistance < distance)
+        {
+            distance = rayDistance;
+            normal = colNormal;
+            hitID = i;
+        }
+    }
+
+    return hitID;
+}
+
+lkCommon::Utils::PixelFloat4 Renderer::DrawPixel(const Scene::Scene& scene, const Geometry::Ray& primaryRay)
 {
     lkCommon::Utils::PixelFloat4 resultColor = AMBIENT_COLOR;
-
-    if (rayCounter > 0)
-        return resultColor;
-
-    float rayDistance = 0.0f;
-    float maxRayDistance = std::numeric_limits<float>::max();
+    lkCommon::Math::Vector4 collision;
     lkCommon::Math::Vector4 normal;
+    lkCommon::Math::Vector4 shadowNorm;
+    float distance = 0.0f;
+    float shadowDist = 0.0f;
+    float lightCoeff = 0.0f;
+    int32_t hitID = -1;
 
-    for (const auto& p: scene.GetPrimitives())
+    const Scene::Scene::PrimitiveContainer& prims = scene.GetPrimitives();
+    hitID = CastRay(prims, primaryRay, 0, -1, distance, normal);
+    if (hitID != -1)
     {
-        if (p->TestCollision(ray, rayDistance, normal))
+        collision = primaryRay.GetOrigin() + primaryRay.GetDirection() * distance;
+        for (const auto& l: scene.GetLights())
         {
-            if (rayDistance > maxRayDistance)
-                continue;
+            lkCommon::Math::Vector4 lightRayDir(l->GetPosition() - collision);
+            float colDistance = lightRayDir.Length();
+            lightRayDir = lightRayDir.Normalize();
 
-            maxRayDistance = rayDistance;
-            float lightCoeff;
-            resultColor = AMBIENT_COLOR;
-            lkCommon::Math::Vector4 collision = ray.GetOrigin() + ray.GetDirection() * rayDistance;
-
-            for (const auto& l: scene.GetLights())
+            Geometry::Ray shadowRay(collision, lightRayDir);
+            if ((CastRay(prims, shadowRay, 0, hitID, shadowDist, shadowNorm) == -1) ||
+                (shadowDist > colDistance))
             {
-                lkCommon::Math::Vector4 lightRayDir = l->GetPosition() - collision;
-                float colDistance = lightRayDir.Length();
-                lightRayDir = lightRayDir.Normalize();
+                lightCoeff = lightRayDir.Dot(normal);
+                if (lightCoeff < 0.0f)
+                    lightCoeff = 0.0f;
 
-                Geometry::Ray shadowRay(collision, lightRayDir);
-                for (const auto& p2: scene.GetPrimitives())
-                {
-                    // don't test shadow ray collision with ourselves
-                    if (p.get() == p2.get())
-                        continue;
+                float att = (1.0f / (1.0f + l->GetAttenuationFactor() * colDistance * colDistance));
 
-                    float shadowDist;
-                    lkCommon::Math::Vector4 shadowNorm;
-                    if (!p2->TestCollision(shadowRay, shadowDist, shadowNorm) || shadowDist >= colDistance)
-                    {
-                        lightCoeff = lightRayDir.Dot(normal);
-                        if (lightCoeff < 0.0f)
-                            lightCoeff = 0.0f;
-
-                        float att = (1.0f / (1.0f + l->GetAttenuationFactor() * colDistance * colDistance));
-
-                        resultColor += l->GetColor() * lightCoeff * att;
-                    }
-                }
+                resultColor += l->GetColor() * lightCoeff * att;
             }
         }
+
+        const Scene::Material& mat = prims[hitID]->GetMaterial();
+        resultColor *= mat.GetColor() * mat.GetAlbedo();
     }
 
     return resultColor;
@@ -112,7 +127,7 @@ void Renderer::DrawThread(const Scene::Scene& scene, const Scene::Camera& camera
 
             // form a ray and cast it
             Geometry::Ray ray(camera.GetPosition(), rayDir);
-            mOutputImage.SetPixel(x, y, CastRay(scene, ray, 0));
+            mOutputImage.SetPixel(x, y, DrawPixel(scene, ray));
         }
     }
 }

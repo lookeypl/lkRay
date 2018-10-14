@@ -44,6 +44,9 @@
     <ClCompile Include="Geometry\Plane.cpp">
       <Filter>Geometry</Filter>
     </ClCompile>
+    <ClCompile Include="Scene\Material.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PCH.hpp" />
@@ -76,6 +79,9 @@
     </ClInclude>
     <ClInclude Include="Geometry\Triangle.hpp">
       <Filter>Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\Material.hpp">
+      <Filter>Scene</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -92,6 +92,15 @@ int main()
 
     Renderer::Renderer renderer(WINDOW_WIDTH, WINDOW_HEIGHT);
 
+
+    Scene::Material blue;
+    blue.SetColor(lkCommon::Utils::PixelFloat4({0.2f, 0.5f, 0.9f, 1.0f}));
+    blue.SetAlbedo(0.8f);
+
+    Scene::Material yellow;
+    yellow.SetColor(lkCommon::Utils::PixelFloat4({0.9f, 0.9f, 0.2f, 1.0f}));
+
+
     Geometry::Primitive::Ptr sphere = std::dynamic_pointer_cast<Geometry::Primitive>(
         std::make_shared<Geometry::Sphere>(
             lkCommon::Math::Vector4(0.0f,-0.5f, 1.0f, 1.0f),
@@ -106,13 +115,51 @@ int main()
             1.5f
         )
     );
+    sphere2->SetMaterial(blue);
     gScene.AddPrimitive(sphere2);
+
+    std::vector<Geometry::Triangle> tris;
+    // back wall
+    tris.emplace_back(
+        lkCommon::Math::Vector4( 5.0f,-1.5f, 5.0f, 1.0f),
+        lkCommon::Math::Vector4( 5.0f, 5.0f, 5.0f, 1.0f),
+        lkCommon::Math::Vector4(-5.0f,-1.5f, 5.0f, 1.0f)
+    );
+    tris.emplace_back(
+        lkCommon::Math::Vector4( 5.0f, 5.0f, 5.0f, 1.0f),
+        lkCommon::Math::Vector4(-5.0f, 5.0f, 5.0f, 1.0f),
+        lkCommon::Math::Vector4(-5.0f,-1.5f, 5.0f, 1.0f)
+    );
+    // right wall
+    tris.emplace_back(
+        lkCommon::Math::Vector4( 5.0f,-1.5f, 5.0f, 1.0f),
+        lkCommon::Math::Vector4( 5.0f,-1.5f,-5.0f, 1.0f),
+        lkCommon::Math::Vector4( 5.0f, 5.0f, 5.0f, 1.0f)
+    );
+    tris.emplace_back(
+        lkCommon::Math::Vector4( 5.0f, 5.0f, 5.0f, 1.0f),
+        lkCommon::Math::Vector4( 5.0f,-1.5f,-5.0f, 1.0f),
+        lkCommon::Math::Vector4( 5.0f, 5.0f,-5.0f, 1.0f)
+    );
+    // floor
+    tris.emplace_back(
+        lkCommon::Math::Vector4( 5.0f,-1.5f,-5.0f, 1.0f),
+        lkCommon::Math::Vector4( 5.0f,-1.5f, 5.0f, 1.0f),
+        lkCommon::Math::Vector4(-5.0f,-1.5f,-5.0f, 1.0f)
+    );
+    tris.emplace_back(
+        lkCommon::Math::Vector4( 5.0f,-1.5f, 5.0f, 1.0f),
+        lkCommon::Math::Vector4(-5.0f,-1.5f, 5.0f, 1.0f),
+        lkCommon::Math::Vector4(-5.0f,-1.5f,-5.0f, 1.0f)
+    );
 
     Geometry::Primitive::Ptr mesh = std::dynamic_pointer_cast<Geometry::Primitive>(
         std::make_shared<Geometry::Mesh>(
-            lkCommon::Math::Vector4(0.0f, 0.0f, 0.0f, 1.0f)
+            lkCommon::Math::Vector4(0.0f, 0.0f, 0.0f, 1.0f),
+            tris
         )
     );
+    mesh->SetMaterial(yellow);
     gScene.AddPrimitive(mesh);
 
     Scene::Light::Ptr light = std::make_shared<Scene::Light>(

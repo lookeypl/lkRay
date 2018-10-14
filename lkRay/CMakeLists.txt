@@ -12,6 +12,7 @@ SET(LKRAY_SRCS PCH.cpp
                Renderer/Renderer.cpp
                Scene/Camera.cpp
                Scene/Light.cpp
+               Scene/Material.cpp
                Scene/Scene.cpp
                )
 
@@ -24,6 +25,7 @@ SET(LKRAY_HDRS PCH.hpp
                Renderer/Renderer.hpp
                Scene/Camera.hpp
                Scene/Light.hpp
+               Scene/Material.hpp
                Scene/Scene.hpp
                )
 
@@ -34,7 +36,7 @@ ADD_EXECUTABLE(${LKRAY_TARGET}
 ADD_DEPENDENCIES(${LKRAY_TARGET} lkCommon)
 
 TARGET_INCLUDE_DIRECTORIES(${LKRAY_TARGET}
-                           PRIVATE ${LKRAY_ROOT_DIRECTORY}/Deps/lkCommon
+                           PRIVATE ${LKRAY_ROOT_DIRECTORY}/Deps/lkCommon/lkCommon/include
                            PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
                            )
 

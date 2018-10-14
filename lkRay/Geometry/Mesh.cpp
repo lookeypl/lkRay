@@ -5,42 +5,11 @@
 namespace lkRay {
 namespace Geometry {
 
-Mesh::Mesh(const lkCommon::Math::Vector4& pos)
+Mesh::Mesh(const lkCommon::Math::Vector4& pos, const std::vector<Triangle>& tris)
     : Primitive(pos)
+    , mTriangles(tris)
 {
-    // back wall
-    mTriangles.emplace_back(
-        lkCommon::Math::Vector4( 5.0f,-1.5f, 5.0f, 1.0f),
-        lkCommon::Math::Vector4( 5.0f, 5.0f, 5.0f, 1.0f),
-        lkCommon::Math::Vector4(-5.0f,-1.5f, 5.0f, 1.0f)
-    );
-    mTriangles.emplace_back(
-        lkCommon::Math::Vector4( 5.0f, 5.0f, 5.0f, 1.0f),
-        lkCommon::Math::Vector4(-5.0f, 5.0f, 5.0f, 1.0f),
-        lkCommon::Math::Vector4(-5.0f,-1.5f, 5.0f, 1.0f)
-    );
-    // right wall
-    mTriangles.emplace_back(
-        lkCommon::Math::Vector4( 5.0f,-1.5f, 5.0f, 1.0f),
-        lkCommon::Math::Vector4( 5.0f,-1.5f,-5.0f, 1.0f),
-        lkCommon::Math::Vector4( 5.0f, 5.0f, 5.0f, 1.0f)
-    );
-    mTriangles.emplace_back(
-        lkCommon::Math::Vector4( 5.0f, 5.0f, 5.0f, 1.0f),
-        lkCommon::Math::Vector4( 5.0f,-1.5f,-5.0f, 1.0f),
-        lkCommon::Math::Vector4( 5.0f, 5.0f,-5.0f, 1.0f)
-    );
-    // floor
-    mTriangles.emplace_back(
-        lkCommon::Math::Vector4( 5.0f,-1.5f,-5.0f, 1.0f),
-        lkCommon::Math::Vector4( 5.0f,-1.5f, 5.0f, 1.0f),
-        lkCommon::Math::Vector4(-5.0f,-1.5f,-5.0f, 1.0f)
-    );
-    mTriangles.emplace_back(
-        lkCommon::Math::Vector4( 5.0f,-1.5f, 5.0f, 1.0f),
-        lkCommon::Math::Vector4(-5.0f,-1.5f, 5.0f, 1.0f),
-        lkCommon::Math::Vector4(-5.0f,-1.5f,-5.0f, 1.0f)
-    );
+
 }
 
 bool Mesh::TestCollision(const Ray& ray, float& distance, lkCommon::Math::Vector4& normal)

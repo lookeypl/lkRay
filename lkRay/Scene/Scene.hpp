@@ -11,11 +11,15 @@ namespace Scene {
 
 class Scene final
 {
+public:
     template <typename T>
-    using Container = std::vector<T>;
+    using Container = std::vector<std::shared_ptr<T>>;
+    using PrimitiveContainer = Container<Geometry::Primitive>;
+    using LightContainer = Container<Light>;
 
-    Container<Geometry::Primitive::Ptr> mPrimitives; // TODO create Scene::Object
-    Container<Light::Ptr> mLights;
+private:
+    PrimitiveContainer mPrimitives; // TODO create Scene::Object
+    LightContainer mLights;
 
 public:
     Scene();
@@ -26,12 +30,12 @@ public:
     void AddPrimitive(Geometry::Primitive::Ptr& ptr);
     void AddLight(Light::Ptr& ptr);
 
-    LKCOMMON_INLINE const Container<Geometry::Primitive::Ptr>& GetPrimitives() const
+    LKCOMMON_INLINE const PrimitiveContainer& GetPrimitives() const
     {
         return mPrimitives;
     }
 
-    LKCOMMON_INLINE const Container<Light::Ptr>& GetLights() const
+    LKCOMMON_INLINE const LightContainer& GetLights() const
     {
         return mLights;
     }
