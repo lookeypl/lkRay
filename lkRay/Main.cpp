@@ -18,6 +18,7 @@ const uint32_t WINDOW_HEIGHT = 600;
 
 using namespace lkRay;
 
+Renderer::Renderer gRenderer(WINDOW_WIDTH, WINDOW_HEIGHT);
 Scene::Scene gScene;
 Scene::Camera gCamera(
     lkCommon::Math::Vector4(0.0f, 0.0f, -3.0f, 1.0f),
@@ -61,6 +62,12 @@ protected:
             gCamera.RotateUpDown(-shiftY);
         }
     }
+
+    void OnResize(int width, int height) override
+    {
+        gRenderer.ResizeOutput(width, height);
+        gCamera.SetAspectRatio(static_cast<float>(width) / static_cast<float>(height));
+    }
 };
 
 
@@ -89,8 +96,6 @@ int main()
         LOGE("Failed to open window");
         return -1;
     }
-
-    Renderer::Renderer renderer(WINDOW_WIDTH, WINDOW_HEIGHT);
 
 
     Scene::Material blue;
@@ -188,8 +193,8 @@ int main()
             gFrameTime.Add(time);
 
         gWindow.Update(time);
-        renderer.Draw(gScene, gCamera);
-        gWindow.DisplayImage(0, 0, renderer.GetOutput());
+        gRenderer.Draw(gScene, gCamera);
+        gWindow.DisplayImage(0, 0, gRenderer.GetOutput());
     }
 
     return 0;

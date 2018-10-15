@@ -19,12 +19,12 @@ bool Scene::Load(const std::string& path)
     return false;
 }
 
-void Scene::AddPrimitive(Geometry::Primitive::Ptr& ptr)
+void Scene::AddPrimitive(const Geometry::Primitive::Ptr& ptr)
 {
     mPrimitives.push_back(ptr);
 }
 
-void Scene::AddLight(Light::Ptr& ptr)
+void Scene::AddLight(const Light::Ptr& ptr)
 {
     mLights.push_back(ptr);
 }

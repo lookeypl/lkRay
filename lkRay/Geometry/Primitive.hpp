@@ -36,11 +36,21 @@ public:
     virtual bool TestCollision(const Ray& ray, float& distance, lkCommon::Math::Vector4& normal) = 0;
 
 
+    LKCOMMON_INLINE void SetPosition(const lkCommon::Math::Vector4& pos)
+    {
+        mPosition = pos;
+    }
+
     LKCOMMON_INLINE void SetMaterial(const Scene::Material& material)
     {
         mMaterial = material;
     }
 
+
+    LKCOMMON_INLINE const lkCommon::Math::Vector4& GetPosition() const
+    {
+        return mPosition;
+    }
 
     LKCOMMON_INLINE const Scene::Material& GetMaterial() const
     {

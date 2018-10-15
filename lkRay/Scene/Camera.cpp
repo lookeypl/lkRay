@@ -115,5 +115,11 @@ void Camera::RotateUpDown(float angleRad)
     mNeedsUpdate = true;
 }
 
+void Camera::SetAspectRatio(float aspectRatio)
+{
+    mAspectRatio = aspectRatio;
+    UpdateCorners();
+}
+
 } // namespace Scene
 } // namespace lkRay

@@ -46,6 +46,7 @@ public:
     void MoveWorldUp(float distance);
     void RotateLeftRight(float angleRad);
     void RotateUpDown(float angleRad);
+    void SetAspectRatio(float aspectRatio);
 
     LKCOMMON_INLINE const lkCommon::Math::Vector4& GetCameraCorner(Corners corner) const
     {

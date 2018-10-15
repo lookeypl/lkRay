@@ -27,8 +27,8 @@ public:
 
     bool Load(const std::string& path);
 
-    void AddPrimitive(Geometry::Primitive::Ptr& ptr);
-    void AddLight(Light::Ptr& ptr);
+    void AddPrimitive(const Geometry::Primitive::Ptr& primitive);
+    void AddLight(const Light::Ptr& light);
 
     LKCOMMON_INLINE const PrimitiveContainer& GetPrimitives() const
     {

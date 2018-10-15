@@ -39,7 +39,7 @@ int32_t Renderer::CastRay(const Scene::Scene::PrimitiveContainer& prims, const G
     distance = std::numeric_limits<float>::max();
     lkCommon::Math::Vector4 colNormal;
 
-    for (int i = 0; i < prims.size(); ++i)
+    for (size_t i = 0; i < prims.size(); ++i)
     {
         if (skipObjID == i)
             continue;
@@ -48,7 +48,7 @@ int32_t Renderer::CastRay(const Scene::Scene::PrimitiveContainer& prims, const G
         {
             distance = rayDistance;
             normal = colNormal;
-            hitID = i;
+            hitID = static_cast<int32_t>(i);
         }
     }
 
