@@ -31,7 +31,8 @@ public:
     Primitive(const lkCommon::Math::Vector4& position);
     ~Primitive() = default;
 
-    // returns closest positive distance to ray origin as argument and surface normal at collision point
+    // returns true if ray collided with something
+    // then, returns through arguments closest positive distance to ray origin and surface normal at collision point
     // false if there's no collision (ray missed the sphere), then both distance and normal are unmodified
     virtual bool TestCollision(const Ray& ray, float& distance, lkCommon::Math::Vector4& normal) = 0;
 

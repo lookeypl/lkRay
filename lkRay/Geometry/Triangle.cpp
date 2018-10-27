@@ -4,50 +4,21 @@
 namespace lkRay {
 namespace Geometry {
 
-Triangle::Triangle(const lkCommon::Math::Vector4& a, const lkCommon::Math::Vector4& b, const lkCommon::Math::Vector4& c)
+Triangle::Triangle(uint32_t a, uint32_t b, uint32_t c)
     : mPoints{a, b, c}
 {
 }
 
-bool Triangle::TestCollision(const lkCommon::Math::Vector4& pos, const Ray& ray, float& distance, lkCommon::Math::Vector4& normal)
+bool Triangle::TestCollision(const lkCommon::Math::Vector4& pos, const std::vector<lkCommon::Math::Vector4>& points,
+                             const Ray& ray, float& distance, lkCommon::Math::Vector4& normal)
 {
-    /*
-    // Geometric approach to finding a triangle:
-    //   1. Check if ray hits Triangle's plane
-    //   2. Check if intersection is inside triangle (inside-outside method)
-
-    float D = mNormal.Dot(mPoints[0] + pos);
-
-    float normalDotDir = mNormal.Dot(ray.GetDirection());
-    if (normalDotDir > 0)
-        return false;
-
-    distance = -(mNormal.Dot(ray.GetOrigin()) - D) / normalDotDir;
-    if (distance < 0)
-        return false;
-
-    // we hit a plane, check if we intersect a triangle
-    lkCommon::Math::Vector4 p0(mPoints[0] + pos);
-    lkCommon::Math::Vector4 p1(mPoints[1] + pos);
-    lkCommon::Math::Vector4 p2(mPoints[2] + pos);
-
-    lkCommon::Math::Vector4 collisionPoint(ray.GetOrigin() + ray.GetDirection() * distance);
-
-    lkCommon::Math::Vector4 toCol1(collisionPoint - p0);
-    lkCommon::Math::Vector4 v1(toCol1.Cross(p1 - p0));
-    lkCommon::Math::Vector4 toCol2(collisionPoint - p1);
-    lkCommon::Math::Vector4 v2(toCol2.Cross(p2 - p1));
-    lkCommon::Math::Vector4 toCol3(collisionPoint - p2);
-    lkCommon::Math::Vector4 v3(toCol3.Cross(p0 - p2));
-
-    if (mNormal.Dot(v1) < 0.0f ||
-        mNormal.Dot(v2) < 0.0f ||
-        mNormal.Dot(v3) < 0.0f)
-        return false;*/
-
     // MT algorithm
-    lkCommon::Math::Vector4 E1 = mPoints[1] - mPoints[0];
-    lkCommon::Math::Vector4 E2 = mPoints[2] - mPoints[0];
+    const lkCommon::Math::Vector4& p0 = points[mPoints[0]];
+    const lkCommon::Math::Vector4& p1 = points[mPoints[1]];
+    const lkCommon::Math::Vector4& p2 = points[mPoints[2]];
+
+    lkCommon::Math::Vector4 E1 = p1 - p0;
+    lkCommon::Math::Vector4 E2 = p2 - p0;
     lkCommon::Math::Vector4 pv(E2.Cross(ray.GetDirection()));
     float d = E1.Dot(pv);
 
@@ -56,7 +27,7 @@ bool Triangle::TestCollision(const lkCommon::Math::Vector4& pos, const Ray& ray,
 
     float invD = 1.0f / d;
 
-    lkCommon::Math::Vector4 tv(ray.GetOrigin() - mPoints[0] - pos);
+    lkCommon::Math::Vector4 tv(ray.GetOrigin() - p0 - pos);
     lkCommon::Math::Vector4 qv = E1.Cross(tv);
     float u = tv.Dot(pv) * invD;
     float v = ray.GetDirection().Dot(qv) * invD;
@@ -66,6 +37,9 @@ bool Triangle::TestCollision(const lkCommon::Math::Vector4& pos, const Ray& ray,
         return false;
 
     distance = E2.Dot(qv) * invD;
+    if (distance < EPSILON)
+        return false;
+
     normal = E2.Cross(E1).Normalize();
     return true;
 }

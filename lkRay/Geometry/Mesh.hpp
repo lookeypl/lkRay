@@ -11,10 +11,12 @@ namespace Geometry {
 
 class Mesh: public Primitive
 {
-    std::vector<Triangle> mTriangles;
+    std::vector<lkCommon::Math::Vector4> mPoints;
+    std::vector<Triangle> mTriangleIndices;
 
 public:
-    Mesh(const lkCommon::Math::Vector4& pos, const std::vector<Triangle>& tris);
+    Mesh(const lkCommon::Math::Vector4& pos, const std::vector<lkCommon::Math::Vector4>& points,
+         const std::vector<Triangle>& indices);
     ~Mesh() = default;
 
     bool TestCollision(const Ray& ray, float& distance, lkCommon::Math::Vector4& normal) override;

@@ -5,9 +5,11 @@
 namespace lkRay {
 namespace Geometry {
 
-Mesh::Mesh(const lkCommon::Math::Vector4& pos, const std::vector<Triangle>& tris)
+Mesh::Mesh(const lkCommon::Math::Vector4& pos, const std::vector<lkCommon::Math::Vector4>& points,
+           const std::vector<Triangle>& indices)
     : Primitive(pos)
-    , mTriangles(tris)
+    , mPoints(points)
+    , mTriangleIndices(indices)
 {
 
 }
@@ -23,9 +25,9 @@ bool Mesh::TestCollision(const Ray& ray, float& distance, lkCommon::Math::Vector
     // TODO optimizations:
     //  - Calculate AABB of mesh and test against it
     //  - When above passes, use a method to optimize the selection
-    for (uint32_t i = 0; i < mTriangles.size(); ++i)
+    for (uint32_t i = 0; i < mTriangleIndices.size(); ++i)
     {
-        if (mTriangles[i].TestCollision(mPosition, ray, resDist, resNorm))
+        if (mTriangleIndices[i].TestCollision(mPosition, mPoints, ray, resDist, resNorm))
         {
             if (resDist < distance)
             {
