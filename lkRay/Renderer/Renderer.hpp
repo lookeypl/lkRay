@@ -18,9 +18,9 @@ class Renderer final
     lkCommon::Utils::ThreadPool mThreadPool;
 
     lkCommon::Math::Vector4 LerpPoints(const lkCommon::Math::Vector4& p1, const lkCommon::Math::Vector4& p2, float factor);
-    int32_t CastRay(const Scene::Scene::Container<Geometry::Primitive>& prims, const Geometry::Ray& primaryRay, int rayCounter,
-                    int skipObjID, float& distance, lkCommon::Math::Vector4& normal);
-    lkCommon::Utils::PixelFloat4 DrawPixel(const Scene::Scene& scene, const Geometry::Ray& primaryRay);
+    int32_t TestCollision(const Scene::Scene::Container<Geometry::Primitive>& prims, const Geometry::Ray& ray,
+                          int skipObjID, float& distance, lkCommon::Math::Vector4& normal);
+    lkCommon::Utils::PixelFloat4 CastRay(const Scene::Scene& scene, const Geometry::Ray& primaryRay, int rayCounter);
 
 public:
     Renderer(const uint32_t width, const uint32_t height);

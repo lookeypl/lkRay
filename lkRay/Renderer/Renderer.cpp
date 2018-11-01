@@ -28,12 +28,9 @@ lkCommon::Math::Vector4 Renderer::LerpPoints(const lkCommon::Math::Vector4& p1, 
 }
 
 // -1 if no object hit, otherwise index of hit primitive
-int32_t Renderer::CastRay(const Scene::Scene::PrimitiveContainer& prims, const Geometry::Ray& ray, int rayCounter,
-                          int skipObjID, float& distance, lkCommon::Math::Vector4& normal)
+int32_t Renderer::TestCollision(const Scene::Scene::PrimitiveContainer& prims, const Geometry::Ray& ray,
+                                int skipObjID, float& distance, lkCommon::Math::Vector4& normal)
 {
-    if (rayCounter > 0)
-        return -1;
-
     int32_t hitID = -1;
     float rayDistance = 0.0f;
     distance = std::numeric_limits<float>::max();
@@ -55,9 +52,14 @@ int32_t Renderer::CastRay(const Scene::Scene::PrimitiveContainer& prims, const G
     return hitID;
 }
 
-lkCommon::Utils::PixelFloat4 Renderer::DrawPixel(const Scene::Scene& scene, const Geometry::Ray& primaryRay)
+lkCommon::Utils::PixelFloat4 Renderer::CastRay(const Scene::Scene& scene, const Geometry::Ray& primaryRay, int rayCounter)
 {
-    lkCommon::Utils::PixelFloat4 resultColor = AMBIENT_COLOR;
+    if (rayCounter > 2)
+        return lkCommon::Utils::PixelFloat4(0.0f);
+
+    lkCommon::Utils::PixelFloat4 lightColor = AMBIENT_COLOR;
+    lkCommon::Utils::PixelFloat4 reflectionColor;
+    lkCommon::Utils::PixelFloat4 matColor;
     lkCommon::Math::Vector4 collision;
     lkCommon::Math::Vector4 normal;
     lkCommon::Math::Vector4 shadowNorm;
@@ -67,10 +69,13 @@ lkCommon::Utils::PixelFloat4 Renderer::DrawPixel(const Scene::Scene& scene, cons
     int32_t hitID = -1;
 
     const Scene::Scene::PrimitiveContainer& prims = scene.GetPrimitives();
-    hitID = CastRay(prims, primaryRay, 0, -1, distance, normal);
+    hitID = TestCollision(prims, primaryRay, -1, distance, normal);
     if (hitID != -1)
     {
         collision = primaryRay.GetOrigin() + primaryRay.GetDirection() * distance;
+
+        const Scene::Material& mat = prims[hitID]->GetMaterial();
+
         for (const auto& l: scene.GetLights())
         {
             lkCommon::Math::Vector4 lightRayDir(l->GetPosition() - collision);
@@ -78,7 +83,7 @@ lkCommon::Utils::PixelFloat4 Renderer::DrawPixel(const Scene::Scene& scene, cons
             lightRayDir = lightRayDir.Normalize();
 
             Geometry::Ray shadowRay(collision, lightRayDir);
-            if ((CastRay(prims, shadowRay, 0, hitID, shadowDist, shadowNorm) == -1) ||
+            if ((TestCollision(prims, shadowRay, hitID, shadowDist, shadowNorm) == -1) ||
                 (shadowDist > colDistance))
             {
                 lightCoeff = lightRayDir.Dot(normal);
@@ -87,15 +92,24 @@ lkCommon::Utils::PixelFloat4 Renderer::DrawPixel(const Scene::Scene& scene, cons
 
                 float att = (1.0f / (1.0f + l->GetAttenuationFactor() * colDistance * colDistance));
 
-                resultColor += l->GetColor() * lightCoeff * att;
+                lightColor += l->GetColor() * lightCoeff * att;
             }
         }
 
-        const Scene::Material& mat = prims[hitID]->GetMaterial();
-        resultColor *= mat.GetColor() * mat.GetAlbedo();
+        if (mat.GetReflection() > 0.0f)
+        {
+            lkCommon::Math::Vector4 reflDir = primaryRay.GetDirection() - normal * (primaryRay.GetDirection().Dot(normal)) * 2;
+            Geometry::Ray reflRay(collision, reflDir);
+            reflectionColor = CastRay(scene, reflRay, rayCounter + 1) * mat.GetReflection();
+        }
+
+        if (mat.GetAlbedo() > 0.0f)
+        {
+            matColor = mat.GetColor() * mat.GetAlbedo();
+        }
     }
 
-    return resultColor;
+    return lightColor * matColor + reflectionColor;
 }
 
 void Renderer::DrawThread(const Scene::Scene& scene, const Scene::Camera& camera, uint32_t widthPos, uint32_t heightPos, uint32_t xCount, uint32_t yCount)
@@ -127,7 +141,7 @@ void Renderer::DrawThread(const Scene::Scene& scene, const Scene::Camera& camera
 
             // form a ray and cast it
             Geometry::Ray ray(camera.GetPosition(), rayDir);
-            mOutputImage.SetPixel(x, y, DrawPixel(scene, ray));
+            mOutputImage.SetPixel(x, y, CastRay(scene, ray, 0));
         }
     }
 }

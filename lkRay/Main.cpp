@@ -107,6 +107,10 @@ int main()
     Scene::Material red;
     red.SetColor(lkCommon::Utils::PixelFloat4({0.9f, 0.4f, 0.2f, 1.0f}));
 
+    Scene::Material reflective;
+    reflective.SetColor(lkCommon::Utils::PixelFloat4(1.0f));
+    reflective.SetReflection(1.0f);
+    reflective.SetAlbedo(0.0f);
 
     Geometry::Primitive::Ptr sphere = std::dynamic_pointer_cast<Geometry::Primitive>(
         std::make_shared<Geometry::Sphere>(
@@ -114,6 +118,7 @@ int main()
             1.0f
         )
     );
+    sphere->SetMaterial(reflective);
     gScene.AddPrimitive(sphere);
 
     Geometry::Primitive::Ptr sphere2 = std::dynamic_pointer_cast<Geometry::Primitive>(
