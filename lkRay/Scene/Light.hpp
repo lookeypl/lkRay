@@ -4,6 +4,9 @@
 #include <lkCommon/Utils/Pixel.hpp>
 #include <memory>
 
+#include "RayCollision.hpp"
+
+
 namespace lkRay {
 namespace Scene {
 
@@ -20,6 +23,8 @@ private:
 public:
     Light(const lkCommon::Math::Vector4& pos, const lkCommon::Utils::PixelFloat4& color, float attenuation);
     ~Light() = default;
+
+    lkCommon::Utils::PixelFloat4 Sample(const Scene::RayCollision& collision) const;
 
     LKCOMMON_INLINE const lkCommon::Math::Vector4& GetPosition() const
     {

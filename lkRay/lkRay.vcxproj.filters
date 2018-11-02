@@ -10,6 +10,9 @@
     <Filter Include="Renderer">
       <UniqueIdentifier>{131d3b5f-9eae-4f5d-b8ba-a101ff474f43}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Material">
+      <UniqueIdentifier>{1b6dc3a6-6aaf-4e34-a281-b0a47ce3fd1f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
@@ -44,8 +47,23 @@
     <ClCompile Include="Geometry\Plane.cpp">
       <Filter>Geometry</Filter>
     </ClCompile>
-    <ClCompile Include="Scene\Material.cpp">
+    <ClCompile Include="Material\Distribution.cpp">
+      <Filter>Material</Filter>
+    </ClCompile>
+    <ClCompile Include="Material\LambertianDistribution.cpp">
+      <Filter>Material</Filter>
+    </ClCompile>
+    <ClCompile Include="Material\Material.cpp">
+      <Filter>Material</Filter>
+    </ClCompile>
+    <ClCompile Include="Material\Matte.cpp">
+      <Filter>Material</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\RayCollision.cpp">
       <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Material\SurfaceDistribution.cpp">
+      <Filter>Material</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -80,8 +98,23 @@
     <ClInclude Include="Geometry\Triangle.hpp">
       <Filter>Geometry</Filter>
     </ClInclude>
-    <ClInclude Include="Scene\Material.hpp">
+    <ClInclude Include="Material\Distribution.hpp">
+      <Filter>Material</Filter>
+    </ClInclude>
+    <ClInclude Include="Material\LambertianDistribution.hpp">
+      <Filter>Material</Filter>
+    </ClInclude>
+    <ClInclude Include="Material\Material.hpp">
+      <Filter>Material</Filter>
+    </ClInclude>
+    <ClInclude Include="Material\Matte.hpp">
+      <Filter>Material</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\RayCollision.hpp">
       <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Material\SurfaceDistribution.hpp">
+      <Filter>Material</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

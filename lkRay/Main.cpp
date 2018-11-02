@@ -12,13 +12,15 @@
 #include "Geometry/Sphere.hpp"
 #include "Geometry/Plane.hpp"
 #include "Geometry/Mesh.hpp"
+#include "Material/Matte.hpp"
 
 const uint32_t WINDOW_WIDTH = 800;
 const uint32_t WINDOW_HEIGHT = 600;
+const uint32_t MAX_RAY_DEPTH = 2;
 
 using namespace lkRay;
 
-Renderer::Renderer gRenderer(WINDOW_WIDTH, WINDOW_HEIGHT);
+Renderer::Renderer gRenderer(WINDOW_WIDTH, WINDOW_HEIGHT, MAX_RAY_DEPTH);
 Scene::Scene gScene;
 Scene::Camera gCamera(
     lkCommon::Math::Vector4(0.0f, 1.0f, -7.0f, 1.0f),
@@ -98,19 +100,17 @@ int main()
     }
 
 
-    Scene::Material blue;
+    Material::Matte blue;
     blue.SetColor(lkCommon::Utils::PixelFloat4({0.2f, 0.5f, 0.9f, 1.0f}));
 
-    Scene::Material yellow;
+    Material::Matte yellow;
     yellow.SetColor(lkCommon::Utils::PixelFloat4({0.9f, 0.9f, 0.2f, 1.0f}));
 
-    Scene::Material red;
+    Material::Matte red;
     red.SetColor(lkCommon::Utils::PixelFloat4({0.9f, 0.4f, 0.2f, 1.0f}));
 
-    Scene::Material reflective;
+    Material::Matte reflective;
     reflective.SetColor(lkCommon::Utils::PixelFloat4(1.0f));
-    reflective.SetReflection(1.0f);
-    reflective.SetAlbedo(0.0f);
 
     Geometry::Primitive::Ptr sphere = std::dynamic_pointer_cast<Geometry::Primitive>(
         std::make_shared<Geometry::Sphere>(
@@ -118,7 +118,7 @@ int main()
             1.0f
         )
     );
-    sphere->SetMaterial(reflective);
+    sphere->SetMaterial(&reflective);
     gScene.AddPrimitive(sphere);
 
     Geometry::Primitive::Ptr sphere2 = std::dynamic_pointer_cast<Geometry::Primitive>(
@@ -127,7 +127,7 @@ int main()
             1.5f
         )
     );
-    sphere2->SetMaterial(blue);
+    sphere2->SetMaterial(&blue);
     gScene.AddPrimitive(sphere2);
 
     Geometry::Primitive::Ptr sphere3 = std::dynamic_pointer_cast<Geometry::Primitive>(
@@ -136,7 +136,7 @@ int main()
             2.0f
         )
     );
-    sphere3->SetMaterial(red);
+    sphere3->SetMaterial(&red);
     gScene.AddPrimitive(sphere3);
 
     std::vector<lkCommon::Math::Vector4> points;
@@ -176,7 +176,7 @@ int main()
             points, tris
         )
     );
-    mesh->SetMaterial(yellow);
+    mesh->SetMaterial(&yellow);
     gScene.AddPrimitive(mesh);
 
     Scene::Light::Ptr light = std::make_shared<Scene::Light>(
@@ -192,6 +192,8 @@ int main()
         0.1f
     );
     gScene.AddLight(light2);
+
+    gScene.SetAmbient(lkCommon::Utils::PixelFloat4({0.1f, 0.1f, 0.1f, 1.0f}));
 
 
     lkCommon::Utils::Timer t;

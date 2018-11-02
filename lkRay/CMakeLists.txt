@@ -9,10 +9,15 @@ SET(LKRAY_SRCS PCH.cpp
                Geometry/Ray.cpp
                Geometry/Sphere.cpp
                Geometry/Triangle.cpp
+               Material/Distribution.cpp
+               Material/LambertianDistribution.cpp
+               Material/Material.cpp
+               Material/Matte.cpp
+               Material/SurfaceDistribution.cpp
                Renderer/Renderer.cpp
                Scene/Camera.cpp
                Scene/Light.cpp
-               Scene/Material.cpp
+               Scene/RayCollision.cpp
                Scene/Scene.cpp
                )
 
@@ -22,10 +27,15 @@ SET(LKRAY_HDRS PCH.hpp
                Geometry/Ray.hpp
                Geometry/Sphere.hpp
                Geometry/Triangle.hpp
+               Material/Distribution.hpp
+               Material/LambertianDistribution.hpp
+               Material/Material.hpp
+               Material/Matte.hpp
+               Material/SurfaceDistribution.hpp
                Renderer/Renderer.hpp
                Scene/Camera.hpp
                Scene/Light.hpp
-               Scene/Material.hpp
+               Scene/RayCollision.hpp
                Scene/Scene.hpp
                )
 

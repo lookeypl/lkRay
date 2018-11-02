@@ -3,7 +3,7 @@
 #include <lkCommon/Math/Vector4.hpp>
 
 #include "Ray.hpp"
-#include "Scene/Material.hpp"
+#include "Material/Material.hpp"
 
 #include <memory>
 
@@ -24,7 +24,7 @@ public:
 
 protected:
     lkCommon::Math::Vector4 mPosition;
-    Scene::Material mMaterial;
+    Material::Material* mMaterial;
 
 public:
     Primitive();
@@ -42,7 +42,7 @@ public:
         mPosition = pos;
     }
 
-    LKCOMMON_INLINE void SetMaterial(const Scene::Material& material)
+    LKCOMMON_INLINE void SetMaterial(Material::Material* material)
     {
         mMaterial = material;
     }
@@ -53,7 +53,7 @@ public:
         return mPosition;
     }
 
-    LKCOMMON_INLINE const Scene::Material& GetMaterial() const
+    LKCOMMON_INLINE Material::Material* GetMaterial() const
     {
         return mMaterial;
     }
