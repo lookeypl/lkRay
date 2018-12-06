@@ -20,20 +20,14 @@ const uint32_t MAX_RAY_DEPTH = 2;
 
 using namespace lkRay;
 
-Renderer::Renderer gRenderer(WINDOW_WIDTH, WINDOW_HEIGHT, MAX_RAY_DEPTH);
-Scene::Scene gScene;
-Scene::Camera gCamera(
-    lkCommon::Math::Vector4(0.0f, 1.0f, -7.0f, 1.0f),
-    lkCommon::Math::Vector4(0.0f, 1.0f, 0.0f, 0.0f),
-    0.0f, 0.0f,
-    75.0f, static_cast<float>(WINDOW_WIDTH) / static_cast<float>(WINDOW_HEIGHT)
-);
-
 lkCommon::Math::RingAverage<float, 20> gFrameTime;
 
 
 class lkRayWindow: public lkCommon::System::Window
 {
+    Renderer::Renderer& mRenderer;
+    Scene::Camera& mCamera;
+
 protected:
     void OnUpdate(float deltaTime) override
     {
@@ -42,14 +36,14 @@ protected:
         if (IsMouseKeyPressed(0))
         {
             float speed = 5.0f * deltaTime;
-            if (IsKeyPressed(lkCommon::System::KeyCode::W)) gCamera.MoveForward(speed);
-            if (IsKeyPressed(lkCommon::System::KeyCode::S)) gCamera.MoveForward(-speed);
-            if (IsKeyPressed(lkCommon::System::KeyCode::D)) gCamera.MoveSideways(speed);
-            if (IsKeyPressed(lkCommon::System::KeyCode::A)) gCamera.MoveSideways(-speed);
-            if (IsKeyPressed(lkCommon::System::KeyCode::R)) gCamera.MoveWorldUp(speed);
-            if (IsKeyPressed(lkCommon::System::KeyCode::F)) gCamera.MoveWorldUp(-speed);
+            if (IsKeyPressed(lkCommon::System::KeyCode::W)) mCamera.MoveForward(speed);
+            if (IsKeyPressed(lkCommon::System::KeyCode::S)) mCamera.MoveForward(-speed);
+            if (IsKeyPressed(lkCommon::System::KeyCode::D)) mCamera.MoveSideways(speed);
+            if (IsKeyPressed(lkCommon::System::KeyCode::A)) mCamera.MoveSideways(-speed);
+            if (IsKeyPressed(lkCommon::System::KeyCode::R)) mCamera.MoveWorldUp(speed);
+            if (IsKeyPressed(lkCommon::System::KeyCode::F)) mCamera.MoveWorldUp(-speed);
 
-            gCamera.Update();
+            mCamera.Update();
         }
     }
 
@@ -60,15 +54,22 @@ protected:
             float shiftX = static_cast<float>(deltaX) * 0.005f;
             float shiftY = static_cast<float>(deltaY) * 0.005f;
 
-            gCamera.RotateLeftRight(shiftX);
-            gCamera.RotateUpDown(-shiftY);
+            mCamera.RotateLeftRight(shiftX);
+            mCamera.RotateUpDown(-shiftY);
         }
     }
 
     void OnResize(int width, int height) override
     {
-        gRenderer.ResizeOutput(width, height);
-        gCamera.SetAspectRatio(static_cast<float>(width) / static_cast<float>(height));
+        mRenderer.ResizeOutput(width, height);
+        mCamera.SetAspectRatio(static_cast<float>(width) / static_cast<float>(height));
+    }
+
+public:
+    lkRayWindow(Renderer::Renderer& renderer, Scene::Camera& camera)
+        : mRenderer(renderer)
+        , mCamera(camera)
+    {
     }
 };
 
@@ -86,7 +87,16 @@ int main()
         return -1;
     }
 
-    lkRayWindow gWindow;
+    Renderer::Renderer renderer(WINDOW_WIDTH, WINDOW_HEIGHT, MAX_RAY_DEPTH);
+
+    Scene::Camera camera(
+        lkCommon::Math::Vector4(0.0f, 1.0f, -7.0f, 1.0f),
+        lkCommon::Math::Vector4(0.0f, 1.0f, 0.0f, 0.0f),
+        0.0f, 0.0f,
+        75.0f, static_cast<float>(WINDOW_WIDTH) / static_cast<float>(WINDOW_HEIGHT)
+    );
+
+    lkRayWindow gWindow(renderer, camera);
     if (!gWindow.Init())
     {
         LOGE("Failed to initialize window");
@@ -98,6 +108,9 @@ int main()
         LOGE("Failed to open window");
         return -1;
     }
+
+
+    Scene::Scene scene;
 
 
     Material::Matte blue;
@@ -119,7 +132,7 @@ int main()
         )
     );
     sphere->SetMaterial(&reflective);
-    gScene.AddPrimitive(sphere);
+    scene.AddPrimitive(sphere);
 
     Geometry::Primitive::Ptr sphere2 = std::dynamic_pointer_cast<Geometry::Primitive>(
         std::make_shared<Geometry::Sphere>(
@@ -128,7 +141,7 @@ int main()
         )
     );
     sphere2->SetMaterial(&blue);
-    gScene.AddPrimitive(sphere2);
+    scene.AddPrimitive(sphere2);
 
     Geometry::Primitive::Ptr sphere3 = std::dynamic_pointer_cast<Geometry::Primitive>(
         std::make_shared<Geometry::Sphere>(
@@ -137,7 +150,7 @@ int main()
         )
     );
     sphere3->SetMaterial(&red);
-    gScene.AddPrimitive(sphere3);
+    scene.AddPrimitive(sphere3);
 
     std::vector<lkCommon::Math::Vector4> points;
     points.emplace_back( 5.0f,-1.5f, 5.0f, 1.0f); // 0 + - +
@@ -177,23 +190,23 @@ int main()
         )
     );
     mesh->SetMaterial(&yellow);
-    gScene.AddPrimitive(mesh);
+    scene.AddPrimitive(mesh);
 
     Scene::Light::Ptr light = std::make_shared<Scene::Light>(
         lkCommon::Math::Vector4(2.5f, 4.0f,-2.5f, 1.0f),
         static_cast<lkCommon::Utils::PixelFloat4>(lkCommon::Utils::PixelUint4({0x85, 0xBE, 0x3C, 0xFF})),
         0.1f
     );
-    gScene.AddLight(light);
+    scene.AddLight(light);
 
     Scene::Light::Ptr light2 = std::make_shared<Scene::Light>(
         lkCommon::Math::Vector4(-2.5f, 4.0f,-2.5f, 1.0f),
         lkCommon::Utils::PixelFloat4({0.3f, 0.7f, 1.0f, 1.0f}),
         0.1f
     );
-    gScene.AddLight(light2);
+    scene.AddLight(light2);
 
-    gScene.SetAmbient(lkCommon::Utils::PixelFloat4({0.1f, 0.1f, 0.1f, 1.0f}));
+    scene.SetAmbient(lkCommon::Utils::PixelFloat4({0.1f, 0.1f, 0.1f, 1.0f}));
 
 
     lkCommon::Utils::Timer t;
@@ -207,8 +220,8 @@ int main()
             gFrameTime.Add(time);
 
         gWindow.Update(time);
-        gRenderer.Draw(gScene, gCamera);
-        gWindow.DisplayImage(0, 0, gRenderer.GetOutput());
+        renderer.Draw(scene, camera);
+        gWindow.DisplayImage(0, 0, renderer.GetOutput());
     }
 
     return 0;
