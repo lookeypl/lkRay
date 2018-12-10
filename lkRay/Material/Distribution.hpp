@@ -55,7 +55,7 @@ public:
 
     LKCOMMON_INLINE bool HasType(const DistributionType type) const
     {
-        return (mType & type) != DistributionType::NONE;
+        return (mType & type) == type;
     }
 };
 

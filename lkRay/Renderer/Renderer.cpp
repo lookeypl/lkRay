@@ -6,11 +6,14 @@
 
 #include <lkCommon/Utils/Logger.hpp>
 #include <lkCommon/Utils/Pixel.hpp>
+#include <lkCommon/Math/Utilities.hpp>
+#include <lkCommon/Math/Random.hpp>
 
 
 namespace {
 
 const uint32_t PIXELS_PER_THREAD = 32;
+const uint32_t PIXELS_PER_THREAD_CONVERT = 32;
 
 } // namespace
 
@@ -19,14 +22,17 @@ namespace lkRay {
 namespace Renderer {
 
 Renderer::Renderer(const uint32_t renderWidth, const uint32_t renderHeight, const uint32_t maxRayDepth)
-    : mOutputImage(renderWidth, renderHeight)
+    : mImageBuffer(renderWidth, renderHeight)
+    , mOutputImage(renderWidth, renderHeight)
     , mMaxRayDepth(maxRayDepth)
     , mThreadPool()
-    , mArenas(mThreadPool.GetWorkerThreadCount())
+    , mThreadData(mThreadPool.GetWorkerThreadCount())
+    , mSampleCount(0)
 {
     for (uint32_t tid = 0; tid < mThreadPool.GetWorkerThreadCount(); ++tid)
     {
-        mThreadPool.SetUserPayloadForThread(tid, &mArenas[tid]);
+        mThreadData[tid].rngState = LKCOMMON_XORSHIFT_INITIAL_STATE;
+        mThreadPool.SetUserPayloadForThread(tid, &mThreadData[tid]);
     }
 }
 
@@ -35,8 +41,34 @@ lkCommon::Math::Vector4 Renderer::LerpPoints(const lkCommon::Math::Vector4& p1, 
     return p1 * (1.0f - factor) + p2 * factor;
 }
 
-lkCommon::Utils::PixelFloat4 Renderer::GetSpecularReflection(const Scene::Scene& scene, const Scene::RayCollision& collision,
-                                                             uint32_t rayDepth)
+
+lkCommon::Utils::PixelFloat4 Renderer::GetDiffuseReflection(Renderer::PathContext& context, Scene::RayCollision& collision, uint32_t rayDepth)
+{
+    lkCommon::Utils::PixelFloat4 surfaceSample;
+    lkCommon::Math::Vector4 reflectedDir;
+
+    bool hasDiffuse = collision.mSurfaceDistribution->Sample(
+        Material::DistributionType::DIFFUSE | Material::DistributionType::REFLECTION,
+        surfaceSample,
+        reflectedDir
+    );
+
+    if (hasDiffuse)
+    {
+        reflectedDir = lkCommon::Math::Util::CosineSampleHemisphere(
+            collision.mCollisionNormal,
+            lkCommon::Math::Random::Xorshift(context.threadData.rngState),
+            lkCommon::Math::Random::Xorshift(context.threadData.rngState)
+        );
+
+        context.ray = Geometry::Ray(collision.mCollisionPoint, reflectedDir);
+        surfaceSample *= CalculateLightIntensity(context, rayDepth + 1);
+    }
+
+    return surfaceSample;
+}
+
+lkCommon::Utils::PixelFloat4 Renderer::GetSpecularReflection(Renderer::PathContext& context, Scene::RayCollision& collision, uint32_t rayDepth)
 {
     lkCommon::Utils::PixelFloat4 surfaceSample;
     lkCommon::Math::Vector4 reflectedDir;
@@ -50,30 +82,33 @@ lkCommon::Utils::PixelFloat4 Renderer::GetSpecularReflection(const Scene::Scene&
 
     if (hasSpecular)
     {
-        // recast ray in direction
+        context.ray = Geometry::Ray(collision.mCollisionPoint, reflectedDir);
+        surfaceSample += CalculateLightIntensity(context, rayDepth + 1);
     }
 
     return surfaceSample;
 }
 
-lkCommon::Utils::PixelFloat4 Renderer::CalculateLightIntensity(lkCommon::Utils::ArenaAllocator* allocator, const Scene::Scene& scene, const Geometry::Ray& ray, uint32_t rayDepth)
+lkCommon::Utils::PixelFloat4 Renderer::CalculateLightIntensity(Renderer::PathContext& context, uint32_t rayDepth)
 {
     lkCommon::Utils::PixelFloat4 resultColor;
+    const Scene::Scene& scene = context.scene;
 
-    Scene::RayCollision collision = scene.TestCollision(ray, -1);
+    Scene::RayCollision collision = scene.TestCollision(context.ray, -1);
     if (collision.mHitID == -1)
     {
         return scene.GetAmbient();
     }
 
-    collision.mAllocator = allocator;
+    collision.mAllocator = &context.threadData.allocator;
     scene.GetPrimitives()[collision.mHitID]->GetMaterial()->PopulateDistributionFunctions(collision);
 
-    resultColor += scene.SampleLights(collision);
+    resultColor = scene.SampleLights(collision);
 
-    if (rayDepth + 1 < mMaxRayDepth)
+    if (rayDepth < mMaxRayDepth)
     {
-        resultColor += GetSpecularReflection(scene, collision, rayDepth);
+        resultColor += GetDiffuseReflection(context, collision, rayDepth);
+        resultColor += GetSpecularReflection(context, collision, rayDepth);
     }
 
     return resultColor;
@@ -82,20 +117,19 @@ lkCommon::Utils::PixelFloat4 Renderer::CalculateLightIntensity(lkCommon::Utils::
 void Renderer::DrawThread(lkCommon::Utils::ThreadPayload& payload, const Scene::Scene& scene, const Scene::Camera& camera, uint32_t widthPos, uint32_t heightPos, uint32_t xCount, uint32_t yCount)
 {
     LKCOMMON_ASSERT(payload.userData != nullptr, "Thread payload does not contain ArenaAllocator");
-    lkCommon::Utils::ArenaAllocator* allocator =
-        reinterpret_cast<lkCommon::Utils::ArenaAllocator*>(payload.userData);
+    ThreadData* threadData = reinterpret_cast<ThreadData*>(payload.userData);
 
     for (uint32_t x = widthPos; x < widthPos + xCount; ++x)
     {
         for (uint32_t y = heightPos; y < heightPos + yCount; ++y)
         {
             // don't go out of bounds
-            if (x >= mOutputImage.GetWidth() || y >= mOutputImage.GetHeight())
+            if (x >= mImageBuffer.GetWidth() || y >= mImageBuffer.GetHeight())
                 continue;
 
             // calculate where our ray will shoot
-            float xFactor = static_cast<float>(x) / static_cast<float>(mOutputImage.GetWidth());
-            float yFactor = static_cast<float>(y) / static_cast<float>(mOutputImage.GetHeight());
+            float xFactor = static_cast<float>(x) / static_cast<float>(mImageBuffer.GetWidth());
+            float yFactor = static_cast<float>(y) / static_cast<float>(mImageBuffer.GetHeight());
 
             lkCommon::Math::Vector4 xLerp1 = LerpPoints(
                 camera.GetCameraCorner(Scene::Camera::Corners::TOP_L),
@@ -110,15 +144,38 @@ void Renderer::DrawThread(lkCommon::Utils::ThreadPayload& payload, const Scene::
             lkCommon::Math::Vector4 rayTarget(LerpPoints(xLerp1, xLerp2, yFactor));
             lkCommon::Math::Vector4 rayDir((rayTarget - camera.GetPosition()).Normalize());
 
-            // form a ray and cast it
-            Geometry::Ray ray(camera.GetPosition(), rayDir);
-            mOutputImage.SetPixel(x, y, CalculateLightIntensity(allocator, scene, ray));
+            // form a context and start calculating
+            PathContext ctx(*threadData, scene, Geometry::Ray(camera.GetPosition(), rayDir));
+            lkCommon::Utils::PixelFloat4 pixel;
+            mImageBuffer.GetPixel(x, y, pixel);
+            mImageBuffer.SetPixel(x, y, pixel + CalculateLightIntensity(ctx, 0));
+        }
+    }
+}
+
+void Renderer::ConvertImageBufferToOutputThread(lkCommon::Utils::ThreadPayload& payload, uint32_t widthPos, uint32_t heightPos, uint32_t xCount, uint32_t yCount)
+{
+    lkCommon::Utils::PixelFloat4 mImageBufferPixel;
+
+    for (uint32_t x = widthPos; x < widthPos + xCount; ++x)
+    {
+        for (uint32_t y = heightPos; y < heightPos + yCount; ++y)
+        {
+            // don't go out of bounds
+            if (x >= mOutputImage.GetWidth() || y >= mOutputImage.GetHeight())
+                continue;
+
+            mImageBuffer.GetPixel(x, y, mImageBufferPixel);
+            mImageBufferPixel /= static_cast<float>(mSampleCount);
+            mOutputImage.SetPixel(x, y, mImageBufferPixel);
         }
     }
 }
 
 void Renderer::Draw(const Scene::Scene& scene, const Scene::Camera& camera)
 {
+    mSampleCount++;
+
     for (uint32_t x = 0; x < mOutputImage.GetWidth(); x += PIXELS_PER_THREAD)
     {
         for (uint32_t y = 0; y < mOutputImage.GetHeight(); y += PIXELS_PER_THREAD)
@@ -130,9 +187,20 @@ void Renderer::Draw(const Scene::Scene& scene, const Scene::Camera& camera)
 
     mThreadPool.WaitForTasks();
 
-    for (auto& arena: mArenas)
+    for (uint32_t x = 0; x < mOutputImage.GetWidth(); x += PIXELS_PER_THREAD)
     {
-        arena.ClearUnusedChunks();
+        for (uint32_t y = 0; y < mOutputImage.GetHeight(); y += PIXELS_PER_THREAD)
+        {
+            mThreadPool.AddTask(std::bind(&Renderer::ConvertImageBufferToOutputThread, this, std::placeholders::_1,
+                                x, y, PIXELS_PER_THREAD_CONVERT, PIXELS_PER_THREAD_CONVERT));
+        }
+    }
+
+    mThreadPool.WaitForTasks();
+
+    for (auto& td: mThreadData)
+    {
+        td.allocator.ClearUnusedChunks();
     }
 }
 
@@ -144,11 +212,19 @@ bool Renderer::ResizeOutput(const uint32_t width, const uint32_t height)
         return false;
     }
 
+    if (!mImageBuffer.Resize(width, height))
+    {
+        LOGE("Failed to resize output image");
+        return false;
+    }
+
     if (!mOutputImage.Resize(width, height))
     {
         LOGE("Failed to resize output image");
         return false;
     }
+
+    ResetImageBuffer();
 
     return true;
 }

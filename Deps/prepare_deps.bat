@@ -25,29 +25,39 @@ if defined FOUND (
     exit /b
 )
 
-set arg1=%1
+set script_path="%~dp0"
+set target=""
+set config=Release
 
-if "%arg1%" == "rebuild" (
-    echo REBUILDING
-    set target=":Rebuild"
-) else (
-    echo BUILDING
-    set target=""
+:argparse_loop
+if NOT "%1" == "" (
+    if "%1" == "Rebuild" (
+        set target=":Rebuild"
+    ) else if "%1" == "Debug"  (
+        set config=Debug
+    )
+
+    shift
+    goto :argparse_loop
 )
 
 pushd .
 
-cd %~dp0
+cd "%script_path%"
 echo Current directory is %cd%
 
 REM ========== lkCommon build ===========
 
 cd lkCommon
 
-msbuild lkCommon.sln /t:lkCommon%target% /p:Configuration=Debug;Platform=x86
-msbuild lkCommon.sln /t:lkCommon%target% /p:Configuration=Release;Platform=x86
-msbuild lkCommon.sln /t:lkCommon%target% /p:Configuration=Debug;Platform=x64
-msbuild lkCommon.sln /t:lkCommon%target% /p:Configuration=Release;Platform=x64
+echo Building lkCommon in %config%
+msbuild lkCommon.sln /t:lkCommon%target% /p:Configuration=%config%;Platform=x64
+if %ERRORLEVEL% GEQ 1 (
+    echo.
+    echo Build failed
+    echo.
+    exit /b
+)
 
 echo.
 echo Script is done

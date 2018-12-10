@@ -16,7 +16,8 @@
 
 const uint32_t WINDOW_WIDTH = 800;
 const uint32_t WINDOW_HEIGHT = 600;
-const uint32_t MAX_RAY_DEPTH = 2;
+const uint32_t MAX_RAY_DEPTH_MOVEMENT = 1;
+const uint32_t MAX_RAY_DEPTH_RENDERING = 4;
 
 using namespace lkRay;
 
@@ -31,10 +32,12 @@ class lkRayWindow: public lkCommon::System::Window
 protected:
     void OnUpdate(float deltaTime) override
     {
-        SetTitle("lkRay - " + std::to_string(gFrameTime.Get() * 1000.0f) + " ms");
+        SetTitle("lkRay - " + std::to_string(mRenderer.GetSampleCount()) + " passes, " + std::to_string(gFrameTime.Get() * 1000.0f) + " ms avg");
 
         if (IsMouseKeyPressed(0))
         {
+            mRenderer.ResetImageBuffer();
+
             float speed = 5.0f * deltaTime;
             if (IsKeyPressed(lkCommon::System::KeyCode::W)) mCamera.MoveForward(speed);
             if (IsKeyPressed(lkCommon::System::KeyCode::S)) mCamera.MoveForward(-speed);
@@ -57,6 +60,16 @@ protected:
             mCamera.RotateLeftRight(shiftX);
             mCamera.RotateUpDown(-shiftY);
         }
+    }
+
+    void OnMouseDown(int) override
+    {
+        mRenderer.SetMaxRayDepth(MAX_RAY_DEPTH_MOVEMENT);
+    }
+
+    void OnMouseUp(int) override
+    {
+        mRenderer.SetMaxRayDepth(MAX_RAY_DEPTH_RENDERING);
     }
 
     void OnResize(int width, int height) override
@@ -87,7 +100,7 @@ int main()
         return -1;
     }
 
-    Renderer::Renderer renderer(WINDOW_WIDTH, WINDOW_HEIGHT, MAX_RAY_DEPTH);
+    Renderer::Renderer renderer(WINDOW_WIDTH, WINDOW_HEIGHT, MAX_RAY_DEPTH_RENDERING);
 
     Scene::Camera camera(
         lkCommon::Math::Vector4(0.0f, 1.0f, -7.0f, 1.0f),
@@ -114,20 +127,21 @@ int main()
 
 
     Material::Matte blue;
-    blue.SetColor(lkCommon::Utils::PixelFloat4({0.2f, 0.5f, 0.9f, 1.0f}));
+    blue.SetColor(lkCommon::Utils::PixelFloat4(0.2f, 0.5f, 0.9f, 1.0f));
 
     Material::Matte yellow;
-    yellow.SetColor(lkCommon::Utils::PixelFloat4({0.9f, 0.9f, 0.2f, 1.0f}));
+    yellow.SetColor(lkCommon::Utils::PixelFloat4(0.9f, 0.9f, 0.2f, 1.0f));
 
     Material::Matte red;
-    red.SetColor(lkCommon::Utils::PixelFloat4({0.9f, 0.4f, 0.2f, 1.0f}));
+    red.SetColor(lkCommon::Utils::PixelFloat4(0.9f, 0.4f, 0.2f, 1.0f));
 
     Material::Matte reflective;
-    reflective.SetColor(lkCommon::Utils::PixelFloat4(1.0f));
+    reflective.SetColor(lkCommon::Utils::PixelFloat4(0.6f, 0.3f, 0.9f, 1.0f));
 
     Geometry::Primitive::Ptr sphere = std::dynamic_pointer_cast<Geometry::Primitive>(
         std::make_shared<Geometry::Sphere>(
-            lkCommon::Math::Vector4(0.7f,-0.5f, 0.7f, 1.0f),
+            //lkCommon::Math::Vector4(0.7f,-0.5f, 0.7f, 1.0f),
+            lkCommon::Math::Vector4(-0.7f,-0.5f,-0.7f, 1.0f),
             1.0f
         )
     );
@@ -151,6 +165,7 @@ int main()
     );
     sphere3->SetMaterial(&red);
     scene.AddPrimitive(sphere3);
+
 
     std::vector<lkCommon::Math::Vector4> points;
     points.emplace_back( 5.0f,-1.5f, 5.0f, 1.0f); // 0 + - +
@@ -183,6 +198,7 @@ int main()
     tris.emplace_back(3, 1, 5);
     tris.emplace_back(3, 5, 7);
 
+
     Geometry::Primitive::Ptr mesh = std::dynamic_pointer_cast<Geometry::Primitive>(
         std::make_shared<Geometry::Mesh>(
             lkCommon::Math::Vector4(0.0f, 0.0f, 0.0f, 1.0f),
@@ -194,15 +210,15 @@ int main()
 
     Scene::Light::Ptr light = std::make_shared<Scene::Light>(
         lkCommon::Math::Vector4(2.5f, 4.0f,-2.5f, 1.0f),
-        static_cast<lkCommon::Utils::PixelFloat4>(lkCommon::Utils::PixelUint4({0x85, 0xBE, 0x3C, 0xFF})),
-        0.1f
+        lkCommon::Utils::PixelFloat4(0.7f),
+        0.2f
     );
     scene.AddLight(light);
 
     Scene::Light::Ptr light2 = std::make_shared<Scene::Light>(
         lkCommon::Math::Vector4(-2.5f, 4.0f,-2.5f, 1.0f),
-        lkCommon::Utils::PixelFloat4({0.3f, 0.7f, 1.0f, 1.0f}),
-        0.1f
+        lkCommon::Utils::PixelFloat4(0.7f),
+        0.2f
     );
     scene.AddLight(light2);
 
@@ -221,8 +237,9 @@ int main()
 
         gWindow.Update(time);
         renderer.Draw(scene, camera);
-        gWindow.DisplayImage(0, 0, renderer.GetOutput());
+        gWindow.DisplayImage(0, 0, renderer.GetOutput().GetWindowImage());
     }
 
+    gWindow.Close();
     return 0;
 }

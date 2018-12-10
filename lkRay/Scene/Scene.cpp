@@ -28,6 +28,7 @@ void Scene::AddPrimitive(const std::shared_ptr<Geometry::Primitive>& ptr)
     mPrimitives.push_back(ptr);
 }
 
+
 void Scene::AddLight(const Light::Ptr& ptr)
 {
     mLights.push_back(ptr);
@@ -39,7 +40,12 @@ lkCommon::Utils::PixelFloat4 Scene::SampleLights(const RayCollision& collision) 
 
     for (const auto& l: mLights)
     {
-        result += l->Sample(collision);
+        lkCommon::Math::Vector4 lightDir = l->GetPosition() - collision.mCollisionPoint;
+        Geometry::Ray shadowRay(collision.mCollisionPoint, lightDir.Normalize());
+        RayCollision shadowCollision = TestCollision(shadowRay, collision.mHitID);
+        // if shadow ray did not hit anything, or it hit an object which is further from light 
+        if (shadowCollision.mHitID == -1 || shadowCollision.mDistance > lightDir.Length())
+            result += l->Sample(collision);
     }
 
     return result;

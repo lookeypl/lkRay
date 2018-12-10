@@ -1,6 +1,7 @@
 #include "PCH.hpp"
 #include "Sphere.hpp"
 #include <cmath>
+#include "lkCommon/Math/Constants.hpp"
 
 
 namespace lkRay {
@@ -16,11 +17,11 @@ bool Sphere::TestCollision(const Ray& ray, float& distance, lkCommon::Math::Vect
 {
     lkCommon::Math::Vector4 L = mPosition - ray.mOrigin;
     float midPoint = L.Dot(ray.mDirection);
-    if (midPoint < EPSILON)
+    if (midPoint < LKCOMMON_EPSILON)
         return false; // sphere is behind us
 
     float distFromOriginSquare = L.Dot(L) - midPoint * midPoint;
-    if (distFromOriginSquare < EPSILON)
+    if (distFromOriginSquare < LKCOMMON_EPSILON)
         return false; // wut
     if (distFromOriginSquare > mRadiusSquare)
         return false; // missed sphere

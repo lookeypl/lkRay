@@ -1,6 +1,8 @@
 #include "PCH.hpp"
 #include "Triangle.hpp"
 
+#include "lkCommon/Math/Constants.hpp"
+
 namespace lkRay {
 namespace Geometry {
 
@@ -22,7 +24,7 @@ bool Triangle::TestCollision(const lkCommon::Math::Vector4& pos, const std::vect
     lkCommon::Math::Vector4 pv(E2.Cross(ray.GetDirection()));
     float d = E1.Dot(pv);
 
-    if (d < EPSILON)
+    if (d < LKCOMMON_EPSILON)
         return false; // backface culling
 
     float invD = 1.0f / d;
@@ -37,7 +39,7 @@ bool Triangle::TestCollision(const lkCommon::Math::Vector4& pos, const std::vect
         return false;
 
     distance = E2.Dot(qv) * invD;
-    if (distance < EPSILON)
+    if (distance < LKCOMMON_EPSILON)
         return false;
 
     normal = E2.Cross(E1).Normalize();

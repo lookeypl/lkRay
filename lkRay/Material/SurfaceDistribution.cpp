@@ -35,11 +35,20 @@ bool SurfaceDistribution::Sample(DistributionType type, lkCommon::Utils::PixelFl
         }
     }
 
-    // * sample the distributions and get value of pixel in that place (and out vector)
+    if (distCount == 0)
+        return false;
 
+    // * sample the distributions and get value of pixel in that place (and out vector)
+    result = 0.0f;
+    lkCommon::Math::Vector4 in;
+    for (uint32_t i = 0; i < distCount; ++i)
+    {
+        result += distributions[i]->F(in, outDir);
+    }
 
     return true;
 }
+
 
 } // namespace Material
 } // namespace lkRay

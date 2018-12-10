@@ -25,7 +25,7 @@ public:
     SurfaceDistribution(lkCommon::Utils::ArenaAllocator* allocator);
     ~SurfaceDistribution();
 
-    // true if result of sampling was successful, ex. surface had distributions of requested type
+    // true if result of sampling was successful - surface had distributions of requested type
     bool Sample(DistributionType type, lkCommon::Utils::PixelFloat4& result, lkCommon::Math::Vector4& outDir);
 
     LKCOMMON_INLINE void AddDistribution(Distribution* dist)
