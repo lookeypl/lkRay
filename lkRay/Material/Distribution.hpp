@@ -51,7 +51,7 @@ public:
 
     ~Distribution() = default;
 
-    virtual lkCommon::Utils::PixelFloat4 F(const lkCommon::Math::Vector4& in, const lkCommon::Math::Vector4& out) = 0;
+    virtual lkCommon::Utils::PixelFloat4 F(const lkCommon::Math::Vector4& in, const lkCommon::Math::Vector4& normal, lkCommon::Math::Vector4& out) = 0;
 
     LKCOMMON_INLINE bool HasType(const DistributionType type) const
     {

@@ -16,6 +16,7 @@ enum class MaterialType: unsigned char
 {
     UNKNOWN = 0,
     MATTE,
+    MIRROR,
 };
 
 class Material

@@ -20,9 +20,9 @@ SurfaceDistribution::~SurfaceDistribution()
     }
 }
 
-bool SurfaceDistribution::Sample(DistributionType type, lkCommon::Utils::PixelFloat4& result, lkCommon::Math::Vector4& outDir)
+bool SurfaceDistribution::Sample(DistributionType type, const lkCommon::Math::Vector4& in, lkCommon::Math::Vector4& normal, lkCommon::Utils::PixelFloat4& result, lkCommon::Math::Vector4& outDir)
 {
-    // go through Distributions and find REFLECTION | SPECULAR
+    // go through Distributions and find matching
     Material::Distribution* distributions[DISTRIBUTION_MAX_COUNT];
     uint32_t distCount = 0;
 
@@ -38,12 +38,11 @@ bool SurfaceDistribution::Sample(DistributionType type, lkCommon::Utils::PixelFl
     if (distCount == 0)
         return false;
 
-    // * sample the distributions and get value of pixel in that place (and out vector)
+    // sample the distributions and get value of pixel in that place (and out vector)
     result = 0.0f;
-    lkCommon::Math::Vector4 in;
     for (uint32_t i = 0; i < distCount; ++i)
     {
-        result += distributions[i]->F(in, outDir);
+        result += distributions[i]->F(in, normal, outDir);
     }
 
     return true;

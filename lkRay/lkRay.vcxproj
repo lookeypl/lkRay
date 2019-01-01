@@ -110,6 +110,8 @@
     <ClCompile Include="Material\LambertianDistribution.cpp" />
     <ClCompile Include="Material\Material.cpp" />
     <ClCompile Include="Material\Matte.cpp" />
+    <ClCompile Include="Material\Mirror.cpp" />
+    <ClCompile Include="Material\SpecularReflection.cpp" />
     <ClCompile Include="Material\SurfaceDistribution.cpp" />
     <ClCompile Include="PCH.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -134,6 +136,8 @@
     <ClInclude Include="Material\LambertianDistribution.hpp" />
     <ClInclude Include="Material\Material.hpp" />
     <ClInclude Include="Material\Matte.hpp" />
+    <ClInclude Include="Material\Mirror.hpp" />
+    <ClInclude Include="Material\SpecularReflection.hpp" />
     <ClInclude Include="Material\SurfaceDistribution.hpp" />
     <ClInclude Include="PCH.hpp" />
     <ClInclude Include="Renderer\Renderer.hpp" />

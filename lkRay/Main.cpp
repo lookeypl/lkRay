@@ -13,12 +13,13 @@
 #include "Geometry/Plane.hpp"
 #include "Geometry/Mesh.hpp"
 #include "Material/Matte.hpp"
+#include "Material/Mirror.hpp"
 
 const uint32_t WINDOW_WIDTH = 800;
 const uint32_t WINDOW_HEIGHT = 600;
 const uint32_t MAX_RAY_DEPTH_MOVEMENT = 1;
 const uint32_t MAX_RAY_DEPTH_RENDERING = 4;
-const float EXPOSURE_DEFAULT = 0.7f;
+const float EXPOSURE_DEFAULT = 0.6f;
 
 using namespace lkRay;
 
@@ -150,8 +151,7 @@ int main()
     Material::Matte red;
     red.SetColor(lkCommon::Utils::PixelFloat4(0.9f, 0.4f, 0.2f, 1.0f));
 
-    Material::Matte reflective;
-    reflective.SetColor(lkCommon::Utils::PixelFloat4(0.6f, 0.3f, 0.9f, 1.0f));
+    Material::Mirror reflective;
 
     Geometry::Primitive::Ptr sphere = std::dynamic_pointer_cast<Geometry::Primitive>(
         std::make_shared<Geometry::Sphere>(

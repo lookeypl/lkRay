@@ -8,14 +8,11 @@
 namespace lkRay {
 namespace Material {
 
-class LambertianDistribution: public Distribution
+class SpecularReflection: public Distribution
 {
-    lkCommon::Utils::PixelFloat4 mR;
-
 public:
-    LambertianDistribution(const lkCommon::Utils::PixelFloat4& r)
-        : Distribution(DistributionType::DIFFUSE | DistributionType::REFLECTION)
-        , mR(r)
+    SpecularReflection()
+        : Distribution(DistributionType::SPECULAR | DistributionType::REFLECTION)
     { }
 
     lkCommon::Utils::PixelFloat4 F(const lkCommon::Math::Vector4& in, const lkCommon::Math::Vector4& normal, lkCommon::Math::Vector4& out) override;

@@ -65,6 +65,12 @@
     <ClCompile Include="Material\SurfaceDistribution.cpp">
       <Filter>Material</Filter>
     </ClCompile>
+    <ClCompile Include="Material\Mirror.cpp">
+      <Filter>Material</Filter>
+    </ClCompile>
+    <ClCompile Include="Material\SpecularReflection.cpp">
+      <Filter>Material</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PCH.hpp" />
@@ -114,6 +120,12 @@
       <Filter>Scene</Filter>
     </ClInclude>
     <ClInclude Include="Material\SurfaceDistribution.hpp">
+      <Filter>Material</Filter>
+    </ClInclude>
+    <ClInclude Include="Material\Mirror.hpp">
+      <Filter>Material</Filter>
+    </ClInclude>
+    <ClInclude Include="Material\SpecularReflection.hpp">
       <Filter>Material</Filter>
     </ClInclude>
   </ItemGroup>

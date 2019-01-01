@@ -49,6 +49,8 @@ lkCommon::Utils::PixelFloat4 Renderer::GetDiffuseReflection(Renderer::PathContex
 
     bool hasDiffuse = collision.mSurfaceDistribution->Sample(
         Material::DistributionType::DIFFUSE | Material::DistributionType::REFLECTION,
+        context.ray.GetDirection(),
+        collision.mCollisionNormal,
         surfaceSample,
         reflectedDir
     );
@@ -76,6 +78,8 @@ lkCommon::Utils::PixelFloat4 Renderer::GetSpecularReflection(Renderer::PathConte
     // sample all specular reflection-related distributions from given surface
     bool hasSpecular = collision.mSurfaceDistribution->Sample(
         Material::DistributionType::SPECULAR | Material::DistributionType::REFLECTION,
+        context.ray.GetDirection(),
+        collision.mCollisionNormal,
         surfaceSample,
         reflectedDir
     );
@@ -83,7 +87,7 @@ lkCommon::Utils::PixelFloat4 Renderer::GetSpecularReflection(Renderer::PathConte
     if (hasSpecular)
     {
         context.ray = Geometry::Ray(collision.mCollisionPoint, reflectedDir);
-        surfaceSample += CalculateLightIntensity(context, rayDepth + 1);
+        surfaceSample *= CalculateLightIntensity(context, rayDepth + 1);
     }
 
     return surfaceSample;
@@ -151,7 +155,6 @@ void Renderer::DrawThread(lkCommon::Utils::ThreadPayload& payload, const Scene::
 
             pixel += CalculateLightIntensity(ctx, 0);
 
-            //mAverageBrightness.Add(pixel.mColors.f[0] + pixel.mColors.f[1] + pixel.mColors.f[2] / 3 / mSampleCount);
             mImageBuffer.SetPixel(x, y, pixel);
         }
     }

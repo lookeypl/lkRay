@@ -26,7 +26,8 @@ public:
     ~SurfaceDistribution();
 
     // true if result of sampling was successful - surface had distributions of requested type
-    bool Sample(DistributionType type, lkCommon::Utils::PixelFloat4& result, lkCommon::Math::Vector4& outDir);
+    bool Sample(DistributionType type, const lkCommon::Math::Vector4& in, lkCommon::Math::Vector4& normal,
+                lkCommon::Utils::PixelFloat4& result, lkCommon::Math::Vector4& outDir);
 
     LKCOMMON_INLINE void AddDistribution(Distribution* dist)
     {
