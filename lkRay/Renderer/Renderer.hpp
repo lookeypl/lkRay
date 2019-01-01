@@ -36,6 +36,7 @@ class Renderer final
 
     lkCommon::Utils::Image<lkCommon::Utils::PixelFloat4> mImageBuffer;
     lkCommon::Utils::Image<lkCommon::Utils::PixelUint4> mOutputImage;
+    float mExposure;
     uint32_t mMaxRayDepth;
     lkCommon::Utils::ThreadPool mThreadPool;
     std::vector<ThreadData> mThreadData;
@@ -68,6 +69,11 @@ public:
     LKCOMMON_INLINE void SetMaxRayDepth(uint32_t depth)
     {
         mMaxRayDepth = depth;
+    }
+
+    LKCOMMON_INLINE void SetExposure(float exposure)
+    {
+        mExposure = exposure;
     }
 
     LKCOMMON_INLINE const lkCommon::Utils::Image<lkCommon::Utils::PixelUint4>& GetOutput() const

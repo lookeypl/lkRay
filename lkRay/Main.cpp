@@ -18,6 +18,7 @@ const uint32_t WINDOW_WIDTH = 800;
 const uint32_t WINDOW_HEIGHT = 600;
 const uint32_t MAX_RAY_DEPTH_MOVEMENT = 1;
 const uint32_t MAX_RAY_DEPTH_RENDERING = 4;
+const float EXPOSURE_DEFAULT = 0.7f;
 
 using namespace lkRay;
 
@@ -28,6 +29,7 @@ class lkRayWindow: public lkCommon::System::Window
 {
     Renderer::Renderer& mRenderer;
     Scene::Camera& mCamera;
+    float mExposure = EXPOSURE_DEFAULT;
 
 protected:
     void OnUpdate(float deltaTime) override
@@ -47,6 +49,18 @@ protected:
             if (IsKeyPressed(lkCommon::System::KeyCode::F)) mCamera.MoveWorldUp(-speed);
 
             mCamera.Update();
+        }
+
+        if (IsKeyPressed(lkCommon::System::KeyCode::Z))
+        {
+            mExposure -= 0.1f;
+            mRenderer.SetExposure(mExposure);
+        }
+
+        if (IsKeyPressed(lkCommon::System::KeyCode::X))
+        {
+            mExposure += 0.1f;
+            mRenderer.SetExposure(mExposure);
         }
     }
 
@@ -101,6 +115,7 @@ int main()
     }
 
     Renderer::Renderer renderer(WINDOW_WIDTH, WINDOW_HEIGHT, MAX_RAY_DEPTH_RENDERING);
+    renderer.SetExposure(EXPOSURE_DEFAULT);
 
     Scene::Camera camera(
         lkCommon::Math::Vector4(0.0f, 1.0f, -7.0f, 1.0f),
@@ -129,8 +144,8 @@ int main()
     Material::Matte blue;
     blue.SetColor(lkCommon::Utils::PixelFloat4(0.2f, 0.5f, 0.9f, 1.0f));
 
-    Material::Matte yellow;
-    yellow.SetColor(lkCommon::Utils::PixelFloat4(0.9f, 0.9f, 0.2f, 1.0f));
+    Material::Matte white;
+    white.SetColor(lkCommon::Utils::PixelFloat4(0.9f, 0.9f, 0.9f, 1.0f));
 
     Material::Matte red;
     red.SetColor(lkCommon::Utils::PixelFloat4(0.9f, 0.4f, 0.2f, 1.0f));
@@ -140,7 +155,6 @@ int main()
 
     Geometry::Primitive::Ptr sphere = std::dynamic_pointer_cast<Geometry::Primitive>(
         std::make_shared<Geometry::Sphere>(
-            //lkCommon::Math::Vector4(0.7f,-0.5f, 0.7f, 1.0f),
             lkCommon::Math::Vector4(-0.7f,-0.5f,-0.7f, 1.0f),
             1.0f
         )
@@ -205,19 +219,19 @@ int main()
             points, tris
         )
     );
-    mesh->SetMaterial(&yellow);
+    mesh->SetMaterial(&white);
     scene.AddPrimitive(mesh);
 
     Scene::Light::Ptr light = std::make_shared<Scene::Light>(
         lkCommon::Math::Vector4(2.5f, 4.0f,-2.5f, 1.0f),
-        lkCommon::Utils::PixelFloat4(0.7f),
+        lkCommon::Utils::PixelFloat4(0.5f),
         0.2f
     );
     scene.AddLight(light);
 
     Scene::Light::Ptr light2 = std::make_shared<Scene::Light>(
         lkCommon::Math::Vector4(-2.5f, 4.0f,-2.5f, 1.0f),
-        lkCommon::Utils::PixelFloat4(0.7f),
+        lkCommon::Utils::PixelFloat4(0.5f),
         0.2f
     );
     scene.AddLight(light2);

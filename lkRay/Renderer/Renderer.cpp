@@ -28,6 +28,7 @@ Renderer::Renderer(const uint32_t renderWidth, const uint32_t renderHeight, cons
     , mThreadPool()
     , mThreadData(mThreadPool.GetWorkerThreadCount())
     , mSampleCount(0)
+    , mExposure(1.0f)
 {
     for (uint32_t tid = 0; tid < mThreadPool.GetWorkerThreadCount(); ++tid)
     {
@@ -40,7 +41,6 @@ lkCommon::Math::Vector4 Renderer::LerpPoints(const lkCommon::Math::Vector4& p1, 
 {
     return p1 * (1.0f - factor) + p2 * factor;
 }
-
 
 lkCommon::Utils::PixelFloat4 Renderer::GetDiffuseReflection(Renderer::PathContext& context, Scene::RayCollision& collision, uint32_t rayDepth)
 {
@@ -148,14 +148,19 @@ void Renderer::DrawThread(lkCommon::Utils::ThreadPayload& payload, const Scene::
             PathContext ctx(*threadData, scene, Geometry::Ray(camera.GetPosition(), rayDir));
             lkCommon::Utils::PixelFloat4 pixel;
             mImageBuffer.GetPixel(x, y, pixel);
-            mImageBuffer.SetPixel(x, y, pixel + CalculateLightIntensity(ctx, 0));
+
+            pixel += CalculateLightIntensity(ctx, 0);
+
+            //mAverageBrightness.Add(pixel.mColors.f[0] + pixel.mColors.f[1] + pixel.mColors.f[2] / 3 / mSampleCount);
+            mImageBuffer.SetPixel(x, y, pixel);
         }
     }
 }
 
 void Renderer::ConvertImageBufferToOutputThread(lkCommon::Utils::ThreadPayload& payload, uint32_t widthPos, uint32_t heightPos, uint32_t xCount, uint32_t yCount)
 {
-    lkCommon::Utils::PixelFloat4 mImageBufferPixel;
+    lkCommon::Utils::PixelFloat4 imageBufferPixel;
+    lkCommon::Utils::PixelFloat4 tempPixel;
 
     for (uint32_t x = widthPos; x < widthPos + xCount; ++x)
     {
@@ -165,9 +170,18 @@ void Renderer::ConvertImageBufferToOutputThread(lkCommon::Utils::ThreadPayload& 
             if (x >= mOutputImage.GetWidth() || y >= mOutputImage.GetHeight())
                 continue;
 
-            mImageBuffer.GetPixel(x, y, mImageBufferPixel);
-            mImageBufferPixel /= static_cast<float>(mSampleCount);
-            mOutputImage.SetPixel(x, y, mImageBufferPixel);
+            mImageBuffer.GetPixel(x, y, imageBufferPixel);
+
+            // average the output color
+            imageBufferPixel /= static_cast<float>(mSampleCount);
+
+            // do some post processing on a pixel
+            // Hejl & Burgess-Dawson gamma correction & tone mapping
+            imageBufferPixel *= mExposure;
+            tempPixel = lkCommon::Utils::MaxPixel(lkCommon::Utils::PixelFloat4(0.0f), imageBufferPixel - 0.004f);
+            imageBufferPixel = (tempPixel * (6.2f * tempPixel + 0.5f)) / (tempPixel * (6.2f * tempPixel + 1.7f) + 0.06f);
+
+            mOutputImage.SetPixel(x, y, imageBufferPixel);
         }
     }
 }
