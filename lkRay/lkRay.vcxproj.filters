@@ -13,6 +13,9 @@
     <Filter Include="Material">
       <UniqueIdentifier>{1b6dc3a6-6aaf-4e34-a281-b0a47ce3fd1f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Distribution">
+      <UniqueIdentifier>{033a7fbe-8b5a-4bbe-8333-b9a6e27d24a8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
@@ -47,12 +50,6 @@
     <ClCompile Include="Geometry\Plane.cpp">
       <Filter>Geometry</Filter>
     </ClCompile>
-    <ClCompile Include="Material\Distribution.cpp">
-      <Filter>Material</Filter>
-    </ClCompile>
-    <ClCompile Include="Material\LambertianDistribution.cpp">
-      <Filter>Material</Filter>
-    </ClCompile>
     <ClCompile Include="Material\Material.cpp">
       <Filter>Material</Filter>
     </ClCompile>
@@ -62,14 +59,20 @@
     <ClCompile Include="Scene\RayCollision.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Material\SurfaceDistribution.cpp">
-      <Filter>Material</Filter>
-    </ClCompile>
     <ClCompile Include="Material\Mirror.cpp">
       <Filter>Material</Filter>
     </ClCompile>
-    <ClCompile Include="Material\SpecularReflection.cpp">
-      <Filter>Material</Filter>
+    <ClCompile Include="Distribution\SpecularReflection.cpp">
+      <Filter>Distribution</Filter>
+    </ClCompile>
+    <ClCompile Include="Distribution\SurfaceDistribution.cpp">
+      <Filter>Distribution</Filter>
+    </ClCompile>
+    <ClCompile Include="Distribution\Function.cpp">
+      <Filter>Distribution</Filter>
+    </ClCompile>
+    <ClCompile Include="Distribution\Lambertian.cpp">
+      <Filter>Distribution</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -104,12 +107,6 @@
     <ClInclude Include="Geometry\Triangle.hpp">
       <Filter>Geometry</Filter>
     </ClInclude>
-    <ClInclude Include="Material\Distribution.hpp">
-      <Filter>Material</Filter>
-    </ClInclude>
-    <ClInclude Include="Material\LambertianDistribution.hpp">
-      <Filter>Material</Filter>
-    </ClInclude>
     <ClInclude Include="Material\Material.hpp">
       <Filter>Material</Filter>
     </ClInclude>
@@ -119,14 +116,20 @@
     <ClInclude Include="Scene\RayCollision.hpp">
       <Filter>Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Material\SurfaceDistribution.hpp">
-      <Filter>Material</Filter>
-    </ClInclude>
     <ClInclude Include="Material\Mirror.hpp">
       <Filter>Material</Filter>
     </ClInclude>
-    <ClInclude Include="Material\SpecularReflection.hpp">
-      <Filter>Material</Filter>
+    <ClInclude Include="Distribution\SpecularReflection.hpp">
+      <Filter>Distribution</Filter>
+    </ClInclude>
+    <ClInclude Include="Distribution\SurfaceDistribution.hpp">
+      <Filter>Distribution</Filter>
+    </ClInclude>
+    <ClInclude Include="Distribution\Function.hpp">
+      <Filter>Distribution</Filter>
+    </ClInclude>
+    <ClInclude Include="Distribution\Lambertian.hpp">
+      <Filter>Distribution</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

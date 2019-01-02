@@ -1,7 +1,7 @@
 #include "PCH.hpp"
 #include "Matte.hpp"
 
-#include "LambertianDistribution.hpp"
+#include "Distribution/Lambertian.hpp"
 
 
 namespace lkRay {
@@ -21,9 +21,9 @@ Matte::Matte(const lkCommon::Utils::PixelFloat4& color)
 
 void Matte::PopulateDistributionFunctions(Scene::RayCollision& collision)
 {
-    collision.mSurfaceDistribution = new (*collision.mAllocator) SurfaceDistribution(collision.mAllocator);
+    collision.mSurfaceDistribution = new (*collision.mAllocator) Distribution::SurfaceDistribution(collision.mAllocator);
 
-    collision.mSurfaceDistribution->AddDistribution(new (*collision.mAllocator) LambertianDistribution(mColor));
+    collision.mSurfaceDistribution->AddDistribution(new (*collision.mAllocator) Distribution::Lambertian(mColor));
 }
 
 } // namespace Material

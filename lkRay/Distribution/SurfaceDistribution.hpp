@@ -5,20 +5,20 @@
 #include <lkCommon/Utils/ArenaAllocator.hpp>
 #include <lkCommon/Utils/ArenaObject.hpp>
 
-#include "Distribution.hpp"
+#include "Function.hpp"
 
 #include <vector>
 #include <memory>
 
-#define DISTRIBUTION_MAX_COUNT 8
+#define FUNCTION_MAX_COUNT 8
 
 namespace lkRay {
-namespace Material {
+namespace Distribution {
 
 class SurfaceDistribution: public lkCommon::Utils::ArenaObject
 {
     lkCommon::Utils::ArenaAllocator* mDistributionAllocator;
-    Distribution* mDistributions[DISTRIBUTION_MAX_COUNT];
+    Function* mDistributions[FUNCTION_MAX_COUNT];
     uint32_t mDistributionCount;
 
 public:
@@ -26,18 +26,18 @@ public:
     ~SurfaceDistribution();
 
     // true if result of sampling was successful - surface had distributions of requested type
-    bool Sample(DistributionType type, const lkCommon::Math::Vector4& in, lkCommon::Math::Vector4& normal,
+    bool Sample(FunctionType type, const lkCommon::Math::Vector4& in, lkCommon::Math::Vector4& normal,
                 lkCommon::Utils::PixelFloat4& result, lkCommon::Math::Vector4& outDir);
 
-    LKCOMMON_INLINE void AddDistribution(Distribution* dist)
+    LKCOMMON_INLINE void AddDistribution(Function* dist)
     {
-        LKCOMMON_ASSERT(mDistributionCount < DISTRIBUTION_MAX_COUNT, "Too many distributions added to given surface distribution");
+        LKCOMMON_ASSERT(mDistributionCount < FUNCTION_MAX_COUNT, "Too many distribution functions added to given surface distribution");
 
         mDistributions[mDistributionCount] = dist;
         ++mDistributionCount;
     }
 
-    LKCOMMON_INLINE Distribution* GetDistribution(uint32_t i) const
+    LKCOMMON_INLINE Function* GetDistribution(uint32_t i) const
     {
         LKCOMMON_ASSERT(i < mDistributionCount, "Requested distribution exceeding range");
         LKCOMMON_ASSERT(mDistributions[i] != nullptr, "Requested NULL distribution");
@@ -51,5 +51,5 @@ public:
     }
 };
 
-} // namespace Material
+} // namespace Distribution
 } // namespace lkRay

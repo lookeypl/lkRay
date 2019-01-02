@@ -1,25 +1,25 @@
 #pragma once
 
-#include "Distribution.hpp"
+#include "Function.hpp"
 
 #include <lkCommon/Utils/Pixel.hpp>
 
 
 namespace lkRay {
-namespace Material {
+namespace Distribution {
 
-class LambertianDistribution: public Distribution
+class Lambertian: public Function
 {
     lkCommon::Utils::PixelFloat4 mR;
 
 public:
-    LambertianDistribution(const lkCommon::Utils::PixelFloat4& r)
-        : Distribution(DistributionType::DIFFUSE | DistributionType::REFLECTION)
+    Lambertian(const lkCommon::Utils::PixelFloat4& r)
+        : Function(FunctionType::DIFFUSE | FunctionType::REFLECTION)
         , mR(r)
     { }
 
     lkCommon::Utils::PixelFloat4 F(const lkCommon::Math::Vector4& in, const lkCommon::Math::Vector4& normal, lkCommon::Math::Vector4& out) override;
 };
 
-} // namespace Material
+} // namespace Distribution
 } // namespace lkRay

@@ -1,22 +1,22 @@
 #pragma once
 
-#include "Distribution.hpp"
+#include "Function.hpp"
 
 #include <lkCommon/Utils/Pixel.hpp>
 
 
 namespace lkRay {
-namespace Material {
+namespace Distribution {
 
-class SpecularReflection: public Distribution
+class SpecularReflection: public Function
 {
 public:
     SpecularReflection()
-        : Distribution(DistributionType::SPECULAR | DistributionType::REFLECTION)
+        : Function(FunctionType::SPECULAR | FunctionType::REFLECTION)
     { }
 
     lkCommon::Utils::PixelFloat4 F(const lkCommon::Math::Vector4& in, const lkCommon::Math::Vector4& normal, lkCommon::Math::Vector4& out) override;
 };
 
-} // namespace Material
+} // namespace Distribution
 } // namespace lkRay

@@ -3,7 +3,7 @@
 #include <lkCommon/Math/Vector4.hpp>
 #include <lkCommon/Utils/ArenaAllocator.hpp>
 
-#include "Material/SurfaceDistribution.hpp"
+#include "Distribution/SurfaceDistribution.hpp"
 
 
 namespace lkRay {
@@ -20,7 +20,7 @@ public:
 
     // to be allocated at a later point
     lkCommon::Utils::ArenaAllocator* mAllocator;
-    Material::SurfaceDistribution* mSurfaceDistribution;
+    Distribution::SurfaceDistribution* mSurfaceDistribution;
 
 
     RayCollision();

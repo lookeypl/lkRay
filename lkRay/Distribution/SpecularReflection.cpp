@@ -3,7 +3,7 @@
 
 
 namespace lkRay {
-namespace Material {
+namespace Distribution {
 
 lkCommon::Utils::PixelFloat4 SpecularReflection::F(const lkCommon::Math::Vector4& in, const lkCommon::Math::Vector4& normal, lkCommon::Math::Vector4& out)
 {
@@ -11,5 +11,5 @@ lkCommon::Utils::PixelFloat4 SpecularReflection::F(const lkCommon::Math::Vector4
     return lkCommon::Utils::PixelFloat4(1.0f);
 }
 
-} // namespace Material
+} // namespace Distribution
 } // namespace lkRay

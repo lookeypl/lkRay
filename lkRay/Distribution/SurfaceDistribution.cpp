@@ -2,7 +2,7 @@
 #include "SurfaceDistribution.hpp"
 
 namespace lkRay {
-namespace Material {
+namespace Distribution {
 
 SurfaceDistribution::SurfaceDistribution(lkCommon::Utils::ArenaAllocator* allocator)
     : mDistributionAllocator(allocator)
@@ -15,15 +15,15 @@ SurfaceDistribution::~SurfaceDistribution()
 {
     for (uint32_t i = 0; i < mDistributionCount; ++i)
     {
-        mDistributions[i]->~Distribution();
+        mDistributions[i]->~Function();
         mDistributionAllocator->Free(mDistributions[i]);
     }
 }
 
-bool SurfaceDistribution::Sample(DistributionType type, const lkCommon::Math::Vector4& in, lkCommon::Math::Vector4& normal, lkCommon::Utils::PixelFloat4& result, lkCommon::Math::Vector4& outDir)
+bool SurfaceDistribution::Sample(FunctionType type, const lkCommon::Math::Vector4& in, lkCommon::Math::Vector4& normal, lkCommon::Utils::PixelFloat4& result, lkCommon::Math::Vector4& outDir)
 {
     // go through Distributions and find matching
-    Material::Distribution* distributions[DISTRIBUTION_MAX_COUNT];
+    Function* distributions[FUNCTION_MAX_COUNT];
     uint32_t distCount = 0;
 
     for (uint32_t i = 0; i < mDistributionCount; ++i)
@@ -49,5 +49,5 @@ bool SurfaceDistribution::Sample(DistributionType type, const lkCommon::Math::Ve
 }
 
 
-} // namespace Material
+} // namespace Distribution
 } // namespace lkRay

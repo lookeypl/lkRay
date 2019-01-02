@@ -2,7 +2,7 @@
 #include "Renderer.hpp"
 
 #include "Geometry/Primitive.hpp"
-#include "Material/Distribution.hpp"
+#include "Distribution/Function.hpp"
 
 #include <lkCommon/Utils/Logger.hpp>
 #include <lkCommon/Utils/Pixel.hpp>
@@ -48,7 +48,7 @@ lkCommon::Utils::PixelFloat4 Renderer::GetDiffuseReflection(Renderer::PathContex
     lkCommon::Math::Vector4 reflectedDir;
 
     bool hasDiffuse = collision.mSurfaceDistribution->Sample(
-        Material::DistributionType::DIFFUSE | Material::DistributionType::REFLECTION,
+        Distribution::FunctionType::DIFFUSE | Distribution::FunctionType::REFLECTION,
         context.ray.GetDirection(),
         collision.mCollisionNormal,
         surfaceSample,
@@ -77,7 +77,7 @@ lkCommon::Utils::PixelFloat4 Renderer::GetSpecularReflection(Renderer::PathConte
 
     // sample all specular reflection-related distributions from given surface
     bool hasSpecular = collision.mSurfaceDistribution->Sample(
-        Material::DistributionType::SPECULAR | Material::DistributionType::REFLECTION,
+        Distribution::FunctionType::SPECULAR | Distribution::FunctionType::REFLECTION,
         context.ray.GetDirection(),
         collision.mCollisionNormal,
         surfaceSample,

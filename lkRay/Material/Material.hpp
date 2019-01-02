@@ -6,7 +6,7 @@
 
 #include "Scene/Scene.hpp"
 #include "Scene/RayCollision.hpp"
-#include "Distribution.hpp"
+#include "Distribution/Function.hpp"
 
 
 namespace lkRay {
