@@ -7,6 +7,7 @@
 #include <lkCommon/Math/RingAverage.hpp>
 
 #include "Renderer/Renderer.hpp"
+#include "Scene/PointLight.hpp"
 #include "Scene/Scene.hpp"
 #include "Scene/Camera.hpp"
 #include "Geometry/Sphere.hpp"
@@ -222,17 +223,21 @@ int main()
     mesh->SetMaterial(&white);
     scene.AddPrimitive(mesh);
 
-    Scene::Light::Ptr light = std::make_shared<Scene::Light>(
-        lkCommon::Math::Vector4(2.5f, 4.0f,-2.5f, 1.0f),
-        lkCommon::Utils::PixelFloat4(0.5f),
-        0.2f
+    Scene::Light::Ptr light = std::dynamic_pointer_cast<Scene::Light>(
+        std::make_shared<Scene::PointLight>(
+            lkCommon::Math::Vector4(2.5f, 4.0f,-2.5f, 1.0f),
+            lkCommon::Utils::PixelFloat4(0.5f),
+            0.2f
+        )
     );
     scene.AddLight(light);
 
-    Scene::Light::Ptr light2 = std::make_shared<Scene::Light>(
-        lkCommon::Math::Vector4(-2.5f, 4.0f,-2.5f, 1.0f),
-        lkCommon::Utils::PixelFloat4(0.5f),
-        0.2f
+    Scene::Light::Ptr light2 = std::dynamic_pointer_cast<Scene::Light>(
+        std::make_shared<Scene::PointLight>(
+            lkCommon::Math::Vector4(-2.5f, 4.0f,-2.5f, 1.0f),
+            lkCommon::Utils::PixelFloat4(0.5f),
+            0.2f
+        )
     );
     scene.AddLight(light2);
 

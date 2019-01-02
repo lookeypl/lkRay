@@ -10,21 +10,32 @@
 namespace lkRay {
 namespace Scene {
 
+enum class LightType
+{
+    UNKNOWN = 0,
+    POINT,
+};
+
 class Light
 {
 public:
     using Ptr = std::shared_ptr<Light>;
 
-private:
+protected:
     lkCommon::Math::Vector4 mPosition;
     lkCommon::Utils::PixelFloat4 mColor;
-    float mAttentuationFactor;
 
 public:
-    Light(const lkCommon::Math::Vector4& pos, const lkCommon::Utils::PixelFloat4& color, float attenuation);
+    Light(const lkCommon::Math::Vector4& pos, const lkCommon::Utils::PixelFloat4& color)
+        : mPosition(pos)
+        , mColor(color)
+    {
+    }
+
     ~Light() = default;
 
-    lkCommon::Utils::PixelFloat4 Sample(const Scene::RayCollision& collision) const;
+    virtual lkCommon::Utils::PixelFloat4 Sample(const RayCollision& collision) const = 0;
+    virtual LightType GetType() const = 0;
 
     LKCOMMON_INLINE const lkCommon::Math::Vector4& GetPosition() const
     {
@@ -34,11 +45,6 @@ public:
     LKCOMMON_INLINE const lkCommon::Utils::PixelFloat4& GetColor() const
     {
         return mColor;
-    }
-
-    LKCOMMON_INLINE const float& GetAttenuationFactor() const
-    {
-        return mAttentuationFactor;
     }
 };
 

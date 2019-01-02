@@ -60,6 +60,7 @@
       <PrecompiledHeaderFile>PCH.hpp</PrecompiledHeaderFile>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <PreprocessorDefinitions>_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN32;_UNICODE;UNICODE;_DEBUG%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ShowIncludes>false</ShowIncludes>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)Deps\lkCommon\Bin\$(Platform)\$(Configuration)\</AdditionalLibraryDirectories>
@@ -122,6 +123,7 @@
     <ClCompile Include="Renderer\Renderer.cpp" />
     <ClCompile Include="Scene\Camera.cpp" />
     <ClCompile Include="Scene\Light.cpp" />
+    <ClCompile Include="Scene\PointLight.cpp" />
     <ClCompile Include="Scene\RayCollision.cpp" />
     <ClCompile Include="Scene\Scene.cpp" />
   </ItemGroup>
@@ -143,8 +145,12 @@
     <ClInclude Include="Renderer\Renderer.hpp" />
     <ClInclude Include="Scene\Camera.hpp" />
     <ClInclude Include="Scene\Light.hpp" />
+    <ClInclude Include="Scene\PointLight.hpp" />
     <ClInclude Include="Scene\RayCollision.hpp" />
     <ClInclude Include="Scene\Scene.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="CMakeLists.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

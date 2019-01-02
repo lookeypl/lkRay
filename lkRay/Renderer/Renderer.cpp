@@ -42,6 +42,18 @@ lkCommon::Math::Vector4 Renderer::LerpPoints(const lkCommon::Math::Vector4& p1, 
     return p1 * (1.0f - factor) + p2 * factor;
 }
 
+lkCommon::Utils::PixelFloat4 Renderer::PostProcess(const lkCommon::Utils::PixelFloat4& in)
+{
+    // adjust exposure of raw pixel
+    lkCommon::Utils::PixelFloat4 out = in * mExposure;
+
+    // Hejl & Burgess-Dawson gamma correction & tone mapping
+    lkCommon::Utils::PixelFloat4 tempPixel = lkCommon::Utils::MaxPixel(lkCommon::Utils::PixelFloat4(0.0f), out - 0.004f);
+    out = (tempPixel * (6.2f * tempPixel + 0.5f)) / (tempPixel * (6.2f * tempPixel + 1.7f) + 0.06f);
+
+    return out;
+}
+
 lkCommon::Utils::PixelFloat4 Renderer::GetDiffuseReflection(Renderer::PathContext& context, Scene::RayCollision& collision, uint32_t rayDepth)
 {
     lkCommon::Utils::PixelFloat4 surfaceSample;
@@ -178,13 +190,8 @@ void Renderer::ConvertImageBufferToOutputThread(lkCommon::Utils::ThreadPayload& 
             // average the output color
             imageBufferPixel /= static_cast<float>(mSampleCount);
 
-            // do some post processing on a pixel
-            // Hejl & Burgess-Dawson gamma correction & tone mapping
-            imageBufferPixel *= mExposure;
-            tempPixel = lkCommon::Utils::MaxPixel(lkCommon::Utils::PixelFloat4(0.0f), imageBufferPixel - 0.004f);
-            imageBufferPixel = (tempPixel * (6.2f * tempPixel + 0.5f)) / (tempPixel * (6.2f * tempPixel + 1.7f) + 0.06f);
-
-            mOutputImage.SetPixel(x, y, imageBufferPixel);
+            // do some post processing on a pixel and return it
+            mOutputImage.SetPixel(x, y, PostProcess(imageBufferPixel));
         }
     }
 }

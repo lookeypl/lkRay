@@ -74,6 +74,9 @@
     <ClCompile Include="Distribution\Lambertian.cpp">
       <Filter>Distribution</Filter>
     </ClCompile>
+    <ClCompile Include="Scene\PointLight.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PCH.hpp" />
@@ -131,5 +134,11 @@
     <ClInclude Include="Distribution\Lambertian.hpp">
       <Filter>Distribution</Filter>
     </ClInclude>
+    <ClInclude Include="Scene\PointLight.hpp">
+      <Filter>Scene</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="CMakeLists.txt" />
   </ItemGroup>
 </Project>

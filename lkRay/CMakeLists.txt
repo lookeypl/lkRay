@@ -19,6 +19,7 @@ SET(LKRAY_SRCS PCH.cpp
                Renderer/Renderer.cpp
                Scene/Camera.cpp
                Scene/Light.cpp
+               Scene/PointLight.cpp
                Scene/RayCollision.cpp
                Scene/Scene.cpp
                )
@@ -39,6 +40,7 @@ SET(LKRAY_HDRS PCH.hpp
                Renderer/Renderer.hpp
                Scene/Camera.hpp
                Scene/Light.hpp
+               Scene/PointLight.hpp
                Scene/RayCollision.hpp
                Scene/Scene.hpp
                )

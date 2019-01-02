@@ -43,6 +43,7 @@ class Renderer final
     uint32_t mSampleCount;
 
     lkCommon::Math::Vector4 LerpPoints(const lkCommon::Math::Vector4& p1, const lkCommon::Math::Vector4& p2, float factor);
+    lkCommon::Utils::PixelFloat4 PostProcess(const lkCommon::Utils::PixelFloat4& in);
     void DrawThread(lkCommon::Utils::ThreadPayload& payload,
                     const Scene::Scene& scene, const Scene::Camera& camera,
                     uint32_t widthPos, uint32_t heightPos,
