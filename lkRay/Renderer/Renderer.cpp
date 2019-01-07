@@ -3,6 +3,7 @@
 
 #include "Geometry/Primitive.hpp"
 #include "Distribution/Function.hpp"
+#include "Material/Material.hpp"
 
 #include <lkCommon/Utils/Logger.hpp>
 #include <lkCommon/Utils/Pixel.hpp>
@@ -119,7 +120,8 @@ lkCommon::Utils::PixelFloat4 Renderer::CalculateLightIntensity(Renderer::PathCon
     collision.mAllocator = &context.threadData.allocator;
     scene.GetPrimitives()[collision.mHitID]->GetMaterial()->PopulateDistributionFunctions(collision);
 
-    resultColor = scene.SampleLights(collision);
+    resultColor = context.scene.SampleLights(collision);
+
 
     if (rayDepth < mMaxRayDepth)
     {

@@ -3,12 +3,14 @@ PKG_CHECK_MODULES(LKRAY_PKG_DEPS REQUIRED
                   )
 
 SET(LKRAY_SRCS PCH.cpp
+               Constants.cpp
                Main.cpp
                Distribution/Function.cpp
                Distribution/Lambertian.cpp
                Distribution/SpecularReflection.cpp
                Distribution/SurfaceDistribution.cpp
                Geometry/Mesh.cpp
+               Geometry/Plane.cpp
                Geometry/Primitive.cpp
                Geometry/Ray.cpp
                Geometry/Sphere.cpp
@@ -25,11 +27,13 @@ SET(LKRAY_SRCS PCH.cpp
                )
 
 SET(LKRAY_HDRS PCH.hpp
+               Constants.hpp
                Distribution/Function.hpp
                Distribution/Lambertian.hpp
                Distribution/SpecularReflection.hpp
                Distribution/SurfaceDistribution.hpp
                Geometry/Mesh.hpp
+               Geometry/Plane.hpp
                Geometry/Primitive.hpp
                Geometry/Ray.hpp
                Geometry/Sphere.hpp
@@ -55,6 +59,10 @@ TARGET_INCLUDE_DIRECTORIES(${LKRAY_TARGET}
                            PRIVATE ${LKRAY_ROOT_DIRECTORY}/Deps/lkCommon/lkCommon/include
                            PRIVATE ${LKRAY_ROOT_DIRECTORY}/Deps/rapidjson/include
                            PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
+                           )
+
+TARGET_COMPILE_DEFINITIONS(${LKRAY_TARGET}
+                           PRIVATE "-DLKRAY_ROOT_REL_TO_BIN=\"../..\""
                            )
 
 TARGET_LINK_LIBRARIES(${LKRAY_TARGET} lkCommon ${LKRAY_PKG_DEPS_LIBRARIES})

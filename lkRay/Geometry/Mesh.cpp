@@ -1,17 +1,27 @@
 #include "PCH.hpp"
 #include "Mesh.hpp"
+
 #include <limits>
+
+#include "Constants.hpp"
+
 
 namespace lkRay {
 namespace Geometry {
 
-Mesh::Mesh(const lkCommon::Math::Vector4& pos, const std::vector<lkCommon::Math::Vector4>& points,
+Mesh::Mesh(const std::string& name)
+    : Primitive(name)
+    , mPoints()
+    , mTriangleIndices()
+{
+}
+
+Mesh::Mesh(const std::string& name, const lkCommon::Math::Vector4& pos, const std::vector<lkCommon::Math::Vector4>& points,
            const std::vector<Triangle>& indices)
-    : Primitive(pos)
+    : Primitive(name, pos)
     , mPoints(points)
     , mTriangleIndices(indices)
 {
-
 }
 
 bool Mesh::TestCollision(const Ray& ray, float& distance, lkCommon::Math::Vector4& normal)
@@ -39,6 +49,84 @@ bool Mesh::TestCollision(const Ray& ray, float& distance, lkCommon::Math::Vector
     }
 
     return hit;
+}
+
+bool Mesh::ReadParametersFromNode(const rapidjson::Value& value, const Scene::Containers::Material& materials)
+{
+    if (!Primitive::ReadParametersFromNode(value, materials))
+    {
+        LOGE("Failed to read base primitive's parameters");
+        return false;
+    }
+
+    lkCommon::Math::Vector4 vertex;
+    Geometry::Triangle tri;
+
+    for (auto& a: value.GetObject())
+    {
+        if (Constants::MESH_ATTRIBUTE_VERTICES_NODE_NAME.compare(a.name.GetString()) == 0)
+        {
+            if (!a.value.IsArray())
+            {
+                LOGE("Invalid vertices in object " << mName << " - should be an array of 4-element arrays");
+                return false;
+            }
+
+            for (auto& v: a.value.GetArray())
+            {
+                if (!v.IsArray() || (v.GetArray().Size() != 4))
+                {
+                    LOGE("Invalid vertex #" << mPoints.size() - 1 << " in object " << mName);
+                    return false;
+                }
+
+                vertex = lkCommon::Math::Vector4();
+
+                uint32_t colIndex = 0;
+                for (auto& c: v.GetArray())
+                {
+                    vertex[colIndex] = c.GetFloat();
+                    colIndex++;
+                }
+
+                mPoints.push_back(vertex);
+            }
+
+            LOGD("     -> Mesh has " << mPoints.size() << " vertices");
+        }
+        else if (Constants::MESH_ATTRIBUTE_INDICES_NODE_NAME.compare(a.name.GetString()) == 0)
+        {
+            if (!a.value.IsArray() || (a.value.GetArray().Size() % 3 != 0))
+            {
+                LOGE("Invalid indices in object " << mName << " - should be an array with indices count divisible by 3");
+                return false;
+            }
+
+            for (auto& t: a.value.GetArray())
+            {
+                if (!t.IsArray() || (t.GetArray().Size() != 3))
+                {
+                    LOGE("Invalid triangle #" << mTriangleIndices.size() - 1 << " in object " << mName);
+                    return false;
+                }
+
+                tri = Geometry::Triangle();
+
+                uint32_t colIndex = 0;
+                for (auto& i: t.GetArray())
+                {
+                    tri[colIndex] = i.GetUint();
+                    colIndex++;
+                }
+
+                mTriangleIndices.push_back(tri);
+            }
+
+            LOGD("     -> Mesh has " << mTriangleIndices.size() << " triangles");
+        }
+    }
+
+    return true;
 }
 
 } // namespace Geometry

@@ -16,6 +16,17 @@
 #include "Material/Matte.hpp"
 #include "Material/Mirror.hpp"
 
+
+// TODO This is a simple but pesky workaround to "find app root" issue.
+//      Resolve this in the future by proper path searching, by one (or more) of:
+//        * Going max 3 directories up, trying to find "Data" and "Bin" folder
+//        * Searching for a predefined file hidden somewhere in "Data" dir?
+#ifndef LKRAY_ROOT_REL_TO_BIN
+#error "Path to root relative to binary not defined. Please define \
+path to app's root as LKRAY_ROOT_REL_TO_BIN variable."
+#endif
+
+
 const uint32_t WINDOW_WIDTH = 800;
 const uint32_t WINDOW_HEIGHT = 600;
 const uint32_t MAX_RAY_DEPTH_MOVEMENT = 1;
@@ -108,7 +119,7 @@ int main()
     if (!lkCommon::System::FS::SetCWD(
             lkCommon::System::FS::JoinPaths(
                 lkCommon::System::FS::GetParentDir(lkCommon::System::FS::GetExecutablePath()),
-                "../../.."
+                LKRAY_ROOT_REL_TO_BIN
                 )
             )
         )
@@ -142,107 +153,11 @@ int main()
 
     Scene::Scene scene;
 
-
-    Material::Matte blue;
-    blue.SetColor(lkCommon::Utils::PixelFloat4(0.2f, 0.5f, 0.9f, 1.0f));
-
-    Material::Matte white;
-    white.SetColor(lkCommon::Utils::PixelFloat4(0.9f, 0.9f, 0.9f, 1.0f));
-
-    Material::Matte red;
-    red.SetColor(lkCommon::Utils::PixelFloat4(0.9f, 0.4f, 0.2f, 1.0f));
-
-    Material::Mirror reflective;
-
-    Geometry::Primitive::Ptr sphere = std::dynamic_pointer_cast<Geometry::Primitive>(
-        std::make_shared<Geometry::Sphere>(
-            lkCommon::Math::Vector4(-0.7f,-0.5f,-0.7f, 1.0f),
-            1.0f
-        )
-    );
-    sphere->SetMaterial(&reflective);
-    scene.AddPrimitive(sphere);
-
-    Geometry::Primitive::Ptr sphere2 = std::dynamic_pointer_cast<Geometry::Primitive>(
-        std::make_shared<Geometry::Sphere>(
-            lkCommon::Math::Vector4(2.5f, 0.0f, 2.5f, 1.0f),
-            1.5f
-        )
-    );
-    sphere2->SetMaterial(&blue);
-    scene.AddPrimitive(sphere2);
-
-    Geometry::Primitive::Ptr sphere3 = std::dynamic_pointer_cast<Geometry::Primitive>(
-        std::make_shared<Geometry::Sphere>(
-            lkCommon::Math::Vector4(-1.5f, 0.5f, 2.5f, 1.0f),
-            2.0f
-        )
-    );
-    sphere3->SetMaterial(&red);
-    scene.AddPrimitive(sphere3);
-
-
-    std::vector<lkCommon::Math::Vector4> points;
-    points.emplace_back( 5.0f,-1.5f, 5.0f, 1.0f); // 0 + - +
-    points.emplace_back( 5.0f, 4.5f, 5.0f, 1.0f); // 1 + + +
-    points.emplace_back(-5.0f,-1.5f, 5.0f, 1.0f); // 2 - - +
-    points.emplace_back(-5.0f, 4.5f, 5.0f, 1.0f); // 3 - + +
-
-    points.emplace_back( 5.0f,-1.5f,-5.0f, 1.0f); // 4 + - -
-    points.emplace_back( 5.0f, 4.5f,-5.0f, 1.0f); // 5 + + -
-    points.emplace_back(-5.0f,-1.5f,-5.0f, 1.0f); // 6 - - -
-    points.emplace_back(-5.0f, 4.5f,-5.0f, 1.0f); // 7 - + -
-
-    std::vector<Geometry::Triangle> tris;
-    // back wall
-    tris.emplace_back(0, 1, 2);
-    tris.emplace_back(1, 3, 2);
-    // front wall
-    tris.emplace_back(4, 6, 5);
-    tris.emplace_back(5, 6, 7);
-    // right wall
-    tris.emplace_back(0, 4, 1);
-    tris.emplace_back(1, 4, 5);
-    // left wall
-    tris.emplace_back(2, 3, 6);
-    tris.emplace_back(3, 7, 6);
-    // floor
-    tris.emplace_back(4, 2, 6);
-    tris.emplace_back(4, 0, 2);
-    // ceiling
-    tris.emplace_back(3, 1, 5);
-    tris.emplace_back(3, 5, 7);
-
-
-    Geometry::Primitive::Ptr mesh = std::dynamic_pointer_cast<Geometry::Primitive>(
-        std::make_shared<Geometry::Mesh>(
-            lkCommon::Math::Vector4(0.0f, 0.0f, 0.0f, 1.0f),
-            points, tris
-        )
-    );
-    mesh->SetMaterial(&white);
-    scene.AddPrimitive(mesh);
-
-    Scene::Light::Ptr light = std::dynamic_pointer_cast<Scene::Light>(
-        std::make_shared<Scene::PointLight>(
-            lkCommon::Math::Vector4(2.5f, 4.0f,-2.5f, 1.0f),
-            lkCommon::Utils::PixelFloat4(0.5f),
-            0.2f
-        )
-    );
-    scene.AddLight(light);
-
-    Scene::Light::Ptr light2 = std::dynamic_pointer_cast<Scene::Light>(
-        std::make_shared<Scene::PointLight>(
-            lkCommon::Math::Vector4(-2.5f, 4.0f,-2.5f, 1.0f),
-            lkCommon::Utils::PixelFloat4(0.5f),
-            0.2f
-        )
-    );
-    scene.AddLight(light2);
-
-    scene.SetAmbient(lkCommon::Utils::PixelFloat4({0.1f, 0.1f, 0.1f, 1.0f}));
-
+    if (!scene.Load("Data/Scenes/test.json"))
+    {
+        LOGE("Failed to load scene");
+        return -1;
+    }
 
     lkCommon::Utils::Timer t;
     t.Start();

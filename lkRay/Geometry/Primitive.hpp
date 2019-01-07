@@ -3,9 +3,10 @@
 #include <lkCommon/Math/Vector4.hpp>
 
 #include "Ray.hpp"
-#include "Material/Material.hpp"
+#include "Scene/Containers.hpp"
 
 #include <memory>
+#include <rapidjson/document.h>
 
 
 namespace lkRay {
@@ -13,28 +14,21 @@ namespace Geometry {
 
 class Primitive
 {
-public:
-    using Ptr = std::shared_ptr<Primitive>;
-
-    enum class Type: unsigned char
-    {
-        Unknown = 0,
-        Sphere,
-    };
-
 protected:
+    std::string mName;
     lkCommon::Math::Vector4 mPosition;
     Material::Material* mMaterial;
 
 public:
-    Primitive();
-    Primitive(const lkCommon::Math::Vector4& position);
+    Primitive(const std::string& name);
+    Primitive(const std::string& name, const lkCommon::Math::Vector4& position);
     ~Primitive() = default;
 
     // returns true if ray collided with something
     // then, returns through arguments closest positive distance to ray origin and surface normal at collision point
     // false if there's no collision (ray missed the sphere), then both distance and normal are unmodified
     virtual bool TestCollision(const Ray& ray, float& distance, lkCommon::Math::Vector4& normal) = 0;
+    virtual bool ReadParametersFromNode(const rapidjson::Value& value, const Scene::Containers::Material& materials);
 
 
     LKCOMMON_INLINE void SetPosition(const lkCommon::Math::Vector4& pos)

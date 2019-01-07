@@ -8,7 +8,7 @@ namespace lkRay {
 namespace Material {
 
 Mirror::Mirror()
-    : Material(MaterialType::MIRROR)
+    : Material(Types::Material::MIRROR)
 {
 }
 
@@ -17,6 +17,13 @@ void Mirror::PopulateDistributionFunctions(Scene::RayCollision& collision)
     collision.mSurfaceDistribution = new (*collision.mAllocator) Distribution::SurfaceDistribution(collision.mAllocator);
 
     collision.mSurfaceDistribution->AddDistribution(new (*collision.mAllocator) Distribution::SpecularReflection());
+}
+
+bool Mirror::ReadParametersFromNode(const rapidjson::Value& value)
+{
+    // empty - Mirror has no additional parameters
+    LKCOMMON_UNUSED(value);
+    return true;
 }
 
 } // namespace Material

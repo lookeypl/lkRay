@@ -6,7 +6,6 @@
 namespace lkRay {
 namespace Geometry {
 
-// Triangle does not inherit Primitive, as it's a building block for Model
 class Plane: public Primitive
 {
 public:
@@ -17,7 +16,8 @@ private:
     float mD;
 
 public:
-    Plane(const lkCommon::Math::Vector4& normal, float distance);
+    Plane(const std::string& name);
+    Plane(const std::string& name, const lkCommon::Math::Vector4& normal, float distance);
     ~Plane() = default;
 
     bool TestCollision(const Ray& ray, float& distance, lkCommon::Math::Vector4& normal) override;

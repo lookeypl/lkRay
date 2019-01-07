@@ -10,6 +10,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Deps", "Deps", "{A599B856-B
 		Deps\prepare_deps.bat = Deps\prepare_deps.bat
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{A79EDB3B-98F4-4E1E-B056-7392ADF19DA2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scenes", "Scenes", "{1D3D1C7A-8E06-4164-9FFC-3CD75CBFC68B}"
+	ProjectSection(SolutionItems) = preProject
+		Data\Scenes\test.json = Data\Scenes\test.json
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -23,6 +30,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{1D3D1C7A-8E06-4164-9FFC-3CD75CBFC68B} = {A79EDB3B-98F4-4E1E-B056-7392ADF19DA2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {92F97087-F107-4903-ABA4-87FC24D2A869}

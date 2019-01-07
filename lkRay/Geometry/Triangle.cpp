@@ -6,6 +6,11 @@
 namespace lkRay {
 namespace Geometry {
 
+Triangle::Triangle()
+    : mPoints{0, 0, 0}
+{
+}
+
 Triangle::Triangle(uint32_t a, uint32_t b, uint32_t c)
     : mPoints{a, b, c}
 {

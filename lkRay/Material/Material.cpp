@@ -6,11 +6,11 @@ namespace lkRay {
 namespace Material {
 
 Material::Material()
-    : mType(MaterialType::UNKNOWN)
+    : mType(Types::Material::UNKNOWN)
 {
 }
 
-Material::Material(MaterialType type)
+Material::Material(Types::Material type)
     : mType(type)
 {
 }

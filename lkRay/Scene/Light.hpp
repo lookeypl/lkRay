@@ -4,38 +4,29 @@
 #include <lkCommon/Utils/Pixel.hpp>
 #include <memory>
 
+#include "Types.hpp"
 #include "RayCollision.hpp"
+
+#include <rapidjson/document.h>
 
 
 namespace lkRay {
 namespace Scene {
 
-enum class LightType
-{
-    UNKNOWN = 0,
-    POINT,
-};
-
 class Light
 {
-public:
-    using Ptr = std::shared_ptr<Light>;
-
 protected:
+    std::string mName;
     lkCommon::Math::Vector4 mPosition;
     lkCommon::Utils::PixelFloat4 mColor;
 
 public:
-    Light(const lkCommon::Math::Vector4& pos, const lkCommon::Utils::PixelFloat4& color)
-        : mPosition(pos)
-        , mColor(color)
-    {
-    }
-
+    Light(const std::string& name);
+    Light(const std::string& name, const lkCommon::Math::Vector4& pos, const lkCommon::Utils::PixelFloat4& color);
     ~Light() = default;
 
     virtual lkCommon::Utils::PixelFloat4 Sample(const RayCollision& collision) const = 0;
-    virtual LightType GetType() const = 0;
+    virtual bool ReadParametersFromNode(const rapidjson::Value& value);
 
     LKCOMMON_INLINE const lkCommon::Math::Vector4& GetPosition() const
     {

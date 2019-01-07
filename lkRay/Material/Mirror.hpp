@@ -15,6 +15,7 @@ public:
     ~Mirror() = default;
 
     void PopulateDistributionFunctions(Scene::RayCollision& collision) override;
+    bool ReadParametersFromNode(const rapidjson::Value& value) override;
 };
 
 } // namespace Material

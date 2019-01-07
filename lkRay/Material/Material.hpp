@@ -4,32 +4,28 @@
 #include <lkCommon/Utils/Pixel.hpp>
 #include <lkCommon/Utils/ArenaAllocator.hpp>
 
-#include "Scene/Scene.hpp"
+#include "Types.hpp"
 #include "Scene/RayCollision.hpp"
 #include "Distribution/Function.hpp"
+
+#include <rapidjson/document.h>
 
 
 namespace lkRay {
 namespace Material {
 
-enum class MaterialType: unsigned char
-{
-    UNKNOWN = 0,
-    MATTE,
-    MIRROR,
-};
-
 class Material
 {
 protected:
-    MaterialType mType;
+    Types::Material mType;
 
 public:
     Material();
-    Material(MaterialType type);
+    Material(Types::Material type);
     ~Material() = default;
 
     virtual void PopulateDistributionFunctions(Scene::RayCollision& collision) = 0;
+    virtual bool ReadParametersFromNode(const rapidjson::Value& value) = 0;
 };
 
 } // namespace Material
