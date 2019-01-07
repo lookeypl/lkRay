@@ -53,6 +53,7 @@ ADD_DEPENDENCIES(${LKRAY_TARGET} lkCommon)
 
 TARGET_INCLUDE_DIRECTORIES(${LKRAY_TARGET}
                            PRIVATE ${LKRAY_ROOT_DIRECTORY}/Deps/lkCommon/lkCommon/include
+                           PRIVATE ${LKRAY_ROOT_DIRECTORY}/Deps/rapidjson/include
                            PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
                            )
 
