@@ -300,14 +300,24 @@ bool Scene::Load(const std::string& path)
     return true;
 }
 
+void Scene::Destroy()
+{
+    mAmbient = lkCommon::Utils::PixelFloat4(0.0f);
+
+    mName.clear();
+    mPrimitives.clear();
+    mLights.clear();
+    mMaterials.clear();
+}
+
 lkCommon::Utils::PixelFloat4 Scene::SampleLights(const RayCollision& collision) const
 {
     lkCommon::Utils::PixelFloat4 result;
 
     for (const auto& l: mLights)
     {
-        lkCommon::Math::Vector4 lightDir = l->GetPosition() - collision.mCollisionPoint;
-        Geometry::Ray shadowRay(collision.mCollisionPoint, lightDir.Normalize());
+        lkCommon::Math::Vector4 lightDir = l->GetPosition() - collision.mPoint;
+        Geometry::Ray shadowRay(collision.mPoint, lightDir.Normalize());
         RayCollision shadowCollision = TestCollision(shadowRay, collision.mHitID);
         // if shadow ray did not hit anything, or it hit an object which is further from light
         if (shadowCollision.mHitID == -1 || shadowCollision.mDistance > lightDir.Length())
@@ -340,7 +350,7 @@ RayCollision Scene::TestCollision(const Geometry::Ray& ray, int skipObjID) const
         }
     }
 
-    return RayCollision(hitID, colDistance, ray.GetOrigin() + ray.GetDirection() * colDistance, colNormal);
+    return RayCollision(hitID, colDistance, ray.mOrigin + ray.mDirection * colDistance, colNormal);
 }
 
 Containers::Ptr<Geometry::Primitive> Scene::CreatePrimitive(const std::string& name, const Types::Primitive& type)

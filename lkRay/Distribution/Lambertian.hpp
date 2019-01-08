@@ -14,11 +14,12 @@ class Lambertian: public Function
 
 public:
     Lambertian(const lkCommon::Utils::PixelFloat4& r)
-        : Function(FunctionType::DIFFUSE | FunctionType::REFLECTION)
+        : Function(Types::Distribution::DIFFUSE | Types::Distribution::REFLECTION)
         , mR(r)
     { }
 
-    lkCommon::Utils::PixelFloat4 F(const lkCommon::Math::Vector4& in, const lkCommon::Math::Vector4& normal, lkCommon::Math::Vector4& out) override;
+    lkCommon::Utils::PixelFloat4 F(const Renderer::PathContext& context, const Scene::RayCollision& collision,
+                                   lkCommon::Math::Vector4& out) override;
 };
 
 } // namespace Distribution

@@ -20,4 +20,10 @@ class Material;
 
 } // namespace Material
 
+namespace Renderer {
+
+class SurfaceDistribution;
+
+} // namespace Renderer
+
 } // namespace lkRay

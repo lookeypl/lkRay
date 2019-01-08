@@ -6,26 +6,18 @@
 namespace lkRay {
 namespace Geometry {
 
-class Ray
+struct Ray
 {
-    friend class Sphere;
-
     lkCommon::Math::Vector4 mOrigin;
     lkCommon::Math::Vector4 mDirection;
 
-public:
-    Ray(const lkCommon::Math::Vector4& origin, const lkCommon::Math::Vector4& direction);
-    ~Ray();
-
-    LKCOMMON_INLINE const lkCommon::Math::Vector4& GetOrigin() const
+    Ray(const lkCommon::Math::Vector4& origin, const lkCommon::Math::Vector4& direction)
+        : mOrigin(origin)
+        , mDirection(direction)
     {
-        return mOrigin;
     }
 
-    LKCOMMON_INLINE const lkCommon::Math::Vector4& GetDirection() const
-    {
-        return mDirection;
-    }
+    ~Ray() = default;
 };
 
 } // namespace Geometry

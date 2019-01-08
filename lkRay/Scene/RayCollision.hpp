@@ -3,7 +3,7 @@
 #include <lkCommon/Math/Vector4.hpp>
 #include <lkCommon/Utils/ArenaAllocator.hpp>
 
-#include "Distribution/SurfaceDistribution.hpp"
+#include "Prerequisites.hpp"
 
 
 namespace lkRay {
@@ -15,16 +15,16 @@ class RayCollision
 public:
     int32_t mHitID;
     float mDistance;
-    lkCommon::Math::Vector4 mCollisionPoint;
-    lkCommon::Math::Vector4 mCollisionNormal;
+    lkCommon::Math::Vector4 mPoint;
+    lkCommon::Math::Vector4 mNormal;
 
     // to be allocated at a later point
     lkCommon::Utils::ArenaAllocator* mAllocator;
-    Distribution::SurfaceDistribution* mSurfaceDistribution;
+    Renderer::SurfaceDistribution* mSurfaceDistribution;
 
 
     RayCollision();
-    RayCollision(int hitID, float distance, const lkCommon::Math::Vector4& collisionPoint, const lkCommon::Math::Vector4& normal);
+    RayCollision(int hitID, float distance, const lkCommon::Math::Vector4& point, const lkCommon::Math::Vector4& normal);
     ~RayCollision();
 };
 

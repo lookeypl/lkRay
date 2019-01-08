@@ -10,6 +10,8 @@
 #include <lkCommon/Math/Utilities.hpp>
 #include <lkCommon/Math/Random.hpp>
 
+#include "SurfaceDistribution.hpp"
+
 
 namespace {
 
@@ -55,61 +57,18 @@ lkCommon::Utils::PixelFloat4 Renderer::PostProcess(const lkCommon::Utils::PixelF
     return out;
 }
 
-lkCommon::Utils::PixelFloat4 Renderer::GetDiffuseReflection(Renderer::PathContext& context, Scene::RayCollision& collision, uint32_t rayDepth)
+lkCommon::Utils::PixelFloat4 Renderer::CalculateLightIntensity(PathContext& context, uint32_t rayDepth)
 {
-    lkCommon::Utils::PixelFloat4 surfaceSample;
-    lkCommon::Math::Vector4 reflectedDir;
-
-    bool hasDiffuse = collision.mSurfaceDistribution->Sample(
-        Distribution::FunctionType::DIFFUSE | Distribution::FunctionType::REFLECTION,
-        context.ray.GetDirection(),
-        collision.mCollisionNormal,
-        surfaceSample,
-        reflectedDir
-    );
-
-    if (hasDiffuse)
+    if (rayDepth > mMaxRayDepth)
     {
-        reflectedDir = lkCommon::Math::Util::CosineSampleHemisphere(
-            collision.mCollisionNormal,
-            lkCommon::Math::Random::Xorshift(context.threadData.rngState),
-            lkCommon::Math::Random::Xorshift(context.threadData.rngState)
-        );
-
-        context.ray = Geometry::Ray(collision.mCollisionPoint, reflectedDir);
-        surfaceSample *= CalculateLightIntensity(context, rayDepth + 1);
+        return context.scene.GetAmbient();
     }
 
-    return surfaceSample;
-}
-
-lkCommon::Utils::PixelFloat4 Renderer::GetSpecularReflection(Renderer::PathContext& context, Scene::RayCollision& collision, uint32_t rayDepth)
-{
-    lkCommon::Utils::PixelFloat4 surfaceSample;
-    lkCommon::Math::Vector4 reflectedDir;
-
-    // sample all specular reflection-related distributions from given surface
-    bool hasSpecular = collision.mSurfaceDistribution->Sample(
-        Distribution::FunctionType::SPECULAR | Distribution::FunctionType::REFLECTION,
-        context.ray.GetDirection(),
-        collision.mCollisionNormal,
-        surfaceSample,
-        reflectedDir
-    );
-
-    if (hasSpecular)
-    {
-        context.ray = Geometry::Ray(collision.mCollisionPoint, reflectedDir);
-        surfaceSample *= CalculateLightIntensity(context, rayDepth + 1);
-    }
-
-    return surfaceSample;
-}
-
-lkCommon::Utils::PixelFloat4 Renderer::CalculateLightIntensity(Renderer::PathContext& context, uint32_t rayDepth)
-{
-    lkCommon::Utils::PixelFloat4 resultColor;
     const Scene::Scene& scene = context.scene;
+    lkCommon::Utils::PixelFloat4 resultColor;
+    lkCommon::Utils::PixelFloat4 lightContribution;
+    lkCommon::Utils::PixelFloat4 surfaceSample;
+    lkCommon::Math::Vector4 reflectedDir;
 
     Scene::RayCollision collision = scene.TestCollision(context.ray, -1);
     if (collision.mHitID == -1)
@@ -120,16 +79,33 @@ lkCommon::Utils::PixelFloat4 Renderer::CalculateLightIntensity(Renderer::PathCon
     collision.mAllocator = &context.threadData.allocator;
     scene.GetPrimitives()[collision.mHitID]->GetMaterial()->PopulateDistributionFunctions(collision);
 
-    resultColor = context.scene.SampleLights(collision);
-
-
-    if (rayDepth < mMaxRayDepth)
+    bool hasDiffuse = collision.mSurfaceDistribution->Sample(Types::Distribution::DIFFUSE | Types::Distribution::REFLECTION,
+                                                             context, collision, surfaceSample, reflectedDir);
+    if (hasDiffuse)
     {
-        resultColor += GetDiffuseReflection(context, collision, rayDepth);
-        resultColor += GetSpecularReflection(context, collision, rayDepth);
+        lightContribution = context.beta * scene.SampleLights(collision);
+
+        context.ray.mOrigin = collision.mPoint;
+        context.ray.mDirection = reflectedDir;
+
+        // diffuse surfaces weaken our rays - adjust beta
+        context.beta *= surfaceSample * (context.ray.mDirection.Dot(collision.mNormal));
+        resultColor += lightContribution * surfaceSample + CalculateLightIntensity(context, rayDepth + 1);
+        return resultColor;
     }
 
-    return resultColor;
+    bool hasSpecular = collision.mSurfaceDistribution->Sample(Types::Distribution::SPECULAR | Types::Distribution::REFLECTION,
+                                                              context, collision, surfaceSample, reflectedDir);
+    if (hasSpecular)
+    {
+        context.ray.mOrigin = collision.mPoint;
+        context.ray.mDirection = reflectedDir;
+
+        resultColor += CalculateLightIntensity(context, rayDepth + 1);
+        return resultColor;
+    }
+
+    return scene.GetAmbient();
 }
 
 void Renderer::DrawThread(lkCommon::Utils::ThreadPayload& payload, const Scene::Scene& scene, const Scene::Camera& camera, uint32_t widthPos, uint32_t heightPos, uint32_t xCount, uint32_t yCount)

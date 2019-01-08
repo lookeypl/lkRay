@@ -65,9 +65,6 @@
     <ClCompile Include="Distribution\SpecularReflection.cpp">
       <Filter>Distribution</Filter>
     </ClCompile>
-    <ClCompile Include="Distribution\SurfaceDistribution.cpp">
-      <Filter>Distribution</Filter>
-    </ClCompile>
     <ClCompile Include="Distribution\Function.cpp">
       <Filter>Distribution</Filter>
     </ClCompile>
@@ -76,6 +73,19 @@
     </ClCompile>
     <ClCompile Include="Scene\PointLight.cpp">
       <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Constants.cpp" />
+    <ClCompile Include="Scene\Containers.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\SurfaceDistribution.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\PathContext.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\ThreadData.cpp">
+      <Filter>Renderer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -125,9 +135,6 @@
     <ClInclude Include="Distribution\SpecularReflection.hpp">
       <Filter>Distribution</Filter>
     </ClInclude>
-    <ClInclude Include="Distribution\SurfaceDistribution.hpp">
-      <Filter>Distribution</Filter>
-    </ClInclude>
     <ClInclude Include="Distribution\Function.hpp">
       <Filter>Distribution</Filter>
     </ClInclude>
@@ -137,6 +144,21 @@
     <ClInclude Include="Scene\PointLight.hpp">
       <Filter>Scene</Filter>
     </ClInclude>
+    <ClInclude Include="Constants.hpp" />
+    <ClInclude Include="Types.hpp" />
+    <ClInclude Include="Scene\Containers.hpp">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\SurfaceDistribution.hpp">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\PathContext.hpp">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\ThreadData.hpp">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Prerequisites.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt" />

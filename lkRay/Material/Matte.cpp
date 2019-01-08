@@ -2,6 +2,7 @@
 #include "Matte.hpp"
 
 #include "Distribution/Lambertian.hpp"
+#include "Renderer/SurfaceDistribution.hpp"
 
 
 namespace {
@@ -28,7 +29,7 @@ Matte::Matte(const lkCommon::Utils::PixelFloat4& color)
 
 void Matte::PopulateDistributionFunctions(Scene::RayCollision& collision)
 {
-    collision.mSurfaceDistribution = new (*collision.mAllocator) Distribution::SurfaceDistribution(collision.mAllocator);
+    collision.mSurfaceDistribution = new (*collision.mAllocator) Renderer::SurfaceDistribution(collision.mAllocator);
 
     collision.mSurfaceDistribution->AddDistribution(new (*collision.mAllocator) Distribution::Lambertian(mColor));
 }

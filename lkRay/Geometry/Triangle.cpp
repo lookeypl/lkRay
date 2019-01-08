@@ -26,18 +26,18 @@ bool Triangle::TestCollision(const lkCommon::Math::Vector4& pos, const std::vect
 
     lkCommon::Math::Vector4 E1 = p1 - p0;
     lkCommon::Math::Vector4 E2 = p2 - p0;
-    lkCommon::Math::Vector4 pv(E2.Cross(ray.GetDirection()));
+    lkCommon::Math::Vector4 pv(E2.Cross(ray.mDirection));
     float d = E1.Dot(pv);
 
-    if (d < LKCOMMON_EPSILON)
+    if (-LKCOMMON_EPSILON < d && d < LKCOMMON_EPSILON)
         return false; // backface culling
 
     float invD = 1.0f / d;
 
-    lkCommon::Math::Vector4 tv(ray.GetOrigin() - p0 - pos);
+    lkCommon::Math::Vector4 tv(ray.mOrigin - p0 - pos);
     lkCommon::Math::Vector4 qv = E1.Cross(tv);
     float u = tv.Dot(pv) * invD;
-    float v = ray.GetDirection().Dot(qv) * invD;
+    float v = ray.mDirection.Dot(qv) * invD;
 
     if (u < 0.0f || u > 1.0f ||
         v < 0.0f || u + v > 1.0f)

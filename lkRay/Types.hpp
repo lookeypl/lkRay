@@ -1,5 +1,8 @@
 #pragma once
 
+#include <lkCommon/lkCommon.hpp>
+
+
 namespace lkRay {
 namespace Types {
 
@@ -23,6 +26,33 @@ enum class Primitive: unsigned char
     PLANE,
     MESH
 };
+
+enum class Distribution: unsigned char
+{
+    NONE = 0,
+    REFLECTION = 1 << 0,
+    TRANSMISSION = 1 << 1,
+    DIFFUSE = 1 << 2,
+    GLOSS = 1 << 3,
+    SPECULAR = 1 << 4,
+    ALL = SPECULAR | GLOSS | DIFFUSE | TRANSMISSION | REFLECTION,
+};
+
+LKCOMMON_INLINE Distribution operator&(const Distribution a, const Distribution b)
+{
+    return static_cast<Distribution>(
+        static_cast<std::underlying_type<Distribution>::type>(a) &
+        static_cast<std::underlying_type<Distribution>::type>(b)
+    );
+}
+
+LKCOMMON_INLINE Distribution operator|(const Distribution a, const Distribution b)
+{
+    return static_cast<Distribution>(
+        static_cast<std::underlying_type<Distribution>::type>(a) |
+        static_cast<std::underlying_type<Distribution>::type>(b)
+    );
+}
 
 } // namespace lkRay
 } // namespace Types

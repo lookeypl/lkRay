@@ -14,7 +14,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{A79EDB3B-9
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scenes", "Scenes", "{1D3D1C7A-8E06-4164-9FFC-3CD75CBFC68B}"
 	ProjectSection(SolutionItems) = preProject
-		Data\Scenes\test.json = Data\Scenes\test.json
+		Data\Scenes\plane.json = Data\Scenes\plane.json
+		Data\Scenes\room.json = Data\Scenes\room.json
 	EndProjectSection
 EndProject
 Global

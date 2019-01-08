@@ -20,10 +20,8 @@ Primitive::Primitive(const std::string& name, const lkCommon::Math::Vector4& pos
 {
 }
 
-bool Primitive::ReadParametersFromNode(const rapidjson::Value& value, const Scene::Containers::Material& materials)
+bool Primitive::ReadPosition(const rapidjson::Value& value)
 {
-    std::string material;
-
     for (auto& a: value.GetObject())
     {
         if (Constants::OBJECT_ATTRIBUTE_POSITION_NODE_NAME.compare(a.name.GetString()) == 0)
@@ -37,7 +35,18 @@ bool Primitive::ReadParametersFromNode(const rapidjson::Value& value, const Scen
 
             LOGD("     -> Object position " << mPosition);
         }
-        else if (Constants::OBJECT_ATTRIBUTE_MATERIAL_NODE_NAME.compare(a.name.GetString()) == 0)
+    }
+
+    return true;
+}
+
+bool Primitive::ReadMaterial(const rapidjson::Value& value, const Scene::Containers::Material& materials)
+{
+    std::string material;
+
+    for (auto& a: value.GetObject())
+    {
+        if (Constants::OBJECT_ATTRIBUTE_MATERIAL_NODE_NAME.compare(a.name.GetString()) == 0)
         {
             material = a.value.GetString();
             LOGD("     -> Object material " << material);
@@ -71,6 +80,22 @@ bool Primitive::ReadParametersFromNode(const rapidjson::Value& value, const Scen
     }
 
     mMaterial = matIt->second.get();
+    return true;
+}
+
+bool Primitive::ReadParametersFromNode(const rapidjson::Value& value, const Scene::Containers::Material& materials)
+{
+    if (!ReadPosition(value))
+    {
+        LOGE("Failed to read object's position");
+        return false;
+    }
+
+    if (!ReadMaterial(value, materials))
+    {
+        LOGE("Failed to read object's material");
+        return false;
+    }
 
     return true;
 }

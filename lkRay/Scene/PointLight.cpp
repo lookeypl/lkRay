@@ -20,11 +20,11 @@ PointLight::PointLight(const std::string& name, const lkCommon::Math::Vector4& p
 
 lkCommon::Utils::PixelFloat4 PointLight::Sample(const RayCollision& collision) const
 {
-    lkCommon::Math::Vector4 lightRayDir(mPosition - collision.mCollisionPoint);
+    lkCommon::Math::Vector4 lightRayDir(mPosition - collision.mPoint);
     float distToLight = lightRayDir.Length();
     lightRayDir = lightRayDir.Normalize();
 
-    float lightCoeff = lightRayDir.Dot(collision.mCollisionNormal);
+    float lightCoeff = lightRayDir.Dot(collision.mNormal);
     if (lightCoeff < 0.0f)
         lightCoeff = 0.0f;
 

@@ -1,24 +1,27 @@
 #include "PCH.hpp"
 #include "RayCollision.hpp"
 
+#include "Renderer/SurfaceDistribution.hpp"
+
+
 namespace lkRay {
 namespace Scene {
 
 RayCollision::RayCollision()
     : mHitID(-1)
     , mDistance(0.0f)
-    , mCollisionPoint()
-    , mCollisionNormal()
+    , mPoint()
+    , mNormal()
     , mSurfaceDistribution(nullptr)
     , mAllocator(nullptr)
 {
 }
 
-RayCollision::RayCollision(int hitID, float distance, const lkCommon::Math::Vector4& collisionPoint, const lkCommon::Math::Vector4& normal)
+RayCollision::RayCollision(int hitID, float distance, const lkCommon::Math::Vector4& point, const lkCommon::Math::Vector4& normal)
     : mHitID(hitID)
     , mDistance(distance)
-    , mCollisionPoint(collisionPoint)
-    , mCollisionNormal(normal)
+    , mPoint(point)
+    , mNormal(normal)
     , mSurfaceDistribution(nullptr)
     , mAllocator(nullptr)
 {

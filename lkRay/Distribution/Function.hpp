@@ -5,55 +5,32 @@
 #include <lkCommon/Utils/ArenaObject.hpp>
 #include <type_traits>
 
+#include "Renderer/PathContext.hpp"
+#include "Scene/RayCollision.hpp"
+#include "Types.hpp"
+
 
 namespace lkRay {
 namespace Distribution {
-
-
-enum class FunctionType: unsigned char
-{
-    NONE = 0,
-    REFLECTION = 1 << 0,
-    TRANSMISSION = 1 << 1,
-    DIFFUSE = 1 << 2,
-    GLOSS = 1 << 3,
-    SPECULAR = 1 << 4,
-    ALL = SPECULAR | GLOSS | DIFFUSE | TRANSMISSION | REFLECTION,
-};
-
-inline FunctionType operator&(const FunctionType a, const FunctionType b)
-{
-    return static_cast<FunctionType>(
-        static_cast<std::underlying_type<FunctionType>::type>(a) &
-        static_cast<std::underlying_type<FunctionType>::type>(b)
-    );
-}
-
-inline FunctionType operator|(const FunctionType a, const FunctionType b)
-{
-    return static_cast<FunctionType>(
-        static_cast<std::underlying_type<FunctionType>::type>(a) |
-        static_cast<std::underlying_type<FunctionType>::type>(b)
-    );
-}
 
 // Base class for methods of ray distribution on given surface
 // gathers both Reflection and Transmission type of distribution
 class Function: public lkCommon::Utils::ArenaObject
 {
 protected:
-    const FunctionType mType;
+    const Types::Distribution mType;
 
 public:
-    LKCOMMON_INLINE Function(const FunctionType type)
+    LKCOMMON_INLINE Function(const Types::Distribution type)
         : mType(type)
     {}
 
     ~Function() = default;
 
-    virtual lkCommon::Utils::PixelFloat4 F(const lkCommon::Math::Vector4& in, const lkCommon::Math::Vector4& normal, lkCommon::Math::Vector4& out) = 0;
+    virtual lkCommon::Utils::PixelFloat4 F(const Renderer::PathContext& context, const Scene::RayCollision& collision,
+                                           lkCommon::Math::Vector4& out) = 0;
 
-    LKCOMMON_INLINE bool HasType(const FunctionType type) const
+    LKCOMMON_INLINE bool HasType(const Types::Distribution type) const
     {
         return (mType & type) == type;
     }

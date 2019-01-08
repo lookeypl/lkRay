@@ -96,9 +96,9 @@ bool Mesh::ReadParametersFromNode(const rapidjson::Value& value, const Scene::Co
         }
         else if (Constants::MESH_ATTRIBUTE_INDICES_NODE_NAME.compare(a.name.GetString()) == 0)
         {
-            if (!a.value.IsArray() || (a.value.GetArray().Size() % 3 != 0))
+            if (!a.value.IsArray())
             {
-                LOGE("Invalid indices in object " << mName << " - should be an array with indices count divisible by 3");
+                LOGE("Invalid indices in object " << mName << " - should be an array");
                 return false;
             }
 

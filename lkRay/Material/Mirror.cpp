@@ -2,6 +2,7 @@
 #include "Mirror.hpp"
 
 #include "Distribution/SpecularReflection.hpp"
+#include "Renderer/SurfaceDistribution.hpp"
 
 
 namespace lkRay {
@@ -14,7 +15,7 @@ Mirror::Mirror()
 
 void Mirror::PopulateDistributionFunctions(Scene::RayCollision& collision)
 {
-    collision.mSurfaceDistribution = new (*collision.mAllocator) Distribution::SurfaceDistribution(collision.mAllocator);
+    collision.mSurfaceDistribution = new (*collision.mAllocator) Renderer::SurfaceDistribution(collision.mAllocator);
 
     collision.mSurfaceDistribution->AddDistribution(new (*collision.mAllocator) Distribution::SpecularReflection());
 }

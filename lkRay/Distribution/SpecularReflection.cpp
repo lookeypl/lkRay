@@ -5,9 +5,12 @@
 namespace lkRay {
 namespace Distribution {
 
-lkCommon::Utils::PixelFloat4 SpecularReflection::F(const lkCommon::Math::Vector4& in, const lkCommon::Math::Vector4& normal, lkCommon::Math::Vector4& out)
+lkCommon::Utils::PixelFloat4 SpecularReflection::F(const Renderer::PathContext& context, const Scene::RayCollision& collision,
+                                                   lkCommon::Math::Vector4& out)
 {
-    out = in - (normal * in.Dot(normal) * 2.0f);
+    // a regular, perfect reflection equation
+    out = context.ray.mDirection - (collision.mNormal * context.ray.mDirection.Dot(collision.mNormal) * 2.0f);
+
     return lkCommon::Utils::PixelFloat4(1.0f);
 }
 

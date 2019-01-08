@@ -6,6 +6,8 @@
 #include <string>
 #include <vector>
 
+#include <lkCommon/Utils/Pixel.hpp>
+
 #include "RayCollision.hpp"
 #include "Containers.hpp"
 #include "Types.hpp"
@@ -37,6 +39,7 @@ public:
     ~Scene();
 
     bool Load(const std::string& path);
+    void Destroy();
 
     lkCommon::Utils::PixelFloat4 SampleLights(const RayCollision& collision) const;
     RayCollision TestCollision(const Geometry::Ray& ray, int skipObjID) const;

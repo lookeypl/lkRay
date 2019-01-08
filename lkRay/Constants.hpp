@@ -6,6 +6,7 @@
 namespace lkRay {
 namespace Constants {
 
+
 extern const std::string LKRAY_DEFAULT_MATERIAL_NAME;
 
 
@@ -42,8 +43,12 @@ extern const std::string OBJECT_ATTRIBUTE_MATERIAL_NODE_NAME;
 
 extern const std::string SPHERE_ATTRIBUTE_RADIUS_NODE_NAME;
 
+extern const std::string PLANE_ATTRIBUTE_NORMAL_NODE_NAME;
+extern const std::string PLANE_ATTRIBUTE_DISTANCE_NODE_NAME;
+
 extern const std::string MESH_ATTRIBUTE_VERTICES_NODE_NAME;
 extern const std::string MESH_ATTRIBUTE_INDICES_NODE_NAME;
+
 
 } // namespace lkRay
 } // namespace Constants

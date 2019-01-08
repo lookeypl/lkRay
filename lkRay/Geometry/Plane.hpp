@@ -21,6 +21,7 @@ public:
     ~Plane() = default;
 
     bool TestCollision(const Ray& ray, float& distance, lkCommon::Math::Vector4& normal) override;
+    bool ReadParametersFromNode(const rapidjson::Value& value, const Scene::Containers::Material& materials) override;
 };
 
 } // namespace Geometry
