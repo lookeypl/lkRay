@@ -8,6 +8,7 @@ SET(LKRAY_SRCS PCH.cpp
                Distribution/Function.cpp
                Distribution/Lambertian.cpp
                Distribution/SpecularReflection.cpp
+               Geometry/AABB.cpp
                Geometry/Mesh.cpp
                Geometry/Plane.cpp
                Geometry/Primitive.cpp
@@ -17,6 +18,7 @@ SET(LKRAY_SRCS PCH.cpp
                Light/DirLight.cpp
                Light/Light.cpp
                Light/PointLight.cpp
+               Light/SpotLight.cpp
                Material/Material.cpp
                Material/Matte.cpp
                Material/Mirror.cpp
@@ -25,6 +27,7 @@ SET(LKRAY_SRCS PCH.cpp
                Renderer/Renderer.cpp
                Renderer/SurfaceDistribution.cpp
                Renderer/ThreadData.cpp
+               Scene/BVH.cpp
                Scene/Camera.cpp
                Scene/Containers.cpp
                Scene/Scene.cpp
@@ -35,6 +38,7 @@ SET(LKRAY_HDRS PCH.hpp
                Distribution/Function.hpp
                Distribution/Lambertian.hpp
                Distribution/SpecularReflection.hpp
+               Geometry/AABB.hpp
                Geometry/Mesh.hpp
                Geometry/Plane.hpp
                Geometry/Primitive.hpp
@@ -44,6 +48,7 @@ SET(LKRAY_HDRS PCH.hpp
                Light/DirLight.hpp
                Light/Light.hpp
                Light/PointLight.hpp
+               Light/SpotLight.hpp
                Material/Material.hpp
                Material/Matte.hpp
                Material/Mirror.hpp
@@ -52,6 +57,7 @@ SET(LKRAY_HDRS PCH.hpp
                Renderer/Renderer.hpp
                Renderer/SurfaceDistribution.hpp
                Renderer/ThreadData.hpp
+               Scene/BVH.hpp
                Scene/Camera.hpp
                Scene/Containers.hpp
                Scene/Scene.hpp
@@ -66,11 +72,13 @@ ADD_DEPENDENCIES(${LKRAY_TARGET} lkCommon)
 TARGET_INCLUDE_DIRECTORIES(${LKRAY_TARGET}
                            PRIVATE ${LKRAY_ROOT_DIRECTORY}/Deps/lkCommon/lkCommon/include
                            PRIVATE ${LKRAY_ROOT_DIRECTORY}/Deps/rapidjson/include
+                           PRIVATE ${LKRAY_ROOT_DIRECTORY}/Deps/tinyobjloader
                            PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
                            )
 
 TARGET_COMPILE_DEFINITIONS(${LKRAY_TARGET}
                            PRIVATE "-DLKRAY_ROOT_REL_TO_BIN=\"../..\""
+                           PRIVATE "-DLKRAY_USE_BVH"
                            )
 
 TARGET_LINK_LIBRARIES(${LKRAY_TARGET} lkCommon ${LKRAY_PKG_DEPS_LIBRARIES})

@@ -11,6 +11,8 @@
 #include "Containers.hpp"
 #include "Types.hpp"
 
+#include "BVH.hpp"
+
 #include "Renderer/RayCollision.hpp"
 #include "Geometry/Ray.hpp"
 
@@ -29,6 +31,7 @@ private:
     Containers::Material mMaterials;
     lkCommon::Utils::PixelFloat4 mAmbient;
     std::string mName;
+    BVH mBVH;
 
     bool LoadMaterials(const rapidjson::Value& node);
     bool LoadObjects(const rapidjson::Value& node);
@@ -39,6 +42,7 @@ public:
     ~Scene();
 
     bool Load(const std::string& path);
+    void BuildBVH();
     void Destroy();
 
     lkCommon::Utils::PixelFloat4 SampleLights(const Renderer::RayCollision& collision) const;

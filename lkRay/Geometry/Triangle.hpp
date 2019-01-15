@@ -16,8 +16,8 @@ struct UV
     float v;
 
     UV()
-        : u(0)
-        , v(0)
+        : u(0.0f)
+        , v(0.0f)
     {
     }
 

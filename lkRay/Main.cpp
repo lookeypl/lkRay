@@ -7,10 +7,14 @@
 #include <lkCommon/System/Window.hpp>
 #include <lkCommon/System/FS.hpp>
 #include <lkCommon/Math/RingAverage.hpp>
+#include <lkCommon/Math/Random.hpp>
 
 #include "Renderer/Renderer.hpp"
 #include "Scene/Scene.hpp"
 #include "Scene/Camera.hpp"
+
+#include "Geometry/Sphere.hpp"
+#include "Material/Matte.hpp"
 
 // TODO This is a simple but pesky workaround to "find app root" issue.
 //      Resolve this in the future by proper path searching, by one (or more) of:
@@ -26,7 +30,8 @@ const uint32_t WINDOW_WIDTH = 800;
 const uint32_t WINDOW_HEIGHT = 600;
 const uint32_t MAX_RAY_DEPTH_MOVEMENT = 1;
 const uint32_t MAX_RAY_DEPTH_RENDERING = 4;
-const uint32_t DEFAULT_SCENE = 2;
+const uint32_t DEFAULT_SCENE = 1;
+const uint32_t DEFAULT_THREAD_COUNT = 8;
 const float EXPOSURE_DEFAULT = 1.0f;
 const float EXPOSURE_STEP = 0.1f;
 
@@ -34,8 +39,9 @@ using namespace lkRay;
 
 lkCommon::Math::RingAverage<float, 20> gFrameTime;
 
-const std::array<std::string, 4> SCENE_CONTAINER = {
+const std::array<std::string, 5> SCENE_CONTAINER = {
     "Data/Scenes/balls.json",
+    "Data/Scenes/emptyplane.json",
     "Data/Scenes/room.json",
     "Data/Scenes/plane.json",
     "Data/Scenes/mirrors.json",
@@ -57,7 +63,7 @@ protected:
         uint32_t newScene = std::numeric_limits<uint32_t>::max();
 
         if (static_cast<int>(lkCommon::System::KeyCode::Num1) <= static_cast<int>(key) &&
-            static_cast<int>(key) <= static_cast<int>(lkCommon::System::KeyCode::Num4))
+            static_cast<int>(key) <= (static_cast<int>(lkCommon::System::KeyCode::Num1) + SCENE_CONTAINER.size()))
         {
             newScene = static_cast<int>(key) - static_cast<int>(lkCommon::System::KeyCode::Num1);
 
@@ -105,6 +111,15 @@ protected:
         {
             mExposure += EXPOSURE_STEP;
             mRenderer.SetExposure(mExposure);
+        }
+
+        if (IsKeyPressed(lkCommon::System::KeyCode::P))
+        {
+            LOGI("Current camera details:");
+            LOGI("  Position: " << mCamera.GetPosition());
+            LOGI("  Rotation: " <<
+                 LKCOMMON_RAD_TO_DEG(mCamera.GetXRotation()) << " " <<
+                 LKCOMMON_RAD_TO_DEG(mCamera.GetYRotation()));
         }
     }
 
@@ -197,6 +212,39 @@ public:
             return false;
         }
 
+        // emptyplane scene - fill it up
+        if (sceneNumber == 1)
+        {
+            Scene::Containers::Ptr<Material::Matte> matte =
+            std::dynamic_pointer_cast<Material::Matte>(
+                mScene.CreateMaterial("sphereMatte", Types::Material::MATTE)
+            );
+
+            matte->SetColor(lkCommon::Utils::PixelFloat4(0.2f, 0.3f, 0.9f, 1.0f));
+
+            Scene::Containers::Ptr<Geometry::Sphere> sphere;
+            for (uint32_t i = 0; i < 1000; ++i)
+            {
+                std::string name = "sphere" + std::to_string(i);
+                sphere = std::dynamic_pointer_cast<Geometry::Sphere>(
+                    mScene.CreatePrimitive(name, Types::Primitive::SPHERE)
+                );
+
+                float radius = lkCommon::Math::Random::Xorshift() + 0.2f;
+                sphere->SetPosition(lkCommon::Math::Vector4(
+                    lkCommon::Math::Random::Xorshift() * 100.0f - 50.0f,
+                    radius,
+                    lkCommon::Math::Random::Xorshift() * 100.0f - 50.0f,
+                    1.0f
+                ));
+
+                sphere->SetRadius(radius);
+                sphere->SetMaterial(matte.get());
+            }
+        }
+
+        mScene.BuildBVH();
+
         return true;
     }
 
@@ -217,6 +265,7 @@ int main()
             )
         )
     {
+        LOGE("Failed to set CWD");
         return -1;
     }
 
@@ -224,9 +273,9 @@ int main()
     renderer.SetExposure(EXPOSURE_DEFAULT);
 
     Scene::Camera camera(
-        lkCommon::Math::Vector4(0.0f, 1.0f, -7.0f, 1.0f),
+        lkCommon::Math::Vector4(0.0f, 50.0f, -70.0f, 1.0f),
         lkCommon::Math::Vector4(0.0f, 1.0f, 0.0f, 0.0f),
-        0.0f, 0.0f,
+        -45.0f, 0.0f,
         75.0f, static_cast<float>(WINDOW_WIDTH) / static_cast<float>(WINDOW_HEIGHT)
     );
 
@@ -242,7 +291,6 @@ int main()
         LOGE("Failed to open window");
         return -1;
     }
-
 
     lkCommon::Utils::Timer t;
     t.Start();

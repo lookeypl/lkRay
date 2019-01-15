@@ -10,6 +10,7 @@ Primitive::Primitive(const std::string& name)
     : mName(name)
     , mPosition(0.0f, 0.0f, 0.0f, 1.0f)
     , mMaterial(nullptr)
+    , mBBox()
 {
 }
 
@@ -17,6 +18,7 @@ Primitive::Primitive(const std::string& name, const lkCommon::Math::Vector4& pos
     : mName(name)
     , mPosition(position)
     , mMaterial(nullptr)
+    , mBBox()
 {
 }
 

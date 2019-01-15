@@ -21,6 +21,16 @@ Plane::Plane(const std::string& name, const lkCommon::Math::Vector4& normal, flo
 {
 }
 
+void Plane::CalculateBBox()
+{
+    // Planes have infinite distance - assign +/-inf just for formality sake
+    mBBox[AABBPoint::MIN] = lkCommon::Math::Vector4(-std::numeric_limits<float>::infinity());
+    mBBox[AABBPoint::MAX] = lkCommon::Math::Vector4(std::numeric_limits<float>::infinity());
+
+    mBBox[AABBPoint::MIN][3] = 1.0f;
+    mBBox[AABBPoint::MAX][3] = 1.0f;
+}
+
 bool Plane::TestCollision(const Ray& ray, float& distance, lkCommon::Math::Vector4& normal)
 {
     // Regular geometric approach checking if ray hit a plane:
@@ -36,6 +46,11 @@ bool Plane::TestCollision(const Ray& ray, float& distance, lkCommon::Math::Vecto
 
     normal = mNormal;
     return true;
+}
+
+Types::Primitive Plane::GetType() const
+{
+    return Types::Primitive::PLANE;
 }
 
 bool Plane::ReadParametersFromNode(const rapidjson::Value& value, const Scene::Containers::Material& materials)

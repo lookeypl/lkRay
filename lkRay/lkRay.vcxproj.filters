@@ -96,6 +96,12 @@
     <ClCompile Include="Light\SpotLight.cpp">
       <Filter>Light</Filter>
     </ClCompile>
+    <ClCompile Include="Scene\BVH.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Geometry\AABB.cpp">
+      <Filter>Geometry</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PCH.hpp" />
@@ -173,6 +179,12 @@
     </ClInclude>
     <ClInclude Include="Light\SpotLight.hpp">
       <Filter>Light</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\BVH.hpp">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Geometry\AABB.hpp">
+      <Filter>Geometry</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

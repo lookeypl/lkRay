@@ -59,7 +59,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>PCH.hpp</PrecompiledHeaderFile>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <PreprocessorDefinitions>LKRAY_ROOT_REL_TO_BIN="../../..";_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN32;_UNICODE;UNICODE;_DEBUG%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>LKRAY_ROOT_REL_TO_BIN="../../..";LKRAY_USE_BVH;_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN32;_UNICODE;UNICODE;_DEBUG%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ShowIncludes>false</ShowIncludes>
     </ClCompile>
     <Link>
@@ -83,7 +83,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>PCH.hpp</PrecompiledHeaderFile>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <PreprocessorDefinitions>LKRAY_ROOT_REL_TO_BIN="../../..";_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN32;_UNICODE;UNICODE;NDEBUG%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>LKRAY_ROOT_REL_TO_BIN="../../..";LKRAY_USE_BVH;_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN32;_UNICODE;UNICODE;NDEBUG%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -101,6 +101,7 @@
     <ClCompile Include="Distribution\Function.cpp" />
     <ClCompile Include="Distribution\Lambertian.cpp" />
     <ClCompile Include="Distribution\SpecularReflection.cpp" />
+    <ClCompile Include="Geometry\AABB.cpp" />
     <ClCompile Include="Geometry\Mesh.cpp" />
     <ClCompile Include="Geometry\Plane.cpp" />
     <ClCompile Include="Geometry\Primitive.cpp" />
@@ -129,6 +130,7 @@
     <ClCompile Include="Renderer\Renderer.cpp" />
     <ClCompile Include="Renderer\SurfaceDistribution.cpp" />
     <ClCompile Include="Renderer\ThreadData.cpp" />
+    <ClCompile Include="Scene\BVH.cpp" />
     <ClCompile Include="Scene\Camera.cpp" />
     <ClCompile Include="Scene\Containers.cpp" />
     <ClCompile Include="Scene\Scene.cpp" />
@@ -138,6 +140,7 @@
     <ClInclude Include="Distribution\Function.hpp" />
     <ClInclude Include="Distribution\Lambertian.hpp" />
     <ClInclude Include="Distribution\SpecularReflection.hpp" />
+    <ClInclude Include="Geometry\AABB.hpp" />
     <ClInclude Include="Geometry\Mesh.hpp" />
     <ClInclude Include="Geometry\Plane.hpp" />
     <ClInclude Include="Geometry\Primitive.hpp" />
@@ -158,6 +161,7 @@
     <ClInclude Include="Renderer\Renderer.hpp" />
     <ClInclude Include="Renderer\SurfaceDistribution.hpp" />
     <ClInclude Include="Renderer\ThreadData.hpp" />
+    <ClInclude Include="Scene\BVH.hpp" />
     <ClInclude Include="Scene\Camera.hpp" />
     <ClInclude Include="Scene\Containers.hpp" />
     <ClInclude Include="Scene\Scene.hpp" />

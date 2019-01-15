@@ -153,6 +153,10 @@ bool Scene::LoadObjects(const rapidjson::Value& node)
             LOGE("Object failed to read its parameters");
             return false;
         }
+
+        pPrim->CalculateBBox();
+        LOGD("     -> Object BBox: " << pPrim->GetBBox()[Geometry::AABBPoint::MIN] <<
+             " " << pPrim->GetBBox()[Geometry::AABBPoint::MAX]);
     }
 
     return true;
@@ -311,6 +315,12 @@ bool Scene::Load(const std::string& path)
     return true;
 }
 
+void Scene::BuildBVH()
+{
+    mBVH.Build(&mPrimitives);
+    mBVH.Print();
+}
+
 void Scene::Destroy()
 {
     mName.clear();
@@ -342,6 +352,10 @@ Renderer::RayCollision Scene::TestCollision(const Geometry::Ray& ray, int skipOb
     int32_t hitID = -1;
     float colDistance = std::numeric_limits<float>::max();
     lkCommon::Math::Vector4 colNormal;
+
+#ifdef LKRAY_USE_BVH
+    hitID = mBVH.Traverse(ray, colDistance, colNormal);
+#else
     float testDistance = 0.0f;
     lkCommon::Math::Vector4 testNormal;
 
@@ -358,6 +372,7 @@ Renderer::RayCollision Scene::TestCollision(const Geometry::Ray& ray, int skipOb
             hitID = static_cast<int32_t>(i);
         }
     }
+#endif
 
     return Renderer::RayCollision(hitID, colDistance, ray.mOrigin + ray.mDirection * colDistance, colNormal);
 }

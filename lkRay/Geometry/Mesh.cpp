@@ -24,6 +24,33 @@ Mesh::Mesh(const std::string& name, const lkCommon::Math::Vector4& pos, const st
 {
 }
 
+void Mesh::CalculateBBox()
+{
+    mBBox[AABBPoint::MIN] = lkCommon::Math::Vector4(std::numeric_limits<float>::infinity());
+    mBBox[AABBPoint::MAX] = lkCommon::Math::Vector4(-std::numeric_limits<float>::infinity());
+
+    auto minAssign = [](const float& a, const float& b) -> float {
+        return (a < b) ? a : b;
+    };
+    auto maxAssign = [](const float& a, const float& b) -> float {
+        return (a > b) ? a : b;
+    };
+
+    for (const auto& p: mPoints)
+    {
+        mBBox[AABBPoint::MIN][0] = minAssign(p[0], mBBox[AABBPoint::MIN][0]);
+        mBBox[AABBPoint::MIN][1] = minAssign(p[1], mBBox[AABBPoint::MIN][1]);
+        mBBox[AABBPoint::MIN][2] = minAssign(p[2], mBBox[AABBPoint::MIN][2]);
+
+        mBBox[AABBPoint::MAX][0] = maxAssign(p[0], mBBox[AABBPoint::MAX][0]);
+        mBBox[AABBPoint::MAX][1] = maxAssign(p[1], mBBox[AABBPoint::MAX][1]);
+        mBBox[AABBPoint::MAX][2] = maxAssign(p[2], mBBox[AABBPoint::MAX][2]);
+    }
+
+    mBBox[AABBPoint::MIN][3] = 1.0f;
+    mBBox[AABBPoint::MAX][3] = 1.0f;
+}
+
 bool Mesh::TestCollision(const Ray& ray, float& distance, lkCommon::Math::Vector4& normal)
 {
     bool hit = false;
@@ -49,6 +76,11 @@ bool Mesh::TestCollision(const Ray& ray, float& distance, lkCommon::Math::Vector
     }
 
     return hit;
+}
+
+Types::Primitive Mesh::GetType() const
+{
+    return Types::Primitive::MESH;
 }
 
 bool Mesh::ReadParametersFromNode(const rapidjson::Value& value, const Scene::Containers::Material& materials)

@@ -57,6 +57,16 @@ public:
     {
         return mPosition;
     }
+
+    LKCOMMON_INLINE const float GetXRotation() const
+    {
+        return mAngleTheta;
+    }
+
+    LKCOMMON_INLINE const float GetYRotation() const
+    {
+        return mAnglePhi;
+    }
 };
 
 } // namespace Scene

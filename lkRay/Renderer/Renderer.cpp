@@ -182,8 +182,8 @@ void Renderer::Draw(const Scene::Scene& scene, const Scene::Camera& camera)
 {
     mSampleCount++;
 
-    mXStep = 1.0f / static_cast<float>(mImageBuffer.GetWidth());
-    mYStep = 1.0f / static_cast<float>(mImageBuffer.GetHeight());
+    mXStep = 2.0f / static_cast<float>(mImageBuffer.GetWidth());
+    mYStep = 2.0f / static_cast<float>(mImageBuffer.GetHeight());
 
     for (uint32_t x = 0; x < mOutputImage.GetWidth(); x += PIXELS_PER_THREAD)
     {
