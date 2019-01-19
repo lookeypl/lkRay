@@ -21,6 +21,8 @@ class Renderer final
     lkCommon::Utils::Image<lkCommon::Utils::PixelFloat4> mImageBuffer;
     lkCommon::Utils::Image<lkCommon::Utils::PixelUint4> mOutputImage;
     float mExposure;
+    float mXStep;
+    float mYStep;
     uint32_t mMaxRayDepth;
     lkCommon::Utils::ThreadPool mThreadPool;
     std::vector<ThreadData> mThreadData;

@@ -125,6 +125,10 @@ void Renderer::DrawThread(lkCommon::Utils::ThreadPayload& payload, const Scene::
             float xFactor = static_cast<float>(x) / static_cast<float>(mImageBuffer.GetWidth());
             float yFactor = static_cast<float>(y) / static_cast<float>(mImageBuffer.GetHeight());
 
+            // affect factors by random shift to provide pseudo AA
+            xFactor += (lkCommon::Math::Random::Xorshift(threadData->rngState) - 0.5f) * mXStep;
+            yFactor += (lkCommon::Math::Random::Xorshift(threadData->rngState) - 0.5f) * mYStep;
+
             lkCommon::Math::Vector4 xLerp1 = LerpPoints(
                 camera.GetCameraCorner(Scene::Camera::Corners::TOP_L),
                 camera.GetCameraCorner(Scene::Camera::Corners::TOP_R),
@@ -177,6 +181,9 @@ void Renderer::ConvertImageBufferToOutputThread(lkCommon::Utils::ThreadPayload& 
 void Renderer::Draw(const Scene::Scene& scene, const Scene::Camera& camera)
 {
     mSampleCount++;
+
+    mXStep = 1.0f / static_cast<float>(mImageBuffer.GetWidth());
+    mYStep = 1.0f / static_cast<float>(mImageBuffer.GetHeight());
 
     for (uint32_t x = 0; x < mOutputImage.GetWidth(); x += PIXELS_PER_THREAD)
     {
