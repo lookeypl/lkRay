@@ -33,6 +33,7 @@ const uint32_t WINDOW_WIDTH = 800;
 const uint32_t WINDOW_HEIGHT = 600;
 const uint32_t MAX_RAY_DEPTH_MOVEMENT = 1;
 const uint32_t MAX_RAY_DEPTH_RENDERING = 4;
+const uint32_t DEFAULT_SCENE = 2;
 const float EXPOSURE_DEFAULT = 1.0f;
 const float EXPOSURE_STEP = 0.1f;
 
@@ -40,9 +41,11 @@ using namespace lkRay;
 
 lkCommon::Math::RingAverage<float, 20> gFrameTime;
 
-const std::array<std::string, 2> SCENE_CONTAINER = {
+const std::array<std::string, 4> SCENE_CONTAINER = {
+    "Data/Scenes/balls.json",
     "Data/Scenes/room.json",
     "Data/Scenes/plane.json",
+    "Data/Scenes/mirrors.json",
 };
 
 
@@ -60,27 +63,26 @@ protected:
     {
         uint32_t newScene = std::numeric_limits<uint32_t>::max();
 
-        switch (key)
+        if (static_cast<int>(lkCommon::System::KeyCode::Num1) <= static_cast<int>(key) &&
+            static_cast<int>(key) <= static_cast<int>(lkCommon::System::KeyCode::Num4))
         {
-        case lkCommon::System::KeyCode::Num1: newScene = 0; break;
-        case lkCommon::System::KeyCode::Num2: newScene = 1; break;
-        default: break;
-        }
+            newScene = static_cast<int>(key) - static_cast<int>(lkCommon::System::KeyCode::Num1);
 
-        if (newScene != std::numeric_limits<uint32_t>::max())
-        {
-            if (!LoadScene(newScene))
+            if (newScene != std::numeric_limits<uint32_t>::max())
             {
-                LOGE("Loading new scene failed - reloading previous one");
-                if (!LoadScene(mCurrentScene))
+                if (!LoadScene(newScene))
                 {
-                    LOGE("Failed to reload previous scene after error. Leaving empty.");
-                    return;
+                    LOGE("Loading new scene failed - reloading previous one");
+                    if (!LoadScene(mCurrentScene))
+                    {
+                        LOGE("Failed to reload previous scene after error. Leaving empty.");
+                        return;
+                    }
                 }
-            }
 
-            mCurrentScene = newScene;
-            mRenderer.ResetImageBuffer();
+                mCurrentScene = newScene;
+                mRenderer.ResetImageBuffer();
+            }
         }
 
         if (key == lkCommon::System::KeyCode::C)
@@ -144,7 +146,7 @@ protected:
             float shiftY = static_cast<float>(deltaY) * 0.005f;
 
             mCamera.RotateLeftRight(shiftX);
-            mCamera.RotateUpDown(-shiftY);
+            mCamera.RotateUpDown(shiftY);
         }
     }
 
@@ -180,7 +182,7 @@ public:
         : mRenderer(renderer)
         , mCamera(camera)
         , mExposure(EXPOSURE_DEFAULT)
-        , mCurrentScene(1)
+        , mCurrentScene(DEFAULT_SCENE)
         , mRayDepthRendering(MAX_RAY_DEPTH_RENDERING)
         , mScene()
     {

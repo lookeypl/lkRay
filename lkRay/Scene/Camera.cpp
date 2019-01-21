@@ -104,7 +104,7 @@ void Camera::RotateLeftRight(float angleRad)
 
 void Camera::RotateUpDown(float angleRad)
 {
-    mAngleTheta += angleRad;
+    mAngleTheta -= angleRad;
 
     // limit values
     if (mAngleTheta > (LKCOMMON_PIF / 2.0f) - 0.1f)

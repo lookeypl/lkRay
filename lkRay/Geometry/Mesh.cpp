@@ -61,6 +61,8 @@ bool Mesh::ReadParametersFromNode(const rapidjson::Value& value, const Scene::Co
 
     lkCommon::Math::Vector4 vertex;
     Geometry::Triangle tri;
+    bool verticesFound = false;
+    bool indicesFound = false;
 
     for (auto& a: value.GetObject())
     {
@@ -68,15 +70,16 @@ bool Mesh::ReadParametersFromNode(const rapidjson::Value& value, const Scene::Co
         {
             if (!a.value.IsArray())
             {
-                LOGE("Invalid vertices in object " << mName << " - should be an array of 4-element arrays");
+                LOGE("Invalid vertices in object " << mName << " - should be an array of 3-element arrays");
                 return false;
             }
 
             for (auto& v: a.value.GetArray())
             {
-                if (!v.IsArray() || (v.GetArray().Size() != 4))
+                if (!v.IsArray() || (v.GetArray().Size() != 3))
                 {
-                    LOGE("Invalid vertex #" << mPoints.size() - 1 << " in object " << mName);
+                    LOGE("Invalid vertex #" << mPoints.size() << " in object " << mName <<
+                         ". Should be an array of 3 floats.");
                     return false;
                 }
 
@@ -89,16 +92,20 @@ bool Mesh::ReadParametersFromNode(const rapidjson::Value& value, const Scene::Co
                     colIndex++;
                 }
 
+                vertex[3] = 1.0f;
+
                 mPoints.push_back(vertex);
             }
 
             LOGD("     -> Mesh has " << mPoints.size() << " vertices");
+            verticesFound = true;
         }
         else if (Constants::MESH_ATTRIBUTE_INDICES_NODE_NAME.compare(a.name.GetString()) == 0)
         {
             if (!a.value.IsArray())
             {
-                LOGE("Invalid indices in object " << mName << " - should be an array");
+                LOGE("Invalid indices parameter in mesh " << mName <<
+                     ". Should be an array of 3-element float arrays.");
                 return false;
             }
 
@@ -106,7 +113,8 @@ bool Mesh::ReadParametersFromNode(const rapidjson::Value& value, const Scene::Co
             {
                 if (!t.IsArray() || (t.GetArray().Size() != 3))
                 {
-                    LOGE("Invalid triangle #" << mTriangleIndices.size() - 1 << " in object " << mName);
+                    LOGE("Invalid triangle #" << mTriangleIndices.size() << " in object " << mName <<
+                         ". Should be an array of 3 float numbers.");
                     return false;
                 }
 
@@ -123,7 +131,14 @@ bool Mesh::ReadParametersFromNode(const rapidjson::Value& value, const Scene::Co
             }
 
             LOGD("     -> Mesh has " << mTriangleIndices.size() << " triangles");
+            indicesFound = true;
         }
+    }
+
+    if (!(verticesFound && indicesFound))
+    {
+        LOGE("Vertices or indices are missing for mesh " << mName);
+        return false;
     }
 
     return true;

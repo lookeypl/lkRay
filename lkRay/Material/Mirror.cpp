@@ -8,8 +8,8 @@
 namespace lkRay {
 namespace Material {
 
-Mirror::Mirror()
-    : Material(Types::Material::MIRROR)
+Mirror::Mirror(const std::string& name)
+    : Material(name)
 {
 }
 

@@ -5,6 +5,7 @@
 
 #include "Light.hpp"
 #include "PointLight.hpp"
+#include "DirLight.hpp"
 
 #include "Material/Material.hpp"
 #include "Material/Matte.hpp"
@@ -18,6 +19,17 @@
 #include <fstream>
 #include <string>
 #include <streambuf>
+
+
+namespace {
+
+template <typename Base, typename Derived>
+LKCOMMON_INLINE std::shared_ptr<Base> CreatePtr(const std::string& name)
+{
+    return std::dynamic_pointer_cast<Base>(std::make_shared<Derived>(name));
+}
+
+} // namespace
 
 
 namespace lkRay {
@@ -167,9 +179,13 @@ bool Scene::LoadLights(const rapidjson::Value& node)
                 {
                     type = Types::Light::POINT;
                 }
+                else if (Constants::LIGHT_DIR_NODE_NAME.compare(a.value.GetString()) == 0)
+                {
+                    type = Types::Light::DIR;
+                }
                 else
                 {
-                    LOGE("Unknown light type read from scene JSON: " << a.value.GetString());
+                    LOGE("Unknown light type read from scene: " << a.value.GetString());
                 }
             }
         }
@@ -227,16 +243,7 @@ bool Scene::Load(const std::string& path)
         if (Constants::NAME_NODE_NAME.compare(o.name.GetString()) == 0)
         {
             mName = o.value.GetString();
-        }
-        else if (Constants::AMBIENT_NODE_NAME.compare(o.name.GetString()) == 0)
-        {
-            uint32_t colIndex = 0;
-            for (auto& c: o.value.GetArray())
-            {
-                if (colIndex >= 4) break;
-                mAmbient[colIndex] = c.GetFloat();
-                colIndex++;
-            }
+            break;
         }
     }
 
@@ -248,9 +255,6 @@ bool Scene::Load(const std::string& path)
     {
         LOGD("Loading unnamed scene from file " << path);
     }
-
-    LOGD("Scene ambient color " << mAmbient);
-
 
     // go through scene description and load materials
     for (auto& o: sceneDesc.GetObject())
@@ -302,8 +306,6 @@ bool Scene::Load(const std::string& path)
 
 void Scene::Destroy()
 {
-    mAmbient = lkCommon::Utils::PixelFloat4(0.0f);
-
     mName.clear();
     mPrimitives.clear();
     mLights.clear();
@@ -316,11 +318,11 @@ lkCommon::Utils::PixelFloat4 Scene::SampleLights(const RayCollision& collision) 
 
     for (const auto& l: mLights)
     {
-        lkCommon::Math::Vector4 lightDir = l->GetPosition() - collision.mPoint;
+        lkCommon::Math::Vector4 lightDir = l->GetToLightDir(collision);
         Geometry::Ray shadowRay(collision.mPoint, lightDir.Normalize());
-        RayCollision shadowCollision = TestCollision(shadowRay, collision.mHitID);
+        RayCollision shadowCollision = TestCollision(shadowRay, -1);
         // if shadow ray did not hit anything, or it hit an object which is further from light
-        if (shadowCollision.mHitID == -1 || shadowCollision.mDistance > lightDir.Length())
+        if ((shadowCollision.mHitID == -1) || (shadowCollision.mDistance > lightDir.Length()))
             result += l->Sample(collision);
     }
 
@@ -361,17 +363,17 @@ Containers::Ptr<Geometry::Primitive> Scene::CreatePrimitive(const std::string& n
     {
     case Types::Primitive::SPHERE:
     {
-        pPrim = std::dynamic_pointer_cast<Geometry::Primitive>(std::make_shared<Geometry::Sphere>(name));
+        pPrim = CreatePtr<Geometry::Primitive, Geometry::Sphere>(name);
         break;
     }
     case Types::Primitive::PLANE:
     {
-        pPrim = std::dynamic_pointer_cast<Geometry::Primitive>(std::make_shared<Geometry::Plane>(name));
+        pPrim = CreatePtr<Geometry::Primitive, Geometry::Plane>(name);
         break;
     }
     case Types::Primitive::MESH:
     {
-        pPrim = std::dynamic_pointer_cast<Geometry::Primitive>(std::make_shared<Geometry::Mesh>(name));
+        pPrim = CreatePtr<Geometry::Primitive, Geometry::Mesh>(name);
         break;
     }
     default:
@@ -399,12 +401,12 @@ Containers::Ptr<Material::Material> Scene::CreateMaterial(const std::string& nam
     {
     case Types::Material::MATTE:
     {
-        pMat = std::dynamic_pointer_cast<Material::Material>(std::make_shared<Material::Matte>());
+        pMat = CreatePtr<Material::Material, Material::Matte>(name);
         break;
     }
     case Types::Material::MIRROR:
     {
-        pMat = std::dynamic_pointer_cast<Material::Material>(std::make_shared<Material::Mirror>());
+        pMat = CreatePtr<Material::Material, Material::Mirror>(name);
         break;
     }
     default:
@@ -426,7 +428,12 @@ Containers::Ptr<Light> Scene::CreateLight(const std::string& name, const Types::
     {
     case Types::Light::POINT:
     {
-        pLight = std::dynamic_pointer_cast<Light>(std::make_shared<PointLight>(name));
+        pLight = CreatePtr<Light, PointLight>(name);
+        break;
+    }
+    case Types::Light::DIR:
+    {
+        pLight = CreatePtr<Light, DirLight>(name);
         break;
     }
     default:

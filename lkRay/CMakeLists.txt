@@ -8,7 +8,6 @@ SET(LKRAY_SRCS PCH.cpp
                Distribution/Function.cpp
                Distribution/Lambertian.cpp
                Distribution/SpecularReflection.cpp
-               Distribution/SurfaceDistribution.cpp
                Geometry/Mesh.cpp
                Geometry/Plane.cpp
                Geometry/Primitive.cpp
@@ -18,8 +17,12 @@ SET(LKRAY_SRCS PCH.cpp
                Material/Material.cpp
                Material/Matte.cpp
                Material/Mirror.cpp
+               Renderer/PathContext.cpp
                Renderer/Renderer.cpp
+               Renderer/SurfaceDistribution.cpp
+               Renderer/ThreadData.cpp
                Scene/Camera.cpp
+               Scene/DirLight.cpp
                Scene/Light.cpp
                Scene/PointLight.cpp
                Scene/RayCollision.cpp
@@ -31,7 +34,6 @@ SET(LKRAY_HDRS PCH.hpp
                Distribution/Function.hpp
                Distribution/Lambertian.hpp
                Distribution/SpecularReflection.hpp
-               Distribution/SurfaceDistribution.hpp
                Geometry/Mesh.hpp
                Geometry/Plane.hpp
                Geometry/Primitive.hpp
@@ -41,8 +43,12 @@ SET(LKRAY_HDRS PCH.hpp
                Material/Material.hpp
                Material/Matte.hpp
                Material/Mirror.hpp
+               Renderer/PathContext.hpp
                Renderer/Renderer.hpp
+               Renderer/SurfaceDistribution.hpp
+               Renderer/ThreadData.hpp
                Scene/Camera.hpp
+               Scene/DirLight.hpp
                Scene/Light.hpp
                Scene/PointLight.hpp
                Scene/RayCollision.hpp

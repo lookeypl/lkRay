@@ -11,7 +11,7 @@ class Mirror: public Material
     lkCommon::Utils::PixelFloat4 mColor;
 
 public:
-    Mirror();
+    Mirror(const std::string& name);
     ~Mirror() = default;
 
     void PopulateDistributionFunctions(Scene::RayCollision& collision) override;

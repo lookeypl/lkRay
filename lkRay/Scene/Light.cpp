@@ -21,12 +21,19 @@ Light::Light(const std::string& name, const lkCommon::Math::Vector4& pos, const 
 {
 }
 
-bool Light::ReadParametersFromNode(const rapidjson::Value& value)
+bool Light::ReadPositionFromNode(const rapidjson::Value& value)
 {
     for (auto& a: value.GetObject())
     {
         if (Constants::LIGHT_ATTRIBUTE_POSITION_NODE_NAME.compare(a.name.GetString()) == 0)
         {
+            if (!a.value.IsArray() || (a.value.GetArray().Size() != 3))
+            {
+                LOGE("Provided position node is not an array for light " << mName <<
+                     ". Should be an array of 3 floats.");
+                return false;
+            }
+
             uint32_t colIndex = 0;
             for (auto& c: a.value.GetArray())
             {
@@ -34,10 +41,30 @@ bool Light::ReadParametersFromNode(const rapidjson::Value& value)
                 colIndex++;
             }
 
+            mPosition[3] = 1.0f;
+
             LOGD("     -> Light position " << mPosition);
+            return true;
         }
-        else if (Constants::LIGHT_ATTRIBUTE_COLOR_NODE_NAME.compare(a.name.GetString()) == 0)
+    }
+
+    LOGE("Position node not found for light " << mName);
+    return false;
+}
+
+bool Light::ReadColorFromNode(const rapidjson::Value& value)
+{
+    for (auto& a: value.GetObject())
+    {
+        if (Constants::LIGHT_ATTRIBUTE_COLOR_NODE_NAME.compare(a.name.GetString()) == 0)
         {
+            if (!a.value.IsArray() || (a.value.GetArray().Size() != 3))
+            {
+                LOGE("Provided color node is not an array for light " << mName <<
+                     ". Should be an array of 3 floats");
+                return false;
+            }
+
             uint32_t colIndex = 0;
             for (auto& c: a.value.GetArray())
             {
@@ -45,8 +72,26 @@ bool Light::ReadParametersFromNode(const rapidjson::Value& value)
                 colIndex++;
             }
 
+            mColor[3] = 1.0f;
             LOGD("     -> Light color " << mColor);
+            return true;
         }
+    }
+
+    LOGE("Color node not found for light " << mName);
+    return false;
+}
+
+bool Light::ReadParametersFromNode(const rapidjson::Value& value)
+{
+    if (!ReadPositionFromNode(value))
+    {
+        return false;
+    }
+
+    if (!ReadColorFromNode(value))
+    {
+        return false;
     }
 
     return true;

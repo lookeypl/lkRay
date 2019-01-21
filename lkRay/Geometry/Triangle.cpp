@@ -29,7 +29,7 @@ bool Triangle::TestCollision(const lkCommon::Math::Vector4& pos, const std::vect
     lkCommon::Math::Vector4 pv(E2.Cross(ray.mDirection));
     float d = E1.Dot(pv);
 
-    if (-LKCOMMON_EPSILON < d && d < LKCOMMON_EPSILON)
+    if (d < LKCOMMON_EPSILON)
         return false; // backface culling
 
     float invD = 1.0f / d;

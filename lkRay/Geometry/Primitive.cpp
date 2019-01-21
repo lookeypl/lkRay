@@ -20,12 +20,19 @@ Primitive::Primitive(const std::string& name, const lkCommon::Math::Vector4& pos
 {
 }
 
-bool Primitive::ReadPosition(const rapidjson::Value& value)
+bool Primitive::ReadPositionFromNode(const rapidjson::Value& value)
 {
     for (auto& a: value.GetObject())
     {
         if (Constants::OBJECT_ATTRIBUTE_POSITION_NODE_NAME.compare(a.name.GetString()) == 0)
         {
+            if (!a.value.IsArray() || (a.value.GetArray().Size() != 3))
+            {
+                LOGE("Invalid position node for object " << mName <<
+                     ". Position should be an array of 3 floats.");
+                return false;
+            }
+
             uint32_t colIndex = 0;
             for (auto& c: a.value.GetArray())
             {
@@ -33,14 +40,18 @@ bool Primitive::ReadPosition(const rapidjson::Value& value)
                 colIndex++;
             }
 
+            mPosition[3] = 1.0f;
+
             LOGD("     -> Object position " << mPosition);
+            return true;
         }
     }
 
-    return true;
+    LOGE("Position node not found for object " << mName);
+    return false;
 }
 
-bool Primitive::ReadMaterial(const rapidjson::Value& value, const Scene::Containers::Material& materials)
+bool Primitive::ReadMaterialFromNode(const rapidjson::Value& value, const Scene::Containers::Material& materials)
 {
     std::string material;
 
@@ -85,13 +96,13 @@ bool Primitive::ReadMaterial(const rapidjson::Value& value, const Scene::Contain
 
 bool Primitive::ReadParametersFromNode(const rapidjson::Value& value, const Scene::Containers::Material& materials)
 {
-    if (!ReadPosition(value))
+    if (!ReadPositionFromNode(value))
     {
         LOGE("Failed to read object's position");
         return false;
     }
 
-    if (!ReadMaterial(value, materials))
+    if (!ReadMaterialFromNode(value, materials))
     {
         LOGE("Failed to read object's material");
         return false;

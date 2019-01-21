@@ -129,17 +129,17 @@ void Renderer::DrawThread(lkCommon::Utils::ThreadPayload& payload, const Scene::
             xFactor += (lkCommon::Math::Random::Xorshift(threadData->rngState) - 0.5f) * mXStep;
             yFactor += (lkCommon::Math::Random::Xorshift(threadData->rngState) - 0.5f) * mYStep;
 
-            lkCommon::Math::Vector4 xLerp1 = LerpPoints(
+            lkCommon::Math::Vector4 xLerpTop = LerpPoints(
                 camera.GetCameraCorner(Scene::Camera::Corners::TOP_L),
                 camera.GetCameraCorner(Scene::Camera::Corners::TOP_R),
                 xFactor
             );
-            lkCommon::Math::Vector4 xLerp2 = LerpPoints(
+            lkCommon::Math::Vector4 xLerpBot = LerpPoints(
                 camera.GetCameraCorner(Scene::Camera::Corners::BOT_L),
                 camera.GetCameraCorner(Scene::Camera::Corners::BOT_R),
                 xFactor
             );
-            lkCommon::Math::Vector4 rayTarget(LerpPoints(xLerp1, xLerp2, yFactor));
+            lkCommon::Math::Vector4 rayTarget(LerpPoints(xLerpTop, xLerpBot, yFactor));
             lkCommon::Math::Vector4 rayDir((rayTarget - camera.GetPosition()).Normalize());
 
             // form a context and start calculating

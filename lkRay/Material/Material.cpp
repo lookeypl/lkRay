@@ -5,13 +5,8 @@
 namespace lkRay {
 namespace Material {
 
-Material::Material()
-    : mType(Types::Material::UNKNOWN)
-{
-}
-
-Material::Material(Types::Material type)
-    : mType(type)
+Material::Material(const std::string& name)
+    : mName(name)
 {
 }
 

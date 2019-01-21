@@ -41,17 +41,27 @@ bool Plane::TestCollision(const Ray& ray, float& distance, lkCommon::Math::Vecto
 bool Plane::ReadParametersFromNode(const rapidjson::Value& value, const Scene::Containers::Material& materials)
 {
     // read only material - position depends on plane-specific normal and distance
-    if (!ReadMaterial(value, materials))
+    if (!ReadMaterialFromNode(value, materials))
     {
         LOGE("Failed to read object's material");
         return false;
     }
 
     // read normal and distance
+    bool normalFound = false;
+    bool distanceFound = false;
+
     for (auto& a: value.GetObject())
     {
         if (Constants::PLANE_ATTRIBUTE_NORMAL_NODE_NAME.compare(a.name.GetString()) == 0)
         {
+            if (!a.value.IsArray() || (a.value.GetArray().Size() != 3))
+            {
+                LOGE("Invalid normal parameter for plane " << mName <<
+                     ". Should be an array of 3 floats.");
+                return false;
+            }
+
             uint32_t colIndex = 0;
             for (auto& c: a.value.GetArray())
             {
@@ -59,14 +69,30 @@ bool Plane::ReadParametersFromNode(const rapidjson::Value& value, const Scene::C
                 colIndex++;
             }
 
+            mNormal[3] = 0.0f;
+
             LOGD("     -> Plane's normal " << mNormal);
+            normalFound = true;
         }
         else if (Constants::PLANE_ATTRIBUTE_DISTANCE_NODE_NAME.compare(a.name.GetString()) == 0)
         {
+            if (!a.value.IsFloat())
+            {
+                LOGE("Invalid distance parameter for plane " << mName <<
+                     ". Should be a float number.");
+                return false;
+            }
+
             mD = a.value.GetFloat();
             LOGD("     -> Plane's distance " << mD);
-            break;
+            distanceFound = true;
         }
+    }
+
+    if (!(distanceFound && normalFound))
+    {
+        LOGE("Not all parameters were found for plane " << mName);
+        return false;
     }
 
     return true;

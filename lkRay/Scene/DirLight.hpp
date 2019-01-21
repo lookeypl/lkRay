@@ -6,15 +6,15 @@
 namespace lkRay {
 namespace Scene {
 
-class PointLight: public Light
+class DirLight: public Light
 {
 private:
-    float mAttentuationFactor;
+    lkCommon::Math::Vector4 mDirection;
 
 public:
-    PointLight(const std::string& name);
-    PointLight(const std::string& name, const lkCommon::Math::Vector4& pos, const lkCommon::Utils::PixelFloat4& color, float attenuation);
-    ~PointLight() = default;
+    DirLight(const std::string& name);
+    DirLight(const std::string& name, const lkCommon::Utils::PixelFloat4& color, const lkCommon::Math::Vector4& dir);
+    ~DirLight() = default;
 
     lkCommon::Math::Vector4 GetToLightDir(const RayCollision& collision) const override;
     lkCommon::Utils::PixelFloat4 Sample(const RayCollision& collision) const override;

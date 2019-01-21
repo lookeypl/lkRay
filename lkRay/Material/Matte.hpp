@@ -11,8 +11,8 @@ class Matte: public Material
     lkCommon::Utils::PixelFloat4 mColor;
 
 public:
-    Matte();
-    Matte(const lkCommon::Utils::PixelFloat4& color);
+    Matte(const std::string& name);
+    Matte(const std::string& name, const lkCommon::Utils::PixelFloat4& color);
     ~Matte() = default;
 
     void PopulateDistributionFunctions(Scene::RayCollision& collision) override;

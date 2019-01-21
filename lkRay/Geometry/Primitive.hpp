@@ -19,8 +19,8 @@ protected:
     lkCommon::Math::Vector4 mPosition;
     Material::Material* mMaterial;
 
-    bool ReadPosition(const rapidjson::Value& value);
-    bool ReadMaterial(const rapidjson::Value& value, const Scene::Containers::Material& materials);
+    bool ReadPositionFromNode(const rapidjson::Value& value);
+    bool ReadMaterialFromNode(const rapidjson::Value& value, const Scene::Containers::Material& materials);
 
 public:
     Primitive(const std::string& name);

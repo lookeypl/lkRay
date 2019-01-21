@@ -4,11 +4,12 @@
 #include <lkCommon/Utils/Pixel.hpp>
 #include <lkCommon/Utils/ArenaAllocator.hpp>
 
-#include "Types.hpp"
 #include "Scene/RayCollision.hpp"
 #include "Distribution/Function.hpp"
 
 #include <rapidjson/document.h>
+
+#include <string>
 
 
 namespace lkRay {
@@ -17,11 +18,10 @@ namespace Material {
 class Material
 {
 protected:
-    Types::Material mType;
+    std::string mName;
 
 public:
-    Material();
-    Material(Types::Material type);
+    Material(const std::string& name);
     ~Material() = default;
 
     virtual void PopulateDistributionFunctions(Scene::RayCollision& collision) = 0;

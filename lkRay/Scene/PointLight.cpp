@@ -18,6 +18,11 @@ PointLight::PointLight(const std::string& name, const lkCommon::Math::Vector4& p
 {
 }
 
+lkCommon::Math::Vector4 PointLight::GetToLightDir(const RayCollision& collision) const
+{
+    return (mPosition - collision.mPoint);
+}
+
 lkCommon::Utils::PixelFloat4 PointLight::Sample(const RayCollision& collision) const
 {
     lkCommon::Math::Vector4 lightRayDir(mPosition - collision.mPoint);
