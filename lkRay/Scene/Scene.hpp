@@ -8,10 +8,10 @@
 
 #include <lkCommon/Utils/Pixel.hpp>
 
-#include "RayCollision.hpp"
 #include "Containers.hpp"
 #include "Types.hpp"
 
+#include "Renderer/RayCollision.hpp"
 #include "Geometry/Ray.hpp"
 
 #include <rapidjson/rapidjson.h>
@@ -41,12 +41,12 @@ public:
     bool Load(const std::string& path);
     void Destroy();
 
-    lkCommon::Utils::PixelFloat4 SampleLights(const RayCollision& collision) const;
-    RayCollision TestCollision(const Geometry::Ray& ray, int skipObjID) const;
+    lkCommon::Utils::PixelFloat4 SampleLights(const Renderer::RayCollision& collision) const;
+    Renderer::RayCollision TestCollision(const Geometry::Ray& ray, int skipObjID) const;
 
     Containers::Ptr<Geometry::Primitive> CreatePrimitive(const std::string& name, const Types::Primitive& type);
     Containers::Ptr<Material::Material> CreateMaterial(const std::string& name, const Types::Material& type);
-    Containers::Ptr<Light> CreateLight(const std::string& name, const Types::Light& type);
+    Containers::Ptr<Light::Light> CreateLight(const std::string& name, const Types::Light& type);
 
 
     LKCOMMON_INLINE void SetAmbient(const lkCommon::Utils::PixelFloat4 ambient)

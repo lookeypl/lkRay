@@ -17,7 +17,7 @@ template <typename T>
 using Container = std::vector<Ptr<T>>;
 
 using Primitive = Container<Geometry::Primitive>;
-using Light = Container<Light>;
+using Light = Container<Light::Light>;
 using Material = std::map<std::string, Ptr<Material::Material>>;
 
 } // namespace lkRay

@@ -4,7 +4,7 @@
 
 
 namespace lkRay {
-namespace Scene {
+namespace Light {
 
 DirLight::DirLight(const std::string& name)
     : Light(name)
@@ -18,12 +18,12 @@ DirLight::DirLight(const std::string& name, const lkCommon::Utils::PixelFloat4& 
 {
 }
 
-lkCommon::Math::Vector4 DirLight::GetToLightDir(const RayCollision&) const
+lkCommon::Math::Vector4 DirLight::GetToLightDir(const Renderer::RayCollision&) const
 {
     return mDirection * -10000.0f;
 }
 
-lkCommon::Utils::PixelFloat4 DirLight::Sample(const RayCollision& collision) const
+lkCommon::Utils::PixelFloat4 DirLight::Sample(const Renderer::RayCollision& collision) const
 {
     float lightCoeff = -mDirection.Dot(collision.mNormal);
     if (lightCoeff < LKCOMMON_EPSILON)
@@ -70,5 +70,5 @@ bool DirLight::ReadParametersFromNode(const rapidjson::Value& value)
     return false;
 }
 
-} // namespace Scene
+} // namespace Light
 } // namespace lkRay

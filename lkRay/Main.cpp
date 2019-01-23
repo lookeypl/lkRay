@@ -9,15 +9,8 @@
 #include <lkCommon/Math/RingAverage.hpp>
 
 #include "Renderer/Renderer.hpp"
-#include "Scene/PointLight.hpp"
 #include "Scene/Scene.hpp"
 #include "Scene/Camera.hpp"
-#include "Geometry/Sphere.hpp"
-#include "Geometry/Plane.hpp"
-#include "Geometry/Mesh.hpp"
-#include "Material/Matte.hpp"
-#include "Material/Mirror.hpp"
-
 
 // TODO This is a simple but pesky workaround to "find app root" issue.
 //      Resolve this in the future by proper path searching, by one (or more) of:

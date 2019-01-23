@@ -7,7 +7,7 @@
 
 
 namespace lkRay {
-namespace Scene {
+namespace Renderer {
 
 // gathers information about current collision point
 class RayCollision
@@ -28,5 +28,5 @@ public:
     ~RayCollision();
 };
 
-} // namespace Scene
+} // namespace Renderer
 } // namespace lkRay

@@ -18,7 +18,8 @@ public:
         , mR(r)
     { }
 
-    lkCommon::Utils::PixelFloat4 F(const Renderer::PathContext& context, const Scene::RayCollision& collision,
+    lkCommon::Utils::PixelFloat4 F(const Renderer::PathContext& context,
+                                   const Renderer::RayCollision& collision,
                                    lkCommon::Math::Vector4& out) override;
 };
 

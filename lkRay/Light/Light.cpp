@@ -5,7 +5,7 @@
 
 
 namespace lkRay {
-namespace Scene {
+namespace Light {
 
 Light::Light(const std::string& name)
     : mName(name)
@@ -97,5 +97,5 @@ bool Light::ReadParametersFromNode(const rapidjson::Value& value)
     return true;
 }
 
-} // namespace Scene
+} // namespace Light
 } // namespace lkRay

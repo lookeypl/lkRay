@@ -6,7 +6,7 @@
 #include <type_traits>
 
 #include "Renderer/PathContext.hpp"
-#include "Scene/RayCollision.hpp"
+#include "Renderer/RayCollision.hpp"
 #include "Types.hpp"
 
 
@@ -27,7 +27,8 @@ public:
 
     ~Function() = default;
 
-    virtual lkCommon::Utils::PixelFloat4 F(const Renderer::PathContext& context, const Scene::RayCollision& collision,
+    virtual lkCommon::Utils::PixelFloat4 F(const Renderer::PathContext& context,
+                                           const Renderer::RayCollision& collision,
                                            lkCommon::Math::Vector4& out) = 0;
 
     LKCOMMON_INLINE bool HasType(const Types::Distribution type) const

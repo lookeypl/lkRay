@@ -5,13 +5,14 @@
 #include <memory>
 
 #include "Types.hpp"
-#include "RayCollision.hpp"
+
+#include "Renderer/RayCollision.hpp"
 
 #include <rapidjson/document.h>
 
 
 namespace lkRay {
-namespace Scene {
+namespace Light {
 
 class Light
 {
@@ -28,8 +29,8 @@ public:
     Light(const std::string& name, const lkCommon::Math::Vector4& pos, const lkCommon::Utils::PixelFloat4& color);
     ~Light() = default;
 
-    virtual lkCommon::Math::Vector4 GetToLightDir(const RayCollision& collision) const = 0;
-    virtual lkCommon::Utils::PixelFloat4 Sample(const RayCollision& collision) const = 0;
+    virtual lkCommon::Math::Vector4 GetToLightDir(const Renderer::RayCollision& collision) const = 0;
+    virtual lkCommon::Utils::PixelFloat4 Sample(const Renderer::RayCollision& collision) const = 0;
     virtual bool ReadParametersFromNode(const rapidjson::Value& value);
 
     LKCOMMON_INLINE const lkCommon::Math::Vector4& GetPosition() const
@@ -43,5 +44,5 @@ public:
     }
 };
 
-} // namespace Scene
+} // namespace Light
 } // namespace lkRay

@@ -22,7 +22,7 @@ SurfaceDistribution::~SurfaceDistribution()
 }
 
 bool SurfaceDistribution::Sample(const Types::Distribution type, const PathContext& ctx,
-                                 const Scene::RayCollision& collision, lkCommon::Utils::PixelFloat4& surfaceSample,
+                                 const RayCollision& collision, lkCommon::Utils::PixelFloat4& surfaceSample,
                                  lkCommon::Math::Vector4& outRayDir)
 {
     // go through Distributions and find matching ones

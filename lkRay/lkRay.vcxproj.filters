@@ -16,6 +16,9 @@
     <Filter Include="Distribution">
       <UniqueIdentifier>{033a7fbe-8b5a-4bbe-8333-b9a6e27d24a8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Light">
+      <UniqueIdentifier>{c1ac6a8d-c03b-4fd4-a25b-ff51ffc10ff1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
@@ -38,9 +41,6 @@
     <ClCompile Include="Scene\Camera.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Scene\Light.cpp">
-      <Filter>Scene</Filter>
-    </ClCompile>
     <ClCompile Include="Geometry\Mesh.cpp">
       <Filter>Geometry</Filter>
     </ClCompile>
@@ -56,8 +56,8 @@
     <ClCompile Include="Material\Matte.cpp">
       <Filter>Material</Filter>
     </ClCompile>
-    <ClCompile Include="Scene\RayCollision.cpp">
-      <Filter>Scene</Filter>
+    <ClCompile Include="Renderer\RayCollision.cpp">
+      <Filter>Renderer</Filter>
     </ClCompile>
     <ClCompile Include="Material\Mirror.cpp">
       <Filter>Material</Filter>
@@ -71,9 +71,6 @@
     <ClCompile Include="Distribution\Lambertian.cpp">
       <Filter>Distribution</Filter>
     </ClCompile>
-    <ClCompile Include="Scene\PointLight.cpp">
-      <Filter>Scene</Filter>
-    </ClCompile>
     <ClCompile Include="Constants.cpp" />
     <ClCompile Include="Scene\Containers.cpp">
       <Filter>Scene</Filter>
@@ -86,6 +83,15 @@
     </ClCompile>
     <ClCompile Include="Renderer\ThreadData.cpp">
       <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Light\DirLight.cpp">
+      <Filter>Light</Filter>
+    </ClCompile>
+    <ClCompile Include="Light\Light.cpp">
+      <Filter>Light</Filter>
+    </ClCompile>
+    <ClCompile Include="Light\PointLight.cpp">
+      <Filter>Light</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -108,9 +114,6 @@
     <ClInclude Include="Scene\Camera.hpp">
       <Filter>Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Scene\Light.hpp">
-      <Filter>Scene</Filter>
-    </ClInclude>
     <ClInclude Include="Geometry\Mesh.hpp">
       <Filter>Geometry</Filter>
     </ClInclude>
@@ -126,8 +129,8 @@
     <ClInclude Include="Material\Matte.hpp">
       <Filter>Material</Filter>
     </ClInclude>
-    <ClInclude Include="Scene\RayCollision.hpp">
-      <Filter>Scene</Filter>
+    <ClInclude Include="Renderer\RayCollision.hpp">
+      <Filter>Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Material\Mirror.hpp">
       <Filter>Material</Filter>
@@ -140,9 +143,6 @@
     </ClInclude>
     <ClInclude Include="Distribution\Lambertian.hpp">
       <Filter>Distribution</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene\PointLight.hpp">
-      <Filter>Scene</Filter>
     </ClInclude>
     <ClInclude Include="Constants.hpp" />
     <ClInclude Include="Types.hpp" />
@@ -159,6 +159,15 @@
       <Filter>Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Prerequisites.hpp" />
+    <ClInclude Include="Light\DirLight.hpp">
+      <Filter>Light</Filter>
+    </ClInclude>
+    <ClInclude Include="Light\Light.hpp">
+      <Filter>Light</Filter>
+    </ClInclude>
+    <ClInclude Include="Light\PointLight.hpp">
+      <Filter>Light</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt" />

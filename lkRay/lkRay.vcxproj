@@ -107,6 +107,9 @@
     <ClCompile Include="Geometry\Ray.cpp" />
     <ClCompile Include="Geometry\Sphere.cpp" />
     <ClCompile Include="Geometry\Triangle.cpp" />
+    <ClCompile Include="Light\DirLight.cpp" />
+    <ClCompile Include="Light\Light.cpp" />
+    <ClCompile Include="Light\PointLight.cpp" />
     <ClCompile Include="Main.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">PCH.hpp</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">PCH.hpp</PrecompiledHeaderFile>
@@ -121,14 +124,12 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">PCH.hpp</PrecompiledHeaderFile>
     </ClCompile>
     <ClCompile Include="Renderer\PathContext.cpp" />
+    <ClCompile Include="Renderer\RayCollision.cpp" />
     <ClCompile Include="Renderer\Renderer.cpp" />
     <ClCompile Include="Renderer\SurfaceDistribution.cpp" />
     <ClCompile Include="Renderer\ThreadData.cpp" />
     <ClCompile Include="Scene\Camera.cpp" />
     <ClCompile Include="Scene\Containers.cpp" />
-    <ClCompile Include="Scene\Light.cpp" />
-    <ClCompile Include="Scene\PointLight.cpp" />
-    <ClCompile Include="Scene\RayCollision.cpp" />
     <ClCompile Include="Scene\Scene.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -142,20 +143,21 @@
     <ClInclude Include="Geometry\Ray.hpp" />
     <ClInclude Include="Geometry\Sphere.hpp" />
     <ClInclude Include="Geometry\Triangle.hpp" />
+    <ClInclude Include="Light\DirLight.hpp" />
+    <ClInclude Include="Light\Light.hpp" />
+    <ClInclude Include="Light\PointLight.hpp" />
     <ClInclude Include="Material\Material.hpp" />
     <ClInclude Include="Material\Matte.hpp" />
     <ClInclude Include="Material\Mirror.hpp" />
     <ClInclude Include="PCH.hpp" />
     <ClInclude Include="Prerequisites.hpp" />
     <ClInclude Include="Renderer\PathContext.hpp" />
+    <ClInclude Include="Renderer\RayCollision.hpp" />
     <ClInclude Include="Renderer\Renderer.hpp" />
     <ClInclude Include="Renderer\SurfaceDistribution.hpp" />
     <ClInclude Include="Renderer\ThreadData.hpp" />
     <ClInclude Include="Scene\Camera.hpp" />
     <ClInclude Include="Scene\Containers.hpp" />
-    <ClInclude Include="Scene\Light.hpp" />
-    <ClInclude Include="Scene\PointLight.hpp" />
-    <ClInclude Include="Scene\RayCollision.hpp" />
     <ClInclude Include="Scene\Scene.hpp" />
     <ClInclude Include="Types.hpp" />
   </ItemGroup>

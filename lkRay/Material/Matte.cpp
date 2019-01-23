@@ -27,7 +27,7 @@ Matte::Matte(const std::string& name, const lkCommon::Utils::PixelFloat4& color)
 {
 }
 
-void Matte::PopulateDistributionFunctions(Scene::RayCollision& collision)
+void Matte::PopulateDistributionFunctions(Renderer::RayCollision& collision)
 {
     collision.mSurfaceDistribution = new (*collision.mAllocator) Renderer::SurfaceDistribution(collision.mAllocator);
 

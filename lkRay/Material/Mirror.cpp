@@ -13,7 +13,7 @@ Mirror::Mirror(const std::string& name)
 {
 }
 
-void Mirror::PopulateDistributionFunctions(Scene::RayCollision& collision)
+void Mirror::PopulateDistributionFunctions(Renderer::RayCollision& collision)
 {
     collision.mSurfaceDistribution = new (*collision.mAllocator) Renderer::SurfaceDistribution(collision.mAllocator);
 

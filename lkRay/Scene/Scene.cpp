@@ -3,9 +3,9 @@
 
 #include "Constants.hpp"
 
-#include "Light.hpp"
-#include "PointLight.hpp"
-#include "DirLight.hpp"
+#include "Light/Light.hpp"
+#include "Light/PointLight.hpp"
+#include "Light/DirLight.hpp"
 
 #include "Material/Material.hpp"
 #include "Material/Matte.hpp"
@@ -191,7 +191,7 @@ bool Scene::LoadLights(const rapidjson::Value& node)
         }
 
         // create light
-        Containers::Ptr<Light> pLight = CreateLight(o.name.GetString(), type);
+        Containers::Ptr<Light::Light> pLight = CreateLight(o.name.GetString(), type);
         if (!pLight)
         {
             LOGE("Failed to create light");
@@ -312,7 +312,7 @@ void Scene::Destroy()
     mMaterials.clear();
 }
 
-lkCommon::Utils::PixelFloat4 Scene::SampleLights(const RayCollision& collision) const
+lkCommon::Utils::PixelFloat4 Scene::SampleLights(const Renderer::RayCollision& collision) const
 {
     lkCommon::Utils::PixelFloat4 result;
 
@@ -320,7 +320,7 @@ lkCommon::Utils::PixelFloat4 Scene::SampleLights(const RayCollision& collision) 
     {
         lkCommon::Math::Vector4 lightDir = l->GetToLightDir(collision);
         Geometry::Ray shadowRay(collision.mPoint, lightDir.Normalize());
-        RayCollision shadowCollision = TestCollision(shadowRay, -1);
+        Renderer::RayCollision shadowCollision = TestCollision(shadowRay, -1);
         // if shadow ray did not hit anything, or it hit an object which is further from light
         if ((shadowCollision.mHitID == -1) || (shadowCollision.mDistance > lightDir.Length()))
             result += l->Sample(collision);
@@ -330,7 +330,7 @@ lkCommon::Utils::PixelFloat4 Scene::SampleLights(const RayCollision& collision) 
 }
 
 // -1 if no object hit, otherwise index of hit primitive
-RayCollision Scene::TestCollision(const Geometry::Ray& ray, int skipObjID) const
+Renderer::RayCollision Scene::TestCollision(const Geometry::Ray& ray, int skipObjID) const
 {
     int32_t hitID = -1;
     float colDistance = std::numeric_limits<float>::max();
@@ -352,7 +352,7 @@ RayCollision Scene::TestCollision(const Geometry::Ray& ray, int skipObjID) const
         }
     }
 
-    return RayCollision(hitID, colDistance, ray.mOrigin + ray.mDirection * colDistance, colNormal);
+    return Renderer::RayCollision(hitID, colDistance, ray.mOrigin + ray.mDirection * colDistance, colNormal);
 }
 
 Containers::Ptr<Geometry::Primitive> Scene::CreatePrimitive(const std::string& name, const Types::Primitive& type)
@@ -420,20 +420,20 @@ Containers::Ptr<Material::Material> Scene::CreateMaterial(const std::string& nam
     return pMat;
 }
 
-Containers::Ptr<Light> Scene::CreateLight(const std::string& name, const Types::Light& type)
+Containers::Ptr<Light::Light> Scene::CreateLight(const std::string& name, const Types::Light& type)
 {
-    Containers::Ptr<Light> pLight;
+    Containers::Ptr<Light::Light> pLight;
 
     switch (type)
     {
     case Types::Light::POINT:
     {
-        pLight = CreatePtr<Light, PointLight>(name);
+        pLight = CreatePtr<Light::Light, Light::PointLight>(name);
         break;
     }
     case Types::Light::DIR:
     {
-        pLight = CreatePtr<Light, DirLight>(name);
+        pLight = CreatePtr<Light::Light, Light::DirLight>(name);
         break;
     }
     default:

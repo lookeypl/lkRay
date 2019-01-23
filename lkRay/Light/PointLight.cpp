@@ -4,7 +4,7 @@
 
 
 namespace lkRay {
-namespace Scene {
+namespace Light {
 
 PointLight::PointLight(const std::string& name)
     : Light(name)
@@ -18,12 +18,12 @@ PointLight::PointLight(const std::string& name, const lkCommon::Math::Vector4& p
 {
 }
 
-lkCommon::Math::Vector4 PointLight::GetToLightDir(const RayCollision& collision) const
+lkCommon::Math::Vector4 PointLight::GetToLightDir(const Renderer::RayCollision& collision) const
 {
     return (mPosition - collision.mPoint);
 }
 
-lkCommon::Utils::PixelFloat4 PointLight::Sample(const RayCollision& collision) const
+lkCommon::Utils::PixelFloat4 PointLight::Sample(const Renderer::RayCollision& collision) const
 {
     lkCommon::Math::Vector4 lightRayDir(mPosition - collision.mPoint);
     float distToLight = lightRayDir.Length();
@@ -58,5 +58,5 @@ bool PointLight::ReadParametersFromNode(const rapidjson::Value& value)
     return true;
 }
 
-} // namespace Scene
+} // namespace Light
 } // namespace lkRay

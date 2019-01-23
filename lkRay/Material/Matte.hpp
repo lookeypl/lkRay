@@ -15,7 +15,7 @@ public:
     Matte(const std::string& name, const lkCommon::Utils::PixelFloat4& color);
     ~Matte() = default;
 
-    void PopulateDistributionFunctions(Scene::RayCollision& collision) override;
+    void PopulateDistributionFunctions(Renderer::RayCollision& collision) override;
     bool ReadParametersFromNode(const rapidjson::Value& value) override;
 
     LKCOMMON_INLINE void SetColor(const lkCommon::Utils::PixelFloat4& color)

@@ -70,7 +70,7 @@ lkCommon::Utils::PixelFloat4 Renderer::CalculateLightIntensity(PathContext& cont
     lkCommon::Utils::PixelFloat4 surfaceSample;
     lkCommon::Math::Vector4 reflectedDir;
 
-    Scene::RayCollision collision = scene.TestCollision(context.ray, -1);
+    RayCollision collision = scene.TestCollision(context.ray, -1);
     if (collision.mHitID == -1)
     {
         return scene.GetAmbient();

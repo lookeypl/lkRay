@@ -5,7 +5,8 @@
 namespace lkRay {
 namespace Distribution {
 
-lkCommon::Utils::PixelFloat4 SpecularReflection::F(const Renderer::PathContext& context, const Scene::RayCollision& collision,
+lkCommon::Utils::PixelFloat4 SpecularReflection::F(const Renderer::PathContext& context,
+                                                   const Renderer::RayCollision& collision,
                                                    lkCommon::Math::Vector4& out)
 {
     // a regular, perfect reflection equation

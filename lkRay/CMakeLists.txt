@@ -14,18 +14,19 @@ SET(LKRAY_SRCS PCH.cpp
                Geometry/Ray.cpp
                Geometry/Sphere.cpp
                Geometry/Triangle.cpp
+               Light/DirLight.cpp
+               Light/Light.cpp
+               Light/PointLight.cpp
                Material/Material.cpp
                Material/Matte.cpp
                Material/Mirror.cpp
                Renderer/PathContext.cpp
+               Renderer/RayCollision.cpp
                Renderer/Renderer.cpp
                Renderer/SurfaceDistribution.cpp
                Renderer/ThreadData.cpp
                Scene/Camera.cpp
-               Scene/DirLight.cpp
-               Scene/Light.cpp
-               Scene/PointLight.cpp
-               Scene/RayCollision.cpp
+               Scene/Containers.cpp
                Scene/Scene.cpp
                )
 
@@ -40,18 +41,19 @@ SET(LKRAY_HDRS PCH.hpp
                Geometry/Ray.hpp
                Geometry/Sphere.hpp
                Geometry/Triangle.hpp
+               Light/DirLight.hpp
+               Light/Light.hpp
+               Light/PointLight.hpp
                Material/Material.hpp
                Material/Matte.hpp
                Material/Mirror.hpp
                Renderer/PathContext.hpp
+               Renderer/RayCollision.hpp
                Renderer/Renderer.hpp
                Renderer/SurfaceDistribution.hpp
                Renderer/ThreadData.hpp
                Scene/Camera.hpp
-               Scene/DirLight.hpp
-               Scene/Light.hpp
-               Scene/PointLight.hpp
-               Scene/RayCollision.hpp
+               Scene/Containers.hpp
                Scene/Scene.hpp
                )
 

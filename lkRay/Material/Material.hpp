@@ -4,7 +4,7 @@
 #include <lkCommon/Utils/Pixel.hpp>
 #include <lkCommon/Utils/ArenaAllocator.hpp>
 
-#include "Scene/RayCollision.hpp"
+#include "Renderer/RayCollision.hpp"
 #include "Distribution/Function.hpp"
 
 #include <rapidjson/document.h>
@@ -24,7 +24,7 @@ public:
     Material(const std::string& name);
     ~Material() = default;
 
-    virtual void PopulateDistributionFunctions(Scene::RayCollision& collision) = 0;
+    virtual void PopulateDistributionFunctions(Renderer::RayCollision& collision) = 0;
     virtual bool ReadParametersFromNode(const rapidjson::Value& value) = 0;
 };
 

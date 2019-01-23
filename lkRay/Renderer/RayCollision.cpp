@@ -1,11 +1,11 @@
 #include "PCH.hpp"
 #include "RayCollision.hpp"
 
-#include "Renderer/SurfaceDistribution.hpp"
+#include "SurfaceDistribution.hpp"
 
 
 namespace lkRay {
-namespace Scene {
+namespace Renderer {
 
 RayCollision::RayCollision()
     : mHitID(-1)
@@ -36,5 +36,5 @@ RayCollision::~RayCollision()
     }
 }
 
-} // namespace Scene
+} // namespace Renderer
 } // namespace lkRay
