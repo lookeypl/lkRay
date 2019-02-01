@@ -58,17 +58,12 @@
     {
         "point1":
         {
-            "type": "point",
+            "type": "spot",
             "position": [2.5, 4.0, -2.5],
             "color": [1.0, 1.0, 1.0],
-            "attFactor": 0.2
-        },
-        "point2":
-        {
-            "type": "point",
-            "position": [-2.5, 4.0, -2.5],
-            "color": [1.0, 1.0, 1.0],
-            "attFactor": 0.2
+            "direction": [0.0, 0.0,-1.0],
+            "attFactor": 0.2,
+            "cutoff": 30.0
         }
     },
     "materials":

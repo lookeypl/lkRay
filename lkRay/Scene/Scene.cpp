@@ -6,6 +6,7 @@
 #include "Light/Light.hpp"
 #include "Light/PointLight.hpp"
 #include "Light/DirLight.hpp"
+#include "Light/SpotLight.hpp"
 
 #include "Material/Material.hpp"
 #include "Material/Matte.hpp"
@@ -19,6 +20,8 @@
 #include <fstream>
 #include <string>
 #include <streambuf>
+
+#include <tiny_obj_loader.h>
 
 
 namespace {
@@ -182,6 +185,10 @@ bool Scene::LoadLights(const rapidjson::Value& node)
                 else if (Constants::LIGHT_DIR_NODE_NAME.compare(a.value.GetString()) == 0)
                 {
                     type = Types::Light::DIR;
+                }
+                else if (Constants::LIGHT_SPOT_NODE_NAME.compare(a.value.GetString()) == 0)
+                {
+                    type = Types::Light::SPOT;
                 }
                 else
                 {
@@ -434,6 +441,11 @@ Containers::Ptr<Light::Light> Scene::CreateLight(const std::string& name, const 
     case Types::Light::DIR:
     {
         pLight = CreatePtr<Light::Light, Light::DirLight>(name);
+        break;
+    }
+    case Types::Light::SPOT:
+    {
+        pLight = CreatePtr<Light::Light, Light::SpotLight>(name);
         break;
     }
     default:

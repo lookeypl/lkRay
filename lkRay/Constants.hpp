@@ -25,6 +25,7 @@ extern const std::string MATERIAL_ATTRIBUTE_TYPE_NODE_NAME;
 extern const std::string LIGHTS_NODE_NAME;
 extern const std::string LIGHT_POINT_NODE_NAME;
 extern const std::string LIGHT_DIR_NODE_NAME;
+extern const std::string LIGHT_SPOT_NODE_NAME;
 
 extern const std::string LIGHT_ATTRIBUTE_TYPE_NODE_NAME;
 extern const std::string LIGHT_ATTRIBUTE_POSITION_NODE_NAME;
@@ -33,6 +34,10 @@ extern const std::string LIGHT_ATTRIBUTE_COLOR_NODE_NAME;
 extern const std::string POINT_LIGHT_ATTRIBUTE_ATTENUATION_FACTOR_NODE_NAME;
 
 extern const std::string DIR_LIGHT_ATTRIBUTE_DIR_NODE_NAME;
+
+extern const std::string SPOT_LIGHT_ATTRIBUTE_ATTENUATION_FACTOR_NODE_NAME;
+extern const std::string SPOT_LIGHT_ATTRIBUTE_DIR_NODE_NAME;
+extern const std::string SPOT_LIGHT_ATTRIBUTE_CUTOFF_NODE_NAME;
 
 // objects
 extern const std::string OBJECTS_NODE_NAME;

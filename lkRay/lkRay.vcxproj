@@ -55,7 +55,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
-      <AdditionalIncludeDirectories>$(SolutionDir)lkRay\;$(SolutionDir)Deps\lkCommon\lkCommon\include;$(SolutionDir)Deps\rapidjson\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)lkRay\;$(SolutionDir)Deps\lkCommon\lkCommon\include;$(SolutionDir)Deps\rapidjson\include;$(SolutionDir)Deps\tinyobjloader</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>PCH.hpp</PrecompiledHeaderFile>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -79,7 +79,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
-      <AdditionalIncludeDirectories>$(SolutionDir)lkRay\;$(SolutionDir)Deps\lkCommon\lkCommon\include;$(SolutionDir)Deps\rapidjson\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)lkRay\;$(SolutionDir)Deps\lkCommon\lkCommon\include;$(SolutionDir)Deps\rapidjson\include;$(SolutionDir)Deps\tinyobjloader</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>PCH.hpp</PrecompiledHeaderFile>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -110,6 +110,7 @@
     <ClCompile Include="Light\DirLight.cpp" />
     <ClCompile Include="Light\Light.cpp" />
     <ClCompile Include="Light\PointLight.cpp" />
+    <ClCompile Include="Light\SpotLight.cpp" />
     <ClCompile Include="Main.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">PCH.hpp</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">PCH.hpp</PrecompiledHeaderFile>
@@ -146,6 +147,7 @@
     <ClInclude Include="Light\DirLight.hpp" />
     <ClInclude Include="Light\Light.hpp" />
     <ClInclude Include="Light\PointLight.hpp" />
+    <ClInclude Include="Light\SpotLight.hpp" />
     <ClInclude Include="Material\Material.hpp" />
     <ClInclude Include="Material\Matte.hpp" />
     <ClInclude Include="Material\Mirror.hpp" />

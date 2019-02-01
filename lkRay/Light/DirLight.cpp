@@ -40,7 +40,7 @@ bool DirLight::ReadParametersFromNode(const rapidjson::Value& value)
         return false;
     }
 
-    // read light's attenuation factor
+    // read light's direction
     for (auto& a: value.GetObject())
     {
         if (Constants::DIR_LIGHT_ATTRIBUTE_DIR_NODE_NAME.compare(a.name.GetString()) == 0)

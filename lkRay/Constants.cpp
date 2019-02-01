@@ -24,6 +24,7 @@ const std::string MATERIAL_ATTRIBUTE_TYPE_NODE_NAME = "type";
 const std::string LIGHTS_NODE_NAME = "lights";
 const std::string LIGHT_POINT_NODE_NAME = "point";
 const std::string LIGHT_DIR_NODE_NAME = "dir";
+const std::string LIGHT_SPOT_NODE_NAME = "spot";
 
 const std::string LIGHT_ATTRIBUTE_TYPE_NODE_NAME = "type";
 const std::string LIGHT_ATTRIBUTE_POSITION_NODE_NAME = "position";
@@ -32,6 +33,10 @@ const std::string LIGHT_ATTRIBUTE_COLOR_NODE_NAME = "color";
 const std::string POINT_LIGHT_ATTRIBUTE_ATTENUATION_FACTOR_NODE_NAME = "attFactor";
 
 const std::string DIR_LIGHT_ATTRIBUTE_DIR_NODE_NAME = "direction";
+
+const std::string SPOT_LIGHT_ATTRIBUTE_ATTENUATION_FACTOR_NODE_NAME = "attFactor";
+const std::string SPOT_LIGHT_ATTRIBUTE_DIR_NODE_NAME = "direction";
+const std::string SPOT_LIGHT_ATTRIBUTE_CUTOFF_NODE_NAME = "cutoff";
 
 // objects
 const std::string OBJECTS_NODE_NAME = "objects";

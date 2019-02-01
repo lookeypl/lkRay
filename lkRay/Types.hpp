@@ -11,6 +11,7 @@ enum class Light: unsigned char
     UNKNOWN = 0,
     POINT,
     DIR,
+    SPOT,
 };
 
 enum class Material: unsigned char

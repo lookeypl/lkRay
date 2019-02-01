@@ -28,11 +28,13 @@ if defined FOUND (
 set script_path="%~dp0"
 set target=""
 set config=Release
+set rebuild=0
 
 :argparse_loop
 if NOT "%1" == "" (
     if "%1" == "Rebuild" (
         set target=":Rebuild"
+        set rebuild=1
     ) else if "%1" == "Debug"  (
         set config=Debug
     )
@@ -50,8 +52,28 @@ REM ========== lkCommon build ===========
 
 cd lkCommon
 
-echo Building lkCommon in %config%
-msbuild lkCommon.sln /t:lkCommon%target% /p:Configuration=%config%;Platform=x64
+echo Building lkCommon
+call :ms_build lkCommon
+
+cd ..
+
+echo.
+echo Script is done
+echo.
+
+popd
+
+exit /b 0
+
+
+
+REM ========== Functions ==========
+
+:ms_build
+set project=%1
+set solution=%project%.sln
+
+msbuild %solution% /t:%project%%target% /p:Configuration=%config%;Platform=x64
 if %ERRORLEVEL% GEQ 1 (
     echo.
     echo Build failed
@@ -59,8 +81,17 @@ if %ERRORLEVEL% GEQ 1 (
     exit /b
 )
 
-echo.
-echo Script is done
-echo.
+exit /b 0
 
-popd
+
+
+:cmake_build
+set project=%1
+set build_dir=build-%config%
+mkdir %build_dir%
+cd %build_dir%
+
+cmake .. -DCMAKE_BUILD_TYPE=%config%
+call :ms_build %project%
+
+exit /b %ERRORLEVEL%
