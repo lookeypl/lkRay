@@ -41,10 +41,11 @@ struct BVHNode
     BVHLeafData leafData;
 };
 
+template <typename T>
 class BVH
 {
     BVHNode* mRootNode;
-    Containers::Primitive* mObjectsPtr;
+    Containers::Container<T> mObjects;
     std::list<BVHNode> mNodes;
     size_t mNodeCount;
 
@@ -56,10 +57,23 @@ public:
     BVH();
     ~BVH();
 
-    void Build(Containers::Primitive* objects);
+    void Build();
+    void Clean();
     int32_t Traverse(const Geometry::Ray& ray, float& distance, lkCommon::Math::Vector4& normal) const;
     void Print() const;
+
+    LKCOMMON_INLINE void AddObject(Containers::Ptr<Geometry::Primitive>& ptr)
+    {
+        mObjects.push_back(ptr);
+    }
+
+    LKCOMMON_INLINE const Containers::Primitive& GetPrimitives() const
+    {
+        return mObjects;
+    }
 };
 
 } // namespace Scene
 } // namespace lkRay
+
+#include "BVHImpl.hpp"

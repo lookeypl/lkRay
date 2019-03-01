@@ -26,12 +26,11 @@ namespace Scene {
 class Scene final
 {
 private:
-    Containers::Primitive mPrimitives; // TODO create Scene::Object
     Containers::Light mLights;
     Containers::Material mMaterials;
     lkCommon::Utils::PixelFloat4 mAmbient;
     std::string mName;
-    BVH mBVH;
+    BVH<Geometry::Primitive> mBVH;
 
     bool LoadMaterials(const rapidjson::Value& node);
     bool LoadObjects(const rapidjson::Value& node);
@@ -61,7 +60,7 @@ public:
 
     LKCOMMON_INLINE const Containers::Primitive& GetPrimitives() const
     {
-        return mPrimitives;
+        return mBVH.GetPrimitives();
     }
 
     LKCOMMON_INLINE const Containers::Light& GetLights() const

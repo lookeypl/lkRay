@@ -46,8 +46,10 @@ bool AABB::TestCollision(const Geometry::Ray& ray,
     if ((tmin > tymax) || (tymin > tmax))
         return false;
 
-    tmin = std::min(tmin, tymin);
-    tmax = std::max(tmax, tymax);
+    if (tymin < tmin)
+        tmin = tymin;
+    if (tymax > tmax)
+        tmax = tymax;
 
     const float tzmin = (mPoints[    rayDirSign[2]][2] - ray.mOrigin[2]) * rayDirInv[2];
     const float tzmax = (mPoints[1 - rayDirSign[2]][2] - ray.mOrigin[2]) * rayDirInv[2];
@@ -55,8 +57,10 @@ bool AABB::TestCollision(const Geometry::Ray& ray,
     if ((tmin > tzmax) || (tzmin > tmax))
         return false;
 
-    tmin = std::min(tmin, tzmin);
-    tmax = std::max(tmax, tzmax);
+    if (tzmin < tmin)
+        tmin = tzmin;
+    if (tzmax > tmax)
+        tmax = tzmax;
 
     return (tmin <= tmax);
 }

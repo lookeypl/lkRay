@@ -96,9 +96,6 @@
     <ClCompile Include="Light\SpotLight.cpp">
       <Filter>Light</Filter>
     </ClCompile>
-    <ClCompile Include="Scene\BVH.cpp">
-      <Filter>Scene</Filter>
-    </ClCompile>
     <ClCompile Include="Geometry\AABB.cpp">
       <Filter>Geometry</Filter>
     </ClCompile>
@@ -185,6 +182,9 @@
     </ClInclude>
     <ClInclude Include="Geometry\AABB.hpp">
       <Filter>Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\BVHImpl.hpp">
+      <Filter>Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

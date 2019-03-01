@@ -1,3 +1,5 @@
+#pragma once
+
 #include "PCH.hpp"
 #include "BVH.hpp"
 
@@ -13,20 +15,21 @@
 namespace lkRay {
 namespace Scene {
 
-BVH::BVH()
+template <typename T>
+BVH<T>::BVH()
     : mRootNode(nullptr)
-    , mObjectsPtr(nullptr)
+    , mObjects()
     , mNodes()
 {
 }
 
-BVH::~BVH()
+template <typename T>
+BVH<T>::~BVH()
 {
-    mRootNode = nullptr;
-    mNodes.clear();
 }
 
-bool BVH::UpdateNodeAABB(Geometry::AABB& bbox, uint32_t objID)
+template <typename T>
+bool BVH<T>::UpdateNodeAABB(Geometry::AABB& bbox, uint32_t objID)
 {
     using AABBPoint = Geometry::AABBPoint;
 
@@ -50,9 +53,9 @@ bool BVH::UpdateNodeAABB(Geometry::AABB& bbox, uint32_t objID)
     bool allModified = true;
 
     // get bbox and shift it with position
-    Geometry::AABB objBox = (*mObjectsPtr)[objID]->GetBBox();
-    objBox[AABBPoint::MIN] += (*mObjectsPtr)[objID]->GetPosition();
-    objBox[AABBPoint::MAX] += (*mObjectsPtr)[objID]->GetPosition();
+    Geometry::AABB objBox = mObjects[objID]->GetBBox();
+    objBox[AABBPoint::MIN] += mObjects[objID]->GetPosition();
+    objBox[AABBPoint::MAX] += mObjects[objID]->GetPosition();
 
     minWithFlag(bbox[AABBPoint::MIN][0], objBox[AABBPoint::MIN][0], allModified);
     minWithFlag(bbox[AABBPoint::MIN][1], objBox[AABBPoint::MIN][1], allModified);
@@ -65,7 +68,8 @@ bool BVH::UpdateNodeAABB(Geometry::AABB& bbox, uint32_t objID)
     return allModified;
 }
 
-void BVH::BuildStep(std::vector<uint32_t>& objIds, BVHNode *currentNode)
+template <typename T>
+void BVH<T>::BuildStep(std::vector<uint32_t>& objIds, BVHNode *currentNode)
 {
     using AABBPoint = Geometry::AABBPoint;
 
@@ -120,7 +124,7 @@ void BVH::BuildStep(std::vector<uint32_t>& objIds, BVHNode *currentNode)
 
     // sort according to longest axis
     std::sort(objIds.begin(), objIds.end(), [this, &longestAxis](const uint32_t& a, const uint32_t& b) {
-        return (*mObjectsPtr)[a]->GetPosition()[longestAxis] < (*mObjectsPtr)[b]->GetPosition()[longestAxis];
+        return mObjects[a]->GetPosition()[longestAxis] < mObjects[b]->GetPosition()[longestAxis];
     });
 
     // find split point
@@ -130,10 +134,10 @@ void BVH::BuildStep(std::vector<uint32_t>& objIds, BVHNode *currentNode)
     // find iterator for split node
     auto split = std::find_if(objIds.begin(), objIds.end(),
     [this, &midpoint, &longestAxis](const uint32_t& objId) {
-        if ((*mObjectsPtr)[objId]->GetType() == Types::Primitive::PLANE)
+        if (mObjects[objId]->GetType() == Types::Primitive::PLANE)
             return false;
 
-        return (*mObjectsPtr)[objId]->GetPosition()[longestAxis] > midpoint;
+        return mObjects[objId]->GetPosition()[longestAxis] > midpoint;
     });
 
     // in case splitting by mid point fails, just divide the collection into two halves
@@ -174,7 +178,8 @@ void BVH::BuildStep(std::vector<uint32_t>& objIds, BVHNode *currentNode)
     }
 }
 
-void BVH::PrintStep(BVHNode* currentNode, uint32_t depth) const
+template <typename T>
+void BVH<T>::PrintStep(BVHNode* currentNode, uint32_t depth) const
 {
     using AABBPoint = Geometry::AABBPoint;
 
@@ -208,13 +213,20 @@ void BVH::PrintStep(BVHNode* currentNode, uint32_t depth) const
         PrintStep(currentNode->midData.right, depth + 1);
 }
 
-void BVH::Build(Containers::Primitive* objects)
+template <typename T>
+void BVH<T>::Build()
 {
-    LOGD("Building BVH for " << objects->size() << " objects");
-    mNodeCount = 0;
-    mObjectsPtr = objects;
+    if (mRootNode)
+    {
+        // clean existing BVH
+        mNodes.clear();
+        mRootNode = nullptr;
+    }
 
-    std::vector<uint32_t> objIds(objects->size(), 0);
+    LOGD("Building BVH for " << mObjects.size() << " objects");
+    mNodeCount = 0;
+
+    std::vector<uint32_t> objIds(mObjects.size(), 0);
     std::iota(objIds.begin(), objIds.end(), 0);
 
     mNodes.emplace_back();
@@ -222,9 +234,18 @@ void BVH::Build(Containers::Primitive* objects)
     BuildStep(objIds, mRootNode);
 }
 
-int32_t BVH::Traverse(const Geometry::Ray& ray,
-                       float& distance,
-                       lkCommon::Math::Vector4& normal) const
+template <typename T>
+void BVH<T>::Clean()
+{
+    mRootNode = nullptr;
+    mNodes.clear();
+    mObjects.clear();
+}
+
+template <typename T>
+int32_t BVH<T>::Traverse(const Geometry::Ray& ray,
+                         float& distance,
+                         lkCommon::Math::Vector4& normal) const
 {
     BVHNode* node = nullptr;
     float tmin = 0.0f, tmax = 0.0f;
@@ -270,36 +291,41 @@ int32_t BVH::Traverse(const Geometry::Ray& ray,
         if (node->midData.left == nullptr && node->midData.right == nullptr)
         {
             bool collided = false;
-            int32_t res[2] = { -1, -1 };
-            float d[2] = { INFINITY, INFINITY };
-            lkCommon::Math::Vector4 n[2];
+            struct _res {
+                int32_t id;
+                float d;
+                lkCommon::Math::Vector4 n;
+
+                _res()
+                    : id(-1)
+                    , d(INFINITY)
+                    , n()
+                {
+                }
+            } res[2];
 
             // we are a leaf node, test intersection with both objects and leave
-            collided = (*mObjectsPtr)[node->leafData.obj[0]]->TestCollision(ray, d[0], n[0]);
+            collided = mObjects[node->leafData.obj[0]]->TestCollision(ray, res[0].d, res[0].n);
             if (collided)
-                res[0] = node->leafData.obj[0];
+                res[0].id = node->leafData.obj[0];
 
             if (node->leafData.obj[1] != UINT32_MAX)
             {
-                collided |= (*mObjectsPtr)[node->leafData.obj[1]]->TestCollision(ray, d[1], n[1]);
+                collided |= mObjects[node->leafData.obj[1]]->TestCollision(ray, res[1].d, res[1].n);
                 if (collided)
-                    res[1] = node->leafData.obj[1];
+                    res[1].id = node->leafData.obj[1];
             }
 
             if (collided)
             {
-                if (d[1] < d[0])
-                {
+                if (res[1].d < res[0].d)
                     std::swap(res[0], res[1]);
-                    std::swap(d[0], d[1]);
-                    std::swap(n[0], n[1]);
-                }
 
-                if (d[0] < distance)
+                if (res[0].d < distance)
                 {
-                    objIDResult = res[0];
-                    distance = d[0];
-                    normal = n[0];
+                    objIDResult = res[0].id;
+                    distance = res[0].d;
+                    normal = res[0].n;
                 }
             }
 
@@ -325,7 +351,8 @@ int32_t BVH::Traverse(const Geometry::Ray& ray,
     return objIDResult;
 }
 
-void BVH::Print() const
+template <typename T>
+void BVH<T>::Print() const
 {
     PrintStep(mRootNode, 0);
 }

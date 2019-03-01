@@ -317,14 +317,14 @@ bool Scene::Load(const std::string& path)
 
 void Scene::BuildBVH()
 {
-    mBVH.Build(&mPrimitives);
+    mBVH.Build();
     mBVH.Print();
 }
 
 void Scene::Destroy()
 {
+    mBVH.Clean();
     mName.clear();
-    mPrimitives.clear();
     mLights.clear();
     mMaterials.clear();
 }
@@ -405,7 +405,7 @@ Containers::Ptr<Geometry::Primitive> Scene::CreatePrimitive(const std::string& n
     }
     }
 
-    mPrimitives.push_back(pPrim);
+    mBVH.AddObject(pPrim);
     return pPrim;
 }
 

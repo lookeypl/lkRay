@@ -66,7 +66,7 @@
             "type": "spot",
             "position": [2.5, 1.0, -2.5],
             "color": [5.0, 5.0, 5.0],
-            "direction": [0.0, 0.0,-1.0],
+            "direction": [0.0, 0.2,-1.0],
             "attFactor": 0.2,
             "cutoff": 30.0
         }

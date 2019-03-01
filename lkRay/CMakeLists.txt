@@ -27,7 +27,6 @@ SET(LKRAY_SRCS PCH.cpp
                Renderer/Renderer.cpp
                Renderer/SurfaceDistribution.cpp
                Renderer/ThreadData.cpp
-               Scene/BVH.cpp
                Scene/Camera.cpp
                Scene/Containers.cpp
                Scene/Scene.cpp
@@ -57,7 +56,6 @@ SET(LKRAY_HDRS PCH.hpp
                Renderer/Renderer.hpp
                Renderer/SurfaceDistribution.hpp
                Renderer/ThreadData.hpp
-               Scene/BVH.hpp
                Scene/Camera.hpp
                Scene/Containers.hpp
                Scene/Scene.hpp
