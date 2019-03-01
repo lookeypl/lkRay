@@ -1,9 +1,12 @@
 #include "PCH.hpp"
 #include "Camera.hpp"
 
+#include "Constants.hpp"
+
 #include <lkCommon/Math/Constants.hpp>
 
 #include <cmath>
+#include <fstream>
 
 
 namespace lkRay {
@@ -53,6 +56,56 @@ void Camera::UpdateCorners()
     mCameraCorners[Corners::TOP_R] = mPosition + mForwardDir + mUpDir * halfHeight + mSideDir * halfWidth;
     mCameraCorners[Corners::BOT_L] = mPosition + mForwardDir - mUpDir * halfHeight - mSideDir * halfWidth;
     mCameraCorners[Corners::BOT_R] = mPosition + mForwardDir - mUpDir * halfHeight + mSideDir * halfWidth;
+}
+
+bool Camera::ReadParametersFromNode(const rapidjson::Value& value)
+{
+    for (auto& a: value.GetObject())
+    {
+        if (Constants::CAMERA_ATTRIBUTE_POSITION_NODE_NAME.compare(a.name.GetString()) == 0)
+        {
+            if (!a.value.IsArray() || (a.value.GetArray().Size() != 3))
+            {
+                LOGE("Invalid normal parameter for camera. Should be an array of 3 floats.");
+                return false;
+            }
+
+            uint32_t colIndex = 0;
+            for (auto& c: a.value.GetArray())
+            {
+                mPosition[colIndex] = c.GetFloat();
+                colIndex++;
+            }
+
+            mPosition[3] = 1.0f;
+
+            LOGD("     -> Camera's position " << mPosition);
+        }
+        else if (Constants::CAMERA_ATTRIBUTE_ROTATION_NODE_NAME.compare(a.name.GetString()) == 0)
+        {
+            if (!a.value.IsArray() || (a.value.GetArray().Size() != 2))
+            {
+                LOGE("Invalid rotation parameter for camera. Should be an array of 2 floats.");
+                return false;
+            }
+
+            float angles[2] = { 0.0f, 0.0f };
+            uint32_t colIndex = 0;
+            for (auto& c: a.value.GetArray())
+            {
+                angles[colIndex] = c.GetFloat();
+                colIndex++;
+            }
+
+            mAngleTheta = LKCOMMON_DEG_TO_RADF(angles[0]);
+            mAnglePhi = LKCOMMON_DEG_TO_RADF(angles[1]);
+            LOGD("     -> Camera's rotation " << mAngleTheta << ", " << mAnglePhi);
+        }
+    }
+
+    mNeedsUpdate = true;
+    Update();
+    return true;
 }
 
 void Camera::Update()
@@ -119,6 +172,43 @@ void Camera::SetAspectRatio(float aspectRatio)
 {
     mAspectRatio = aspectRatio;
     UpdateCorners();
+}
+
+bool Camera::ReadParametersFromScene(const std::string& path)
+{
+    // load scene from JSON
+    std::fstream sceneFile(path, std::fstream::in);
+    if (!sceneFile)
+    {
+        LOGE("Failed to open scene file " << path);
+        return false;
+    }
+
+    std::string sceneFileString((std::istreambuf_iterator<char>(sceneFile)),
+                                std::istreambuf_iterator<char>());
+
+    sceneFile.close();
+
+    rapidjson::Document sceneDesc;
+    sceneDesc.Parse(sceneFileString.c_str());
+
+    if (!sceneDesc.IsObject())
+    {
+        LOGE("File is not a proper JSON object");
+        return false;
+    }
+
+    // parse camera's name and ambient color
+    for (auto& o: sceneDesc.GetObject())
+    {
+        if (Constants::CAMERA_NODE_NAME.compare(o.name.GetString()) == 0)
+        {
+            return ReadParametersFromNode(o.value);
+        }
+    }
+
+    // no camera node found - just return true and don't change a thing
+    return true;
 }
 
 } // namespace Scene

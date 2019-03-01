@@ -1,5 +1,10 @@
 {
     "name": "Test scene - Room",
+    "camera":
+    {
+        "position": [0.0, 1.5, -8.0],
+        "rotation": [0.0, 0.0]
+    },
     "objects":
     {
         "sphere1":
@@ -56,11 +61,11 @@
     },
     "lights":
     {
-        "point1":
+        "spot":
         {
             "type": "spot",
-            "position": [2.5, 4.0, -2.5],
-            "color": [1.0, 1.0, 1.0],
+            "position": [2.5, 1.0, -2.5],
+            "color": [5.0, 5.0, 5.0],
             "direction": [0.0, 0.0,-1.0],
             "attFactor": 0.2,
             "cutoff": 30.0

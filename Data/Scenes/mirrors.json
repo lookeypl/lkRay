@@ -1,5 +1,10 @@
 {
     "name": "Test scene - Hall of Mirrors",
+    "camera":
+    {
+        "position": [5.0, 1.75, -4.0],
+        "rotation": [-5.0, 295.0]
+    },
     "objects":
     {
         "sphere1":

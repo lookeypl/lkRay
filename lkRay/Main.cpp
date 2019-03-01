@@ -30,7 +30,7 @@ const uint32_t WINDOW_WIDTH = 800;
 const uint32_t WINDOW_HEIGHT = 600;
 const uint32_t MAX_RAY_DEPTH_MOVEMENT = 1;
 const uint32_t MAX_RAY_DEPTH_RENDERING = 4;
-const uint32_t DEFAULT_SCENE = 1;
+const uint32_t DEFAULT_SCENE = 2;
 const uint32_t DEFAULT_THREAD_COUNT = 8;
 const float EXPOSURE_DEFAULT = 1.0f;
 const float EXPOSURE_STEP = 0.1f;
@@ -206,6 +206,13 @@ public:
 
         mScene.Destroy();
 
+        if (!mCamera.ReadParametersFromScene(SCENE_CONTAINER[sceneNumber]))
+        {
+            LOGE("Failed to parse camera parameters from scene "
+                 << SCENE_CONTAINER[sceneNumber]);
+            return false;
+        }
+
         if (!mScene.Load(SCENE_CONTAINER[sceneNumber]))
         {
             LOGE("Failed to load scene " << SCENE_CONTAINER[sceneNumber]);
@@ -273,7 +280,7 @@ int main()
     renderer.SetExposure(EXPOSURE_DEFAULT);
 
     Scene::Camera camera(
-        lkCommon::Math::Vector4(0.0f, 50.0f, -70.0f, 1.0f),
+        lkCommon::Math::Vector4(0.0f, 0.0f, -1.0f, 1.0f),
         lkCommon::Math::Vector4(0.0f, 1.0f, 0.0f, 0.0f),
         -45.0f, 0.0f,
         75.0f, static_cast<float>(WINDOW_WIDTH) / static_cast<float>(WINDOW_HEIGHT)

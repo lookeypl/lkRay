@@ -13,6 +13,7 @@ extern const std::string LKRAY_DEFAULT_MATERIAL_NAME;
 // JSON parsing names
 extern const std::string NAME_NODE_NAME;
 extern const std::string AMBIENT_NODE_NAME;
+extern const std::string CAMERA_NODE_NAME;
 
 // materials
 extern const std::string MATERIALS_NODE_NAME;
@@ -56,6 +57,10 @@ extern const std::string PLANE_ATTRIBUTE_DISTANCE_NODE_NAME;
 
 extern const std::string MESH_ATTRIBUTE_VERTICES_NODE_NAME;
 extern const std::string MESH_ATTRIBUTE_INDICES_NODE_NAME;
+
+// camera
+extern const std::string CAMERA_ATTRIBUTE_POSITION_NODE_NAME;
+extern const std::string CAMERA_ATTRIBUTE_ROTATION_NODE_NAME;
 
 
 } // namespace lkRay

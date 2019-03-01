@@ -2,6 +2,8 @@
 
 #include "lkCommon/Math/Vector4.hpp"
 
+#include <rapidjson/document.h>
+
 
 namespace lkRay {
 namespace Scene {
@@ -32,6 +34,7 @@ private:
 
     void CalculateCameraAxes();
     void UpdateCorners();
+    bool ReadParametersFromNode(const rapidjson::Value& value);
 
 public:
     Camera(const lkCommon::Math::Vector4& pos, const lkCommon::Math::Vector4& worldUp,
@@ -47,6 +50,7 @@ public:
     void RotateLeftRight(float angleRad);
     void RotateUpDown(float angleRad);
     void SetAspectRatio(float aspectRatio);
+    bool ReadParametersFromScene(const std::string& path);
 
     LKCOMMON_INLINE const lkCommon::Math::Vector4& GetCameraCorner(Corners corner) const
     {
