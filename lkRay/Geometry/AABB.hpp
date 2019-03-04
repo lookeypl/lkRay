@@ -32,7 +32,7 @@ public:
     bool TestCollision(const Geometry::Ray& ray,
                        const lkCommon::Math::Vector4& rayDirInv,
                        const int rayDirSign[3],
-                       float& tmin, float& tmax);
+                       float& tmin, float& tmax) const;
 };
 
 } // namespace Geometry

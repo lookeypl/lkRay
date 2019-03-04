@@ -21,7 +21,7 @@ public:
     Sphere(const std::string& name, const lkCommon::Math::Vector4& origin, float r);
     ~Sphere() = default;
 
-    bool TestCollision(const Ray& ray, float& distance, lkCommon::Math::Vector4& normal) override;
+    bool TestCollision(const Ray& ray, float& distance, lkCommon::Math::Vector4& normal) const override;
     void CalculateBBox() override;
     bool ReadParametersFromNode(const rapidjson::Value& value, const Scene::Containers::Material& materials) override;
     Types::Primitive GetType() const override;

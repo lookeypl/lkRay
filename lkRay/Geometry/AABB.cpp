@@ -35,7 +35,7 @@ bool AABB::operator== (const AABB& other) const
 bool AABB::TestCollision(const Geometry::Ray& ray,
                          const lkCommon::Math::Vector4& rayDirInv,
                          const int rayDirSign[3],
-                         float& tmin, float& tmax)
+                         float& tmin, float& tmax) const
 {
     tmin = (mPoints[    rayDirSign[0]][0] - ray.mOrigin[0]) * rayDirInv[0];
     tmax = (mPoints[1 - rayDirSign[0]][0] - ray.mOrigin[0]) * rayDirInv[0];

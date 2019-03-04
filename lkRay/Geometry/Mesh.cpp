@@ -6,13 +6,26 @@
 #include "Constants.hpp"
 
 
+namespace {
+
+bool TestTriCollision(uint32_t objID,
+                      const lkRay::Scene::Containers::Container<lkRay::Scene::Containers::Ptr<lkRay::Geometry::Triangle>>& objs,
+                      const lkRay::Geometry::Ray& ray,
+                      float& distance,
+                      lkCommon::Math::Vector4& normal)
+{
+    return objs[objID]->TestCollision(ray, distance, normal);
+}
+
+} // namespace
+
 namespace lkRay {
 namespace Geometry {
 
 Mesh::Mesh(const std::string& name)
     : Primitive(name)
     , mPoints()
-    , mTriangleIndices()
+    , mMeshBVH()
 {
 }
 
@@ -20,14 +33,14 @@ Mesh::Mesh(const std::string& name, const lkCommon::Math::Vector4& pos, const st
            const std::vector<Triangle>& indices)
     : Primitive(name, pos)
     , mPoints(points)
-    , mTriangleIndices(indices)
+    , mMeshBVH()
 {
 }
 
 void Mesh::CalculateBBox()
 {
-    mBBox[AABBPoint::MIN] = lkCommon::Math::Vector4(std::numeric_limits<float>::infinity());
-    mBBox[AABBPoint::MAX] = lkCommon::Math::Vector4(-std::numeric_limits<float>::infinity());
+    mBBox[AABBPoint::MIN] = lkCommon::Math::Vector4(INFINITY);
+    mBBox[AABBPoint::MAX] = lkCommon::Math::Vector4(-INFINITY);
 
     auto minAssign = [](const float& a, const float& b) -> float {
         return (a < b) ? a : b;
@@ -51,31 +64,10 @@ void Mesh::CalculateBBox()
     mBBox[AABBPoint::MAX][3] = 1.0f;
 }
 
-bool Mesh::TestCollision(const Ray& ray, float& distance, lkCommon::Math::Vector4& normal)
+bool Mesh::TestCollision(const Ray& ray, float& distance, lkCommon::Math::Vector4& normal) const
 {
-    bool hit = false;
-    float resDist = 0.0f;
-    lkCommon::Math::Vector4 resNorm;
-    distance = std::numeric_limits<float>::max();
-
-    // A very naive approach, just goes through all the tris at once.
-    // TODO optimizations:
-    //  - Calculate AABB of mesh and test against it
-    //  - When above passes, use a method to optimize the selection
-    for (uint32_t i = 0; i < mTriangleIndices.size(); ++i)
-    {
-        if (mTriangleIndices[i].TestCollision(mPosition, mPoints, ray, resDist, resNorm))
-        {
-            if (resDist < distance)
-            {
-                hit = true;
-                distance = resDist;
-                normal = resNorm;
-            }
-        }
-    }
-
-    return hit;
+    distance = INFINITY;
+    return (mMeshBVH.Traverse(ray, distance, normal) != -1);
 }
 
 Types::Primitive Mesh::GetType() const
@@ -92,7 +84,6 @@ bool Mesh::ReadParametersFromNode(const rapidjson::Value& value, const Scene::Co
     }
 
     lkCommon::Math::Vector4 vertex;
-    Geometry::Triangle tri;
     bool verticesFound = false;
     bool indicesFound = false;
 
@@ -145,24 +136,23 @@ bool Mesh::ReadParametersFromNode(const rapidjson::Value& value, const Scene::Co
             {
                 if (!t.IsArray() || (t.GetArray().Size() != 3))
                 {
-                    LOGE("Invalid triangle #" << mTriangleIndices.size() << " in object " << mName <<
-                         ". Should be an array of 3 float numbers.");
+                    LOGE("Invalid triangle #" << mMeshBVH.GetObjectCount()
+                         << " in object " << mName << ". Should be an array of 3 float numbers.");
                     return false;
                 }
 
-                tri = Geometry::Triangle();
-
+                uint32_t idx[3];
                 uint32_t colIndex = 0;
                 for (auto& i: t.GetArray())
                 {
-                    tri[colIndex] = i.GetUint();
+                    idx[colIndex] = i.GetUint();
                     colIndex++;
                 }
 
-                mTriangleIndices.push_back(tri);
+                mMeshBVH.EmplaceObject(mPoints, mPosition, idx[0], idx[1], idx[2]);
             }
 
-            LOGD("     -> Mesh has " << mTriangleIndices.size() << " triangles");
+            LOGD("     -> Mesh has " << mMeshBVH.GetObjectCount() << " triangles");
             indicesFound = true;
         }
     }
@@ -172,6 +162,9 @@ bool Mesh::ReadParametersFromNode(const rapidjson::Value& value, const Scene::Co
         LOGE("Vertices or indices are missing for mesh " << mName);
         return false;
     }
+
+    mMeshBVH.Build();
+    mMeshBVH.Print();
 
     return true;
 }

@@ -61,7 +61,14 @@ lkCommon::Utils::PixelFloat4 Renderer::CalculateLightIntensity(PathContext& cont
 {
     if (rayDepth > mMaxRayDepth)
     {
-        return context.scene.GetAmbient();
+        return lkCommon::Utils::PixelFloat4(0.0f);
+    }
+
+    if (context.beta[0] < 0.05f &&
+        context.beta[1] < 0.05f &&
+        context.beta[2] < 0.05f)
+    {
+        return lkCommon::Utils::PixelFloat4(0.0f);
     }
 
     const Scene::Scene& scene = context.scene;
@@ -73,7 +80,7 @@ lkCommon::Utils::PixelFloat4 Renderer::CalculateLightIntensity(PathContext& cont
     RayCollision collision = scene.TestCollision(context.ray, -1);
     if (collision.mHitID == -1)
     {
-        return scene.GetAmbient();
+        return context.beta * scene.GetAmbient();
     }
 
     collision.mAllocator = &context.threadData.allocator;
@@ -105,7 +112,7 @@ lkCommon::Utils::PixelFloat4 Renderer::CalculateLightIntensity(PathContext& cont
         return resultColor;
     }
 
-    return scene.GetAmbient();
+    return lkCommon::Utils::PixelFloat4(0.0f);
 }
 
 void Renderer::DrawThread(lkCommon::Utils::ThreadPayload& payload, const Scene::Scene& scene, const Scene::Camera& camera, uint32_t widthPos, uint32_t heightPos, uint32_t xCount, uint32_t yCount)

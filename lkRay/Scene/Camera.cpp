@@ -79,7 +79,7 @@ bool Camera::ReadParametersFromNode(const rapidjson::Value& value)
 
             mPosition[3] = 1.0f;
 
-            LOGD("     -> Camera's position " << mPosition);
+            LOGD(" -> Camera's position " << mPosition);
         }
         else if (Constants::CAMERA_ATTRIBUTE_ROTATION_NODE_NAME.compare(a.name.GetString()) == 0)
         {
@@ -99,7 +99,7 @@ bool Camera::ReadParametersFromNode(const rapidjson::Value& value)
 
             mAngleTheta = LKCOMMON_DEG_TO_RADF(angles[0]);
             mAnglePhi = LKCOMMON_DEG_TO_RADF(angles[1]);
-            LOGD("     -> Camera's rotation " << mAngleTheta << ", " << mAnglePhi);
+            LOGD(" -> Camera's rotation " << mAngleTheta << ", " << mAnglePhi);
         }
     }
 

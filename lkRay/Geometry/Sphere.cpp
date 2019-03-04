@@ -31,7 +31,7 @@ void Sphere::CalculateBBox()
     mBBox[AABBPoint::MAX] = lkCommon::Math::Vector4(mRadius, mRadius, mRadius, 1.0f);
 }
 
-bool Sphere::TestCollision(const Ray& ray, float& distance, lkCommon::Math::Vector4& normal)
+bool Sphere::TestCollision(const Ray& ray, float& distance, lkCommon::Math::Vector4& normal) const
 {
     const lkCommon::Math::Vector4 L = mPosition - ray.mOrigin;
     const float midPoint = L.Dot(ray.mDirection);

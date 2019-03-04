@@ -34,7 +34,7 @@ public:
     // returns true if ray collided with something
     // then, returns through arguments closest positive distance to ray origin and surface normal at collision point
     // false if there's no collision (ray missed the sphere), then both distance and normal are unmodified
-    virtual bool TestCollision(const Ray& ray, float& distance, lkCommon::Math::Vector4& normal) = 0;
+    virtual bool TestCollision(const Ray& ray, float& distance, lkCommon::Math::Vector4& normal) const = 0;
     virtual void CalculateBBox() = 0;
     virtual bool ReadParametersFromNode(const rapidjson::Value& value, const Scene::Containers::Material& materials) = 0;
     virtual Types::Primitive GetType() const = 0;

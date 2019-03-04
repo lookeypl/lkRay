@@ -14,10 +14,10 @@ namespace Containers {
 template <typename T>
 using Ptr = std::shared_ptr<T>;
 template <typename T>
-using Container = std::vector<Ptr<T>>;
+using Container = std::vector<T>;
 
-using Primitive = Container<Geometry::Primitive>;
-using Light = Container<Light::Light>;
+using Primitive = Container<Ptr<Geometry::Primitive>>;
+using Light = Container<Ptr<Light::Light>>;
 using Material = std::map<std::string, Ptr<Material::Material>>;
 
 } // namespace lkRay

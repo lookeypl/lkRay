@@ -30,7 +30,7 @@ private:
     Containers::Material mMaterials;
     lkCommon::Utils::PixelFloat4 mAmbient;
     std::string mName;
-    BVH<Geometry::Primitive> mBVH;
+    BVH<Containers::Ptr<Geometry::Primitive>> mBVH;
 
     bool LoadMaterials(const rapidjson::Value& node);
     bool LoadObjects(const rapidjson::Value& node);

@@ -3,7 +3,8 @@
 #include "Triangle.hpp"
 #include "Primitive.hpp"
 
-#include <vector>
+#include "Scene/Containers.hpp"
+#include "Scene/BVH.hpp"
 
 
 namespace lkRay {
@@ -12,7 +13,7 @@ namespace Geometry {
 class Mesh: public Primitive
 {
     std::vector<lkCommon::Math::Vector4> mPoints;
-    std::vector<Triangle> mTriangleIndices;
+    Scene::BVH<Triangle> mMeshBVH;
 
 public:
     Mesh(const std::string& name);
@@ -20,7 +21,7 @@ public:
          const std::vector<Triangle>& indices);
     ~Mesh() = default;
 
-    bool TestCollision(const Ray& ray, float& distance, lkCommon::Math::Vector4& normal) override;
+    bool TestCollision(const Ray& ray, float& distance, lkCommon::Math::Vector4& normal) const override;
     void CalculateBBox() override;
     bool ReadParametersFromNode(const rapidjson::Value& value, const Scene::Containers::Material& materials) override;
     Types::Primitive GetType() const override;

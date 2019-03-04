@@ -3,13 +3,52 @@
 #include "PCH.hpp"
 #include "BVH.hpp"
 
-#include <lkCommon/Utils/Sort.hpp>
+#include <lkCommon/Utils/StaticStack.hpp>
 
 #include <algorithm>
 #include <numeric>
 #include <queue>
 
 #include "Geometry/Primitive.hpp"
+
+
+namespace {
+
+const uint32_t STACK_MAX_SIZE = 2048;
+
+template <class T>
+struct Ptr
+{
+    T* p;
+    Ptr(T& t): p(&t) {};
+    T* operator->() { return p; };
+};
+
+template <class T>
+struct Ptr<const T>
+{
+    const T* p;
+    Ptr(const T& t): p(&t) {};
+    const T* operator->() const { return p; };
+};
+
+template <class T>
+struct Ptr<std::shared_ptr<T>>
+{
+    T* p;
+    Ptr(std::shared_ptr<T> t): p(t.get()) {};
+    T* operator->() { return p; };
+};
+
+template <class T>
+struct Ptr<const std::shared_ptr<T>>
+{
+    const T* p;
+    Ptr(const std::shared_ptr<T>& t): p(t.get()) {};
+    const T* operator->() const { return p; };
+};
+
+}
 
 
 namespace lkRay {
@@ -29,49 +68,93 @@ BVH<T>::~BVH()
 }
 
 template <typename T>
-bool BVH<T>::UpdateNodeAABB(Geometry::AABB& bbox, uint32_t objID)
+void BVH<T>::UpdateNodeAABB(Geometry::AABB& bbox, uint32_t objID)
 {
     using AABBPoint = Geometry::AABBPoint;
 
-    // like std::min, but additionally sets a "modified" flag to false.
-    auto minWithFlag = [](float& src, const float& b, bool& modified)
+    auto minLambda = [](float& src, const float& b) -> void
     {
-        if (b <= src)
+        if (b < src)
             src = b;
-        else
-            modified = false;
     };
 
-    auto maxWithFlag = [](float& src, const float& b, bool& modified) -> void
+    auto maxLambda = [](float& src, const float& b) -> void
     {
-        if (b >= src)
+        if (b > src)
             src = b;
-        else
-            modified = false;
     };
-
-    bool allModified = true;
 
     // get bbox and shift it with position
-    Geometry::AABB objBox = mObjects[objID]->GetBBox();
-    objBox[AABBPoint::MIN] += mObjects[objID]->GetPosition();
-    objBox[AABBPoint::MAX] += mObjects[objID]->GetPosition();
+    Geometry::AABB objBox = Ptr<T>(mObjects[objID]).p->GetBBox();
+    objBox[AABBPoint::MIN] += Ptr<T>(mObjects[objID]).p->GetPosition();
+    objBox[AABBPoint::MAX] += Ptr<T>(mObjects[objID]).p->GetPosition();
 
-    minWithFlag(bbox[AABBPoint::MIN][0], objBox[AABBPoint::MIN][0], allModified);
-    minWithFlag(bbox[AABBPoint::MIN][1], objBox[AABBPoint::MIN][1], allModified);
-    minWithFlag(bbox[AABBPoint::MIN][2], objBox[AABBPoint::MIN][2], allModified);
+    minLambda(bbox[AABBPoint::MIN][0], objBox[AABBPoint::MIN][0]);
+    minLambda(bbox[AABBPoint::MIN][1], objBox[AABBPoint::MIN][1]);
+    minLambda(bbox[AABBPoint::MIN][2], objBox[AABBPoint::MIN][2]);
 
-    maxWithFlag(bbox[AABBPoint::MAX][0], objBox[AABBPoint::MAX][0], allModified);
-    maxWithFlag(bbox[AABBPoint::MAX][1], objBox[AABBPoint::MAX][1], allModified);
-    maxWithFlag(bbox[AABBPoint::MAX][2], objBox[AABBPoint::MAX][2], allModified);
-
-    return allModified;
+    maxLambda(bbox[AABBPoint::MAX][0], objBox[AABBPoint::MAX][0]);
+    maxLambda(bbox[AABBPoint::MAX][1], objBox[AABBPoint::MAX][1]);
+    maxLambda(bbox[AABBPoint::MAX][2], objBox[AABBPoint::MAX][2]);
 }
 
 template <typename T>
-void BVH<T>::BuildStep(std::vector<uint32_t>& objIds, BVHNode *currentNode)
+BVHObjIdCollection::iterator BVH<T>::FindSplitPoint(BVHObjIdCollection& objIds,
+                                                    const BVHNode* currentNode)
 {
     using AABBPoint = Geometry::AABBPoint;
+
+    // find longest axis
+    float longestAxisLen = 0.0f;
+    uint32_t longestAxis = UINT32_MAX; // 0 - X, 1 - Y, 2 - Z
+    for (uint32_t i = 0; i < 3; ++i)
+    {
+        float len = currentNode->bBox[AABBPoint::MAX][i] - currentNode->bBox[AABBPoint::MIN][i];
+        if (len > longestAxisLen)
+        {
+            longestAxisLen = len;
+            longestAxis = i;
+        }
+    }
+
+    // sort according to longest axis
+    std::sort(objIds.begin(), objIds.end(), [this, &longestAxis](const uint32_t& a, const uint32_t& b) {
+        return Ptr<T>(mObjects[a])->GetPosition()[longestAxis] < Ptr<T>(mObjects[b])->GetPosition()[longestAxis];
+    });
+
+    // find split point
+    // TODO use SAH instead of midpoints
+    float midpoint = (currentNode->bBox[AABBPoint::MIN][longestAxis] + currentNode->bBox[AABBPoint::MAX][longestAxis]) / 2.0f;
+
+    // find iterator for split node
+    auto split = std::find_if(objIds.begin(), objIds.end(),
+    [this, &midpoint, &longestAxis](const uint32_t& objId) {
+        return Ptr<T>(mObjects[objId])->GetPosition()[longestAxis] > midpoint;
+    });
+
+    // in case splitting by mid point fails, just divide the collection into two halves
+    // and continue
+    if (split == objIds.begin() || split == objIds.end())
+    {
+        LOGD("Split by halves");
+        split = objIds.begin();
+        std::advance(split, objIds.size() / 2);
+    }
+    else
+    {
+        LOGD("Split by midpoint " << midpoint);
+    }
+
+
+    return split;
+}
+
+template <typename T>
+void BVH<T>::BuildStep(BVHObjIdCollection& objIds, BVHNode *currentNode)
+{
+    using AABBPoint = Geometry::AABBPoint;
+
+    LKCOMMON_ASSERT(objIds.size() != 0, "BVH build error - step has no objects!");
 
     // debug
     std::stringstream objstr;
@@ -104,52 +187,15 @@ void BVH<T>::BuildStep(std::vector<uint32_t>& objIds, BVHNode *currentNode)
         if (objIds.size() == 2)
             currentNode->leafData.obj[1] = objIds.back();
         else
-            currentNode->leafData.obj[1] = std::numeric_limits<uint32_t>::max();
+            currentNode->leafData.obj[1] = UINT32_MAX;
 
         return;
     }
 
-    // find longest axis
-    float longestAxisLen = 0.0f;
-    uint32_t longestAxis = UINT32_MAX; // 0 - X, 1 - Y, 2 - Z
-    for (uint32_t i = 0; i < 3; ++i)
-    {
-        float len = currentNode->bBox[AABBPoint::MAX][i] - currentNode->bBox[AABBPoint::MIN][i];
-        if (len > longestAxisLen)
-        {
-            longestAxisLen = len;
-            longestAxis = i;
-        }
-    }
-
-    // sort according to longest axis
-    std::sort(objIds.begin(), objIds.end(), [this, &longestAxis](const uint32_t& a, const uint32_t& b) {
-        return mObjects[a]->GetPosition()[longestAxis] < mObjects[b]->GetPosition()[longestAxis];
-    });
-
-    // find split point
-    // TODO use SAH instead of midpoints
-    float midpoint = (currentNode->bBox[AABBPoint::MIN][longestAxis] + currentNode->bBox[AABBPoint::MAX][longestAxis]) / 2.0f;
-
-    // find iterator for split node
-    auto split = std::find_if(objIds.begin(), objIds.end(),
-    [this, &midpoint, &longestAxis](const uint32_t& objId) {
-        if (mObjects[objId]->GetType() == Types::Primitive::PLANE)
-            return false;
-
-        return mObjects[objId]->GetPosition()[longestAxis] > midpoint;
-    });
-
-    // in case splitting by mid point fails, just divide the collection into two halves
-    // and continue
-    if (split == objIds.begin() || split == objIds.end())
-    {
-        split = objIds.begin();
-        std::advance(split, objIds.size() / 2);
-    }
+    auto split = FindSplitPoint(objIds, currentNode);
 
     // build left node
-    std::vector<uint32_t> subObjs(objIds.begin(), split);
+    BVHObjIdCollection subObjs(objIds.begin(), split);
     if (subObjs.size() > 0)
     {
         mNodes.emplace_back();
@@ -268,29 +314,20 @@ int32_t BVH<T>::Traverse(const Geometry::Ray& ray,
     if (!mRootNode->bBox.TestCollision(ray, rayDirInv, rayDirSign, tmin, tmax))
         return objIDResult;
 
-    // queue element = tmin collision distance + ptr to node
-    using StackElement = std::pair<float, BVHNode*>;
-    std::vector<StackElement> heap;
-    heap.reserve(mNodeCount);
+    LKCOMMON_ASSERT(mNodeCount <= STACK_MAX_SIZE, "STACK NOT BIG ENOUGH");
+    lkCommon::Utils::StaticStack<BVHNode*, STACK_MAX_SIZE> stack;
+    stack.Emplace(mRootNode);
 
-    heap.emplace_back(std::make_pair(0.0f, mRootNode));
-    auto compare = [](const StackElement& a, const StackElement& b) -> bool
+    while (stack.Size())
     {
-        return a.first > b.first;
-    };
-
-    while (!heap.empty())
-    {
-        std::pop_heap(heap.begin(), heap.end(), compare);
-        BVHNode* node = heap.back().second;
-        heap.pop_back();
-
-        LKCOMMON_ASSERT(node != nullptr, "Received node from heap which is NULL.");
+        BVHNode* node = stack.Pop();
+        LKCOMMON_ASSERT(node != nullptr, "Received node from stack which is NULL.");
 
         // ray collides with bbox, check if we are a leaf node
         if (node->midData.left == nullptr && node->midData.right == nullptr)
         {
-            bool collided = false;
+            // we are a leaf node, test intersection with both objects
+            bool collided[2] = { false, false };
             struct _res {
                 int32_t id;
                 float d;
@@ -304,19 +341,21 @@ int32_t BVH<T>::Traverse(const Geometry::Ray& ray,
                 }
             } res[2];
 
-            // we are a leaf node, test intersection with both objects and leave
-            collided = mObjects[node->leafData.obj[0]]->TestCollision(ray, res[0].d, res[0].n);
-            if (collided)
+            collided[0] =
+                Ptr<const T>(mObjects[node->leafData.obj[0]])->TestCollision(ray, res[0].d, res[0].n);
+            if (collided[0])
                 res[0].id = node->leafData.obj[0];
 
             if (node->leafData.obj[1] != UINT32_MAX)
             {
-                collided |= mObjects[node->leafData.obj[1]]->TestCollision(ray, res[1].d, res[1].n);
-                if (collided)
+                collided[1] =
+                    Ptr<const T>(mObjects[node->leafData.obj[1]])->TestCollision(ray, res[1].d, res[1].n);
+                if (collided[1])
                     res[1].id = node->leafData.obj[1];
             }
 
-            if (collided)
+
+            if (collided[0] || collided[1])
             {
                 if (res[1].d < res[0].d)
                     std::swap(res[0], res[1]);
@@ -335,17 +374,11 @@ int32_t BVH<T>::Traverse(const Geometry::Ray& ray,
         // not a leaf node, traverse further
         if (node->midData.left &&
             node->midData.left->bBox.TestCollision(ray, rayDirInv, rayDirSign, tmin, tmax))
-        {
-            heap.emplace_back(std::make_pair(tmin, node->midData.left));
-            std::push_heap(heap.begin(), heap.end(), compare);
-        }
+            stack.Emplace(node->midData.left);
 
         if (node->midData.right &&
             node->midData.right->bBox.TestCollision(ray, rayDirInv, rayDirSign, tmin, tmax))
-        {
-            heap.emplace_back(std::make_pair(tmin, node->midData.right));
-            std::push_heap(heap.begin(), heap.end(), compare);
-        }
+            stack.Emplace(node->midData.right);
     }
 
     return objIDResult;
@@ -359,3 +392,21 @@ void BVH<T>::Print() const
 
 } // namespace Scene
 } // namespace lkRay
+
+/*
+
+                [4, 6, 5],
+                [5, 6, 7],
+
+                [8, 9, 10],
+                [9, 11, 10],
+                [9, 13, 11],
+                [11, 13, 15],
+                [12, 14, 13],
+                [13, 14, 15],
+                [10, 11, 14],
+                [15, 14, 11],
+                [8, 12, 9],
+                [13, 9, 12]
+
+*/

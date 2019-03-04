@@ -258,6 +258,31 @@ bool Scene::Load(const std::string& path)
         }
     }
 
+    mAmbient = lkCommon::Utils::PixelFloat4(0.0f);
+    for (auto& o: sceneDesc.GetObject())
+    {
+        if (Constants::AMBIENT_NODE_NAME.compare(o.name.GetString()) == 0)
+        {
+            if (!o.value.IsArray() || (o.value.GetArray().Size() != 3))
+            {
+                LOGE("Invalid normal parameter for camera. Should be an array of 3 floats.");
+                return false;
+            }
+
+            uint32_t colIndex = 0;
+            for (auto& c: o.value.GetArray())
+            {
+                mAmbient[colIndex] = c.GetFloat();
+                colIndex++;
+            }
+
+            mAmbient[3] = 1.0f;
+
+            LOGD(" -> Scene's ambient " << mAmbient);
+            break;
+        }
+    }
+
     if (!mName.empty())
     {
         LOGD("Loading scene \"" << mName << "\" from path " << path);
@@ -359,12 +384,12 @@ Renderer::RayCollision Scene::TestCollision(const Geometry::Ray& ray, int skipOb
     float testDistance = 0.0f;
     lkCommon::Math::Vector4 testNormal;
 
-    for (size_t i = 0; i < mPrimitives.size(); ++i)
+    for (size_t i = 0; i < mBVH.GetObjectCount(); ++i)
     {
         if (skipObjID == i)
             continue;
 
-        if (mPrimitives[i]->TestCollision(ray, testDistance, testNormal) &&
+        if (mBVH.GetObject(i)->TestCollision(ray, testDistance, testNormal) &&
             testDistance < colDistance)
         {
             colDistance = testDistance;
@@ -405,7 +430,7 @@ Containers::Ptr<Geometry::Primitive> Scene::CreatePrimitive(const std::string& n
     }
     }
 
-    mBVH.AddObject(pPrim);
+    mBVH.PushObject(pPrim);
     return pPrim;
 }
 

@@ -31,7 +31,7 @@ void Plane::CalculateBBox()
     mBBox[AABBPoint::MAX][3] = 1.0f;
 }
 
-bool Plane::TestCollision(const Ray& ray, float& distance, lkCommon::Math::Vector4& normal)
+bool Plane::TestCollision(const Ray& ray, float& distance, lkCommon::Math::Vector4& normal) const
 {
     // Regular geometric approach checking if ray hit a plane:
     //  * Get dot product (angle between normal and ray dir)

@@ -5,6 +5,7 @@
 #include "Containers.hpp"
 
 #include <list>
+#include <functional>
 
 
 namespace lkRay {
@@ -41,6 +42,8 @@ struct BVHNode
     BVHLeafData leafData;
 };
 
+using BVHObjIdCollection = std::vector<uint32_t>;
+
 template <typename T>
 class BVH
 {
@@ -49,8 +52,9 @@ class BVH
     std::list<BVHNode> mNodes;
     size_t mNodeCount;
 
-    bool UpdateNodeAABB(Geometry::AABB& bbox, uint32_t objID);
-    void BuildStep(std::vector<uint32_t>& objIds, BVHNode* currentNode);
+    void UpdateNodeAABB(Geometry::AABB& bbox, uint32_t objID);
+    BVHObjIdCollection::iterator FindSplitPoint(BVHObjIdCollection& ids, const BVHNode* currentNode);
+    void BuildStep(BVHObjIdCollection& objIds, BVHNode* currentNode);
     void PrintStep(BVHNode* currentNode, uint32_t depth) const;
 
 public:
@@ -62,14 +66,30 @@ public:
     int32_t Traverse(const Geometry::Ray& ray, float& distance, lkCommon::Math::Vector4& normal) const;
     void Print() const;
 
-    LKCOMMON_INLINE void AddObject(Containers::Ptr<Geometry::Primitive>& ptr)
+    LKCOMMON_INLINE void PushObject(T& ptr)
     {
         mObjects.push_back(ptr);
+    }
+
+    template <typename... Ts>
+    LKCOMMON_INLINE void EmplaceObject(Ts&&... args)
+    {
+        mObjects.emplace_back(std::forward<Ts>(args)...);
     }
 
     LKCOMMON_INLINE const Containers::Primitive& GetPrimitives() const
     {
         return mObjects;
+    }
+
+    LKCOMMON_INLINE const T& GetObject(size_t i) const
+    {
+        return mObjects[i];
+    }
+
+    LKCOMMON_INLINE size_t GetObjectCount() const
+    {
+        return mObjects.size();
     }
 };
 
