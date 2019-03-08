@@ -39,7 +39,7 @@ class Renderer final
     lkCommon::Utils::PixelFloat4 CalculateLightIntensity(PathContext& context, uint32_t rayDepth);
 
 public:
-    Renderer(const uint32_t width, const uint32_t height, const uint32_t maxRayDepth);
+    Renderer(const uint32_t width, const uint32_t height, const uint32_t maxRayDepth, const uint32_t threadCount);
     ~Renderer() = default;
 
     void Draw(const Scene::Scene& scene, const Scene::Camera& camera);

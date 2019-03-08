@@ -24,11 +24,11 @@ const uint32_t PIXELS_PER_THREAD_CONVERT = 32;
 namespace lkRay {
 namespace Renderer {
 
-Renderer::Renderer(const uint32_t renderWidth, const uint32_t renderHeight, const uint32_t maxRayDepth)
+Renderer::Renderer(const uint32_t renderWidth, const uint32_t renderHeight, const uint32_t maxRayDepth, const uint32_t threadCount)
     : mImageBuffer(renderWidth, renderHeight)
     , mOutputImage(renderWidth, renderHeight)
     , mMaxRayDepth(maxRayDepth)
-    , mThreadPool()
+    , mThreadPool(threadCount)
     , mThreadData(mThreadPool.GetWorkerThreadCount())
     , mSampleCount(0)
     , mExposure(1.0f)
@@ -64,9 +64,9 @@ lkCommon::Utils::PixelFloat4 Renderer::CalculateLightIntensity(PathContext& cont
         return lkCommon::Utils::PixelFloat4(0.0f);
     }
 
-    if (context.beta[0] < 0.05f &&
-        context.beta[1] < 0.05f &&
-        context.beta[2] < 0.05f)
+    if (context.beta[0] < 0.3f &&
+        context.beta[1] < 0.3f &&
+        context.beta[2] < 0.3f)
     {
         return lkCommon::Utils::PixelFloat4(0.0f);
     }
@@ -151,36 +151,19 @@ void Renderer::DrawThread(lkCommon::Utils::ThreadPayload& payload, const Scene::
 
             // form a context and start calculating
             PathContext ctx(*threadData, scene, Geometry::Ray(camera.GetPosition(), rayDir));
+
             lkCommon::Utils::PixelFloat4 pixel;
             mImageBuffer.GetPixel(x, y, pixel);
 
+            // get the value
             pixel += CalculateLightIntensity(ctx, 0);
 
+            // save current pixel value for later
             mImageBuffer.SetPixel(x, y, pixel);
-        }
-    }
-}
 
-void Renderer::ConvertImageBufferToOutputThread(lkCommon::Utils::ThreadPayload& payload, uint32_t widthPos, uint32_t heightPos, uint32_t xCount, uint32_t yCount)
-{
-    lkCommon::Utils::PixelFloat4 imageBufferPixel;
-    lkCommon::Utils::PixelFloat4 tempPixel;
-
-    for (uint32_t x = widthPos; x < widthPos + xCount; ++x)
-    {
-        for (uint32_t y = heightPos; y < heightPos + yCount; ++y)
-        {
-            // don't go out of bounds
-            if (x >= mOutputImage.GetWidth() || y >= mOutputImage.GetHeight())
-                continue;
-
-            mImageBuffer.GetPixel(x, y, imageBufferPixel);
-
-            // average the output color
-            imageBufferPixel /= static_cast<float>(mSampleCount);
-
-            // do some post processing on a pixel and return it
-            mOutputImage.SetPixel(x, y, PostProcess(imageBufferPixel));
+            // divide by sample count and post-process for output
+            pixel /= static_cast<float>(mSampleCount);
+            mOutputImage.SetPixel(x, y, PostProcess(pixel));
         }
     }
 }
@@ -198,17 +181,6 @@ void Renderer::Draw(const Scene::Scene& scene, const Scene::Camera& camera)
         {
             mThreadPool.AddTask(std::bind(&Renderer::DrawThread, this, std::placeholders::_1,
                                 scene, camera, x, y, PIXELS_PER_THREAD, PIXELS_PER_THREAD));
-        }
-    }
-
-    mThreadPool.WaitForTasks();
-
-    for (uint32_t x = 0; x < mOutputImage.GetWidth(); x += PIXELS_PER_THREAD)
-    {
-        for (uint32_t y = 0; y < mOutputImage.GetHeight(); y += PIXELS_PER_THREAD)
-        {
-            mThreadPool.AddTask(std::bind(&Renderer::ConvertImageBufferToOutputThread, this, std::placeholders::_1,
-                                x, y, PIXELS_PER_THREAD_CONVERT, PIXELS_PER_THREAD_CONVERT));
         }
     }
 

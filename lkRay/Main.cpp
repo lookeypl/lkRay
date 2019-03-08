@@ -8,6 +8,7 @@
 #include <lkCommon/System/FS.hpp>
 #include <lkCommon/Math/RingAverage.hpp>
 #include <lkCommon/Math/Random.hpp>
+#include <lkCommon/Utils/ArgParser.hpp>
 
 #include "Renderer/Renderer.hpp"
 #include "Scene/Scene.hpp"
@@ -262,7 +263,7 @@ public:
 };
 
 
-int main()
+int main(int argc, char* argv[])
 {
     if (!lkCommon::System::FS::SetCWD(
             lkCommon::System::FS::JoinPaths(
@@ -276,7 +277,24 @@ int main()
         return -1;
     }
 
-    Renderer::Renderer renderer(WINDOW_WIDTH, WINDOW_HEIGHT, MAX_RAY_DEPTH_RENDERING);
+    int32_t threads = static_cast<int32_t>(lkCommon::System::Info::GetCPUCount());
+
+    lkCommon::Utils::ArgParser args;
+    args.Add("t,threads", threads, true, "Amount of threads to render at. Defaults to logical CPU count in the system.");
+    if (!args.Parse(argc, argv))
+    {
+        LOGE("Failed to parse args.");
+        args.PrintUsage();
+        return -1;
+    }
+
+    if (args.GetValue("threads", threads) && threads < 1)
+    {
+        LOGE("Invalid amount of rendering threads provided");
+        return -1;
+    }
+
+    Renderer::Renderer renderer(WINDOW_WIDTH, WINDOW_HEIGHT, MAX_RAY_DEPTH_RENDERING, static_cast<uint32_t>(threads));
     renderer.SetExposure(EXPOSURE_DEFAULT);
 
     Scene::Camera camera(

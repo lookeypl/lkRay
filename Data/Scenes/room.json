@@ -2,8 +2,8 @@
     "name": "Test scene - Room",
     "camera":
     {
-        "position": [0.0, 1.5, -8.0],
-        "rotation": [0.0, 0.0]
+        "position": [4.9, 3.5, -3.8],
+        "rotation": [-25.0, 323.0]
     },
     "objects":
     {
