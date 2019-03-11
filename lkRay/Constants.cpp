@@ -54,6 +54,7 @@ const std::string SPHERE_ATTRIBUTE_RADIUS_NODE_NAME = "radius";
 const std::string PLANE_ATTRIBUTE_NORMAL_NODE_NAME = "normal";
 const std::string PLANE_ATTRIBUTE_DISTANCE_NODE_NAME = "distance";
 
+const std::string MESH_ATTRIBUTE_PATH_NODE_NAME = "path";
 const std::string MESH_ATTRIBUTE_VERTICES_NODE_NAME = "vertices";
 const std::string MESH_ATTRIBUTE_INDICES_NODE_NAME = "indices";
 

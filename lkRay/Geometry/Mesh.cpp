@@ -5,6 +5,9 @@
 
 #include "Constants.hpp"
 
+#define TINYOBJLOADER_IMPLEMENTATION
+#include <tiny_obj_loader.h>
+
 
 namespace {
 
@@ -75,6 +78,76 @@ Types::Primitive Mesh::GetType() const
     return Types::Primitive::MESH;
 }
 
+bool Mesh::LoadFromFile(const std::string& objFilePath)
+{
+    tinyobj::attrib_t attrib;
+    std::vector<tinyobj::shape_t> shapes;
+    std::vector<tinyobj::material_t> materials;
+
+    std::string warn;
+    std::string err;
+    bool loaded = tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, objFilePath.c_str());
+
+    if (!warn.empty())
+    {
+        LOGW("Warnings while parsing OBJ:\n" << warn);
+    }
+
+    if (!loaded)
+    {
+        LOGE("Failed to parse OBJ file " << objFilePath << " for object " << mName);
+        if (!err.empty())
+        {
+            LOGE("Error log:\n" << err);
+        }
+        return false;
+    }
+
+    // TODO avoid this limitation in the future
+    if (shapes.size() != 1)
+    {
+        LOGE("Read invalid number of shapes, should be 1");
+        return false;
+    }
+
+    tinyobj::mesh_t& m = shapes[0].mesh;
+
+    lkCommon::Math::Vector4 v;
+    std::vector<tinyobj::real_t>& objv = attrib.vertices;
+    for (uint32_t i = 0; i < objv.size(); i += 3)
+    {
+        v = lkCommon::Math::Vector4(
+            objv[i + 0],
+            objv[i + 1],
+            objv[i + 2],
+            1.0f
+        );
+
+        mPoints.push_back(v);
+    }
+
+    LOGD("     -> OBJ Mesh has " << mPoints.size() << " vertices.");
+
+    std::vector<tinyobj::index_t>& obji = m.indices;
+    for (uint32_t i = 0; i < obji.size(); i += 3)
+    {
+        mMeshBVH.EmplaceObject(
+            mPoints,
+            mPosition,
+            static_cast<uint32_t>(obji[i + 0].vertex_index),
+            static_cast<uint32_t>(obji[i + 1].vertex_index),
+            static_cast<uint32_t>(obji[i + 2].vertex_index)
+        );
+    }
+
+    LOGD("     -> OBJ Mesh has " << mMeshBVH.GetObjectCount() << " triangles.");
+
+    mMeshBVH.Build();
+    mMeshBVH.Print();
+
+    return true;
+}
+
 bool Mesh::ReadParametersFromNode(const rapidjson::Value& value, const Scene::Containers::Material& materials)
 {
     if (!Primitive::ReadParametersFromNode(value, materials))
@@ -84,9 +157,39 @@ bool Mesh::ReadParametersFromNode(const rapidjson::Value& value, const Scene::Co
     }
 
     lkCommon::Math::Vector4 vertex;
+    bool pathFound = false;
+    bool objLoaded = false;
     bool verticesFound = false;
     bool indicesFound = false;
 
+    // first, search if we have an OBJ-based mesh
+    for (auto& a: value.GetObject())
+    {
+        if (Constants::MESH_ATTRIBUTE_PATH_NODE_NAME.compare(a.name.GetString()) == 0)
+        {
+            pathFound = true;
+
+            if (!a.value.IsString())
+            {
+                LOGE("Path attribute in object " << mName << " should be a string.");
+                break;
+            }
+
+            LOGD("     -> Mesh's path is " << a.value.GetString());
+            if (!(objLoaded = LoadFromFile(a.value.GetString())))
+            {
+                LOGE("Failed to read object " << mName << " from OBJ file.");
+                break;
+            }
+        }
+    }
+
+    if (pathFound)
+    {
+        return objLoaded;
+    }
+
+    // obj not found - see if we have vert/index combos
     for (auto& a: value.GetObject())
     {
         if (Constants::MESH_ATTRIBUTE_VERTICES_NODE_NAME.compare(a.name.GetString()) == 0)

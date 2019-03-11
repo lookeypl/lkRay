@@ -23,6 +23,7 @@ public:
 
     bool TestCollision(const Ray& ray, float& distance, lkCommon::Math::Vector4& normal) const override;
     void CalculateBBox() override;
+    bool LoadFromFile(const std::string& objFilePath);
     bool ReadParametersFromNode(const rapidjson::Value& value, const Scene::Containers::Material& materials) override;
     Types::Primitive GetType() const override;
 };

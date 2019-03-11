@@ -30,8 +30,8 @@ bool Triangle::TestCollision(const Ray& ray, float& distance, lkCommon::Math::Ve
     const lkCommon::Math::Vector4& p1 = mPointsRef[mPoints[1]];
     const lkCommon::Math::Vector4& p2 = mPointsRef[mPoints[2]];
 
-    lkCommon::Math::Vector4 E1 = p1 - p0;
-    lkCommon::Math::Vector4 E2 = p2 - p0;
+    lkCommon::Math::Vector4 E1 = p2 - p0;
+    lkCommon::Math::Vector4 E2 = p1 - p0;
     lkCommon::Math::Vector4 pv(E2.Cross(ray.mDirection));
     float d = E1.Dot(pv);
 

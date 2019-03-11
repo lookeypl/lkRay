@@ -40,12 +40,13 @@ using namespace lkRay;
 
 lkCommon::Math::RingAverage<float, 20> gFrameTime;
 
-const std::array<std::string, 5> SCENE_CONTAINER = {
+const std::array<std::string, 6> SCENE_CONTAINER = {
     "Data/Scenes/balls.json",
     "Data/Scenes/emptyplane.json",
     "Data/Scenes/room.json",
     "Data/Scenes/plane.json",
     "Data/Scenes/mirrors.json",
+    "Data/Scenes/bunny.json",
 };
 
 
@@ -70,7 +71,8 @@ protected:
 
             if (newScene != std::numeric_limits<uint32_t>::max())
             {
-                if (!LoadScene(newScene))
+                bool resetCamera = !IsKeyPressed(lkCommon::System::KeyCode::Shift);
+                if (!LoadScene(newScene, resetCamera))
                 {
                     LOGE("Loading new scene failed - reloading previous one");
                     if (!LoadScene(mCurrentScene))
@@ -179,7 +181,7 @@ protected:
     {
         if (!LoadScene(mCurrentScene))
         {
-            LOGE("Failed to load scene " << SCENE_CONTAINER[mCurrentScene]);
+            LOGE("Failed to load scene #" << mCurrentScene);
             return false;
         }
 
@@ -197,7 +199,7 @@ public:
     {
     }
 
-    bool LoadScene(const uint32_t sceneNumber)
+    bool LoadScene(const uint32_t sceneNumber, bool resetCamera = true)
     {
         if (sceneNumber > SCENE_CONTAINER.size())
         {
@@ -207,16 +209,19 @@ public:
 
         mScene.Destroy();
 
-        if (!mCamera.ReadParametersFromScene(SCENE_CONTAINER[sceneNumber]))
+        if (resetCamera)
         {
-            LOGE("Failed to parse camera parameters from scene "
-                 << SCENE_CONTAINER[sceneNumber]);
-            return false;
+            if (!mCamera.ReadParametersFromScene(SCENE_CONTAINER[sceneNumber]))
+            {
+                LOGE("Failed to parse camera parameters from scene "
+                     << SCENE_CONTAINER[sceneNumber]);
+                return false;
+            }
         }
 
         if (!mScene.Load(SCENE_CONTAINER[sceneNumber]))
         {
-            LOGE("Failed to load scene " << SCENE_CONTAINER[sceneNumber]);
+            LOGE("Failed to parse scene JSON " << SCENE_CONTAINER[sceneNumber]);
             return false;
         }
 

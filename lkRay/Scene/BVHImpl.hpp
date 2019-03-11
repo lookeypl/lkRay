@@ -14,7 +14,7 @@
 
 namespace {
 
-const uint32_t STACK_MAX_SIZE = 2048;
+const uint32_t STACK_MAX_SIZE = 8192;
 
 template <class T>
 struct Ptr
@@ -278,6 +278,8 @@ void BVH<T>::Build()
     mNodes.emplace_back();
     mRootNode = &mNodes.back();
     BuildStep(objIds, mRootNode);
+
+    LOGI("BVH built for " << mObjects.size() << " objects");
 }
 
 template <typename T>
@@ -392,21 +394,3 @@ void BVH<T>::Print() const
 
 } // namespace Scene
 } // namespace lkRay
-
-/*
-
-                [4, 6, 5],
-                [5, 6, 7],
-
-                [8, 9, 10],
-                [9, 11, 10],
-                [9, 13, 11],
-                [11, 13, 15],
-                [12, 14, 13],
-                [13, 14, 15],
-                [10, 11, 14],
-                [15, 14, 11],
-                [8, 12, 9],
-                [13, 9, 12]
-
-*/

@@ -55,6 +55,7 @@ extern const std::string SPHERE_ATTRIBUTE_RADIUS_NODE_NAME;
 extern const std::string PLANE_ATTRIBUTE_NORMAL_NODE_NAME;
 extern const std::string PLANE_ATTRIBUTE_DISTANCE_NODE_NAME;
 
+extern const std::string MESH_ATTRIBUTE_PATH_NODE_NAME;
 extern const std::string MESH_ATTRIBUTE_VERTICES_NODE_NAME;
 extern const std::string MESH_ATTRIBUTE_INDICES_NODE_NAME;
 

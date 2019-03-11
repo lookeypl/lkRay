@@ -15,8 +15,7 @@
 
 namespace {
 
-const uint32_t PIXELS_PER_THREAD = 32;
-const uint32_t PIXELS_PER_THREAD_CONVERT = 32;
+const uint32_t PIXELS_PER_THREAD = 16;
 
 } // namespace
 

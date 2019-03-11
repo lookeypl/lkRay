@@ -1,0 +1,70 @@
+{
+    "name": "Bunny",
+    "camera":
+    {
+        "position": [-3.5, 2.0, 3.5],
+        "rotation": [-15.0,135.0]
+    },
+    "objects":
+    {
+        "bunny":
+        {
+            "type": "mesh",
+            "position": [0.0, 0.0, 0.0],
+            "material": "blue",
+            "path": "Data/OBJ/bunny.obj"
+        },
+        "floor":
+        {
+            "type": "mesh",
+            "position": [0.0, 0.0, 0.0],
+            "material": "white",
+            "vertices": [
+                [-2.0, 0.0,-2.0],
+                [-2.0, 0.0, 2.0],
+                [ 2.0, 0.0, 2.0],
+                [ 2.0, 0.0,-2.0]
+            ],
+            "indices": [
+                [0, 1, 2],
+                [0, 2, 3]
+            ]
+        }
+    },
+    "lights":
+    {
+        "sun":
+        {
+            "type": "dir",
+            "direction": [0.0,-0.5,-1.0],
+            "color": [0.7, 0.7, 0.7]
+        }
+    },
+    "materials":
+    {
+        "blue":
+        {
+            "type": "matte",
+            "color": [0.2, 0.5, 0.9]
+        },
+        "white":
+        {
+            "type": "matte",
+            "color": [0.9, 0.9, 0.9]
+        },
+        "red":
+        {
+            "type": "matte",
+            "color": [0.9, 0.4, 0.2]
+        },
+        "green":
+        {
+            "type": "matte",
+            "color": [0.2, 0.9, 0.3]
+        },
+        "reflective":
+        {
+            "type": "mirror"
+        }
+    }
+}
