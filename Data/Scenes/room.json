@@ -7,6 +7,13 @@
     },
     "objects":
     {
+        "bunny":
+        {
+            "type": "mesh",
+            "position": [2.5,-1.5, 2.5],
+            "material": "blue",
+            "path": "Data/OBJ/bunny.obj"
+        },
         "sphere1":
         {
             "type": "sphere",
@@ -15,13 +22,6 @@
             "material": "reflective"
         },
         "sphere2":
-        {
-            "type": "sphere",
-            "position": [2.5, 0.0, 2.5],
-            "radius": 1.5,
-            "material": "blue"
-        },
-        "sphere3":
         {
             "type": "sphere",
             "position": [-1.5, 0.5, 2.5],

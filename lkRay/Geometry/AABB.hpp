@@ -22,10 +22,14 @@ public:
     AABB(const lkCommon::Math::Vector4& min, const lkCommon::Math::Vector4& max);
     ~AABB() = default;
 
-    lkCommon::Math::Vector4& operator[](const AABBPoint p);
-    const lkCommon::Math::Vector4& operator[](const AABBPoint p) const;
+    // Joins two AABB's together, which results in one large one, including this and other.
+    void Join(const AABB& other);
 
-    bool operator== (const AABB& other) const;
+    // returns centre point of this AABB
+    lkCommon::Math::Vector4 Centre() const;
+
+    // returns surface area of this AABB
+    float Surface() const;
 
     // AABB is more of an internal element rather than an actual scene primitive
     // thus, TestCollision definition is a bit different for faster intersection tests
@@ -33,6 +37,21 @@ public:
                        const lkCommon::Math::Vector4& rayDirInv,
                        const int rayDirSign[3],
                        float& tmin, float& tmax) const;
+
+    LKCOMMON_INLINE bool operator== (const AABB& other) const
+    {
+        return (mPoints[0] == other.mPoints[0]) && (mPoints[1] == other.mPoints[1]);
+    }
+
+    LKCOMMON_INLINE lkCommon::Math::Vector4& operator[](const AABBPoint p)
+    {
+        return mPoints[static_cast<std::underlying_type<AABBPoint>::type>(p)];
+    }
+
+    LKCOMMON_INLINE const lkCommon::Math::Vector4& operator[](const AABBPoint p) const
+    {
+        return mPoints[static_cast<std::underlying_type<AABBPoint>::type>(p)];
+    }
 };
 
 } // namespace Geometry

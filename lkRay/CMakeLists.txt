@@ -77,6 +77,8 @@ TARGET_INCLUDE_DIRECTORIES(${LKRAY_TARGET}
 TARGET_COMPILE_DEFINITIONS(${LKRAY_TARGET}
                            PRIVATE "-DLKRAY_ROOT_REL_TO_BIN=\"../..\""
                            PRIVATE "-DLKRAY_USE_BVH"
+                           PRIVATE "-DLKRAY_USE_SAH"
+                           PRIVATE "-DLKRAY_ROOT_DIR=R\"(${LKRAY_ROOT_DIRECTORY}/)\""
                            )
 
 TARGET_LINK_LIBRARIES(${LKRAY_TARGET} lkCommon ${LKRAY_PKG_DEPS_LIBRARIES})

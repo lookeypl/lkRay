@@ -63,9 +63,9 @@ lkCommon::Utils::PixelFloat4 Renderer::CalculateLightIntensity(PathContext& cont
         return lkCommon::Utils::PixelFloat4(0.0f);
     }
 
-    if (context.beta[0] < 0.3f &&
-        context.beta[1] < 0.3f &&
-        context.beta[2] < 0.3f)
+    if (context.beta[0] < 0.1f &&
+        context.beta[1] < 0.1f &&
+        context.beta[2] < 0.1f)
     {
         return lkCommon::Utils::PixelFloat4(0.0f);
     }

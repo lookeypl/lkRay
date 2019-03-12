@@ -283,14 +283,12 @@ bool Scene::Load(const std::string& path)
         }
     }
 
-    if (!mName.empty())
+    if (mName.empty())
     {
-        LOGD("Loading scene \"" << mName << "\" from path " << path);
+        mName = "UNNAMED";
     }
-    else
-    {
-        LOGD("Loading unnamed scene from file " << path);
-    }
+
+    LOGI("Loading scene \"" << mName << "\" from path " << path);
 
     // go through scene description and load materials
     for (auto& o: sceneDesc.GetObject())
@@ -337,6 +335,7 @@ bool Scene::Load(const std::string& path)
         }
     }
 
+    LOGI("Scene " << mName << " loaded successfully");
     return true;
 }
 

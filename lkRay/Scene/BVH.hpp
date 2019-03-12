@@ -52,7 +52,6 @@ class BVH
     std::list<BVHNode> mNodes;
     size_t mNodeCount;
 
-    void UpdateNodeAABB(Geometry::AABB& bbox, uint32_t objID);
     BVHObjIdCollection::iterator FindSplitPoint(BVHObjIdCollection& ids, const BVHNode* currentNode);
     void BuildStep(BVHObjIdCollection& objIds, BVHNode* currentNode);
     void PrintStep(BVHNode* currentNode, uint32_t depth) const;

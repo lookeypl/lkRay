@@ -15,6 +15,7 @@
 namespace {
 
 const uint32_t STACK_MAX_SIZE = 8192;
+const uint32_t BUCKET_COUNT = 12;
 
 template <class T>
 struct Ptr
@@ -68,37 +69,6 @@ BVH<T>::~BVH()
 }
 
 template <typename T>
-void BVH<T>::UpdateNodeAABB(Geometry::AABB& bbox, uint32_t objID)
-{
-    using AABBPoint = Geometry::AABBPoint;
-
-    auto minLambda = [](float& src, const float& b) -> void
-    {
-        if (b < src)
-            src = b;
-    };
-
-    auto maxLambda = [](float& src, const float& b) -> void
-    {
-        if (b > src)
-            src = b;
-    };
-
-    // get bbox and shift it with position
-    Geometry::AABB objBox = Ptr<T>(mObjects[objID]).p->GetBBox();
-    objBox[AABBPoint::MIN] += Ptr<T>(mObjects[objID]).p->GetPosition();
-    objBox[AABBPoint::MAX] += Ptr<T>(mObjects[objID]).p->GetPosition();
-
-    minLambda(bbox[AABBPoint::MIN][0], objBox[AABBPoint::MIN][0]);
-    minLambda(bbox[AABBPoint::MIN][1], objBox[AABBPoint::MIN][1]);
-    minLambda(bbox[AABBPoint::MIN][2], objBox[AABBPoint::MIN][2]);
-
-    maxLambda(bbox[AABBPoint::MAX][0], objBox[AABBPoint::MAX][0]);
-    maxLambda(bbox[AABBPoint::MAX][1], objBox[AABBPoint::MAX][1]);
-    maxLambda(bbox[AABBPoint::MAX][2], objBox[AABBPoint::MAX][2]);
-}
-
-template <typename T>
 BVHObjIdCollection::iterator BVH<T>::FindSplitPoint(BVHObjIdCollection& objIds,
                                                     const BVHNode* currentNode)
 {
@@ -118,33 +88,122 @@ BVHObjIdCollection::iterator BVH<T>::FindSplitPoint(BVHObjIdCollection& objIds,
     }
 
     // sort according to longest axis
+    // TODO here's lots of calcs to be done, especially by GetBBox() in some cases. Speedup by precaching the info.
     std::sort(objIds.begin(), objIds.end(), [this, &longestAxis](const uint32_t& a, const uint32_t& b) {
-        return Ptr<T>(mObjects[a])->GetPosition()[longestAxis] < Ptr<T>(mObjects[b])->GetPosition()[longestAxis];
+        return Ptr<T>(mObjects[a])->GetBBox().Centre()[longestAxis] + Ptr<T>(mObjects[a])->GetPosition()[longestAxis] <
+            Ptr<T>(mObjects[b])->GetBBox().Centre()[longestAxis] + Ptr<T>(mObjects[b])->GetPosition()[longestAxis];
     });
 
     // find split point
+    BVHObjIdCollection::iterator split;
+
+#ifdef LKRAY_USE_SAH
+    struct SAHBucket
+    {
+        uint32_t count;
+        Geometry::AABB bounds;
+
+        SAHBucket()
+            : count(0)
+            , bounds()
+        {}
+    } buckets[BUCKET_COUNT];
+
+    lkCommon::Math::Vector4 nodeSize = currentNode->bBox[AABBPoint::MAX] - currentNode->bBox[AABBPoint::MIN];
+
+    // fill our buckets
+    for (uint32_t i = 0; i < objIds.size(); ++i)
+    {
+        const Geometry::AABB& objBox = Ptr<T>(mObjects[objIds[i]])->GetBBox();
+        const lkCommon::Math::Vector4& pos = Ptr<T>(mObjects[objIds[i]])->GetPosition();
+
+        float offset = objBox.Centre()[longestAxis] + pos[longestAxis];
+        offset -= currentNode->bBox[AABBPoint::MIN][longestAxis];
+        offset /= nodeSize[longestAxis];
+        uint32_t bucket = static_cast<uint32_t>(BUCKET_COUNT * offset);
+
+        if (bucket == BUCKET_COUNT)
+            bucket = BUCKET_COUNT - 1;
+
+        LKCOMMON_ASSERT(bucket < BUCKET_COUNT, "Achieved a bucket " << bucket << " out of range!");
+        buckets[bucket].count++;
+        buckets[bucket].bounds.Join(objBox);
+    }
+
+    // calculate cost per split between buckets
+    float nodeSurface = currentNode->bBox.Surface();
+    float cost[BUCKET_COUNT];
+    for (uint32_t i = 0; i < BUCKET_COUNT; ++i)
+    {
+        Geometry::AABB bboxLeft, bboxRight;
+        uint32_t countLeft = 0, countRight = 0;
+
+        // left side
+        for (uint32_t j = 0; j <= i; ++j)
+        {
+            bboxLeft.Join(buckets[j].bounds);
+            countLeft += buckets[j].count;
+        }
+
+        // right side
+        for (uint32_t j = i + 1; j < BUCKET_COUNT; ++j)
+        {
+            bboxRight.Join(buckets[j].bounds);
+            countRight += buckets[j].count;
+        }
+
+        // cost includes:
+        //   - traversal cost (1)
+        //   - surface of left side AABB * count of left elements / surface of node AABB
+        //   - surface of right side AABB * count of right elements / surface of node AABB
+        cost[i] = 1.0f +
+            (bboxLeft.Surface() * countLeft +
+             bboxRight.Surface() * countRight) / nodeSurface;
+    }
+
+    // find lowest costing split point
+    uint32_t lowestCostId = 0;
+    float lowestCost = cost[0];
+    for (uint32_t i = 1; i < BUCKET_COUNT; ++i)
+    {
+        if (cost[i] < lowestCost)
+        {
+            lowestCostId = i;
+            lowestCost = cost[i];
+        }
+    }
+
+    LOGD("For " << objIds.size() << " objects lowest cost is #" << lowestCostId << ": " << lowestCost);
+
+    // advance split operator by summed count items
+    uint32_t toAdvance = 0;
+    for (uint32_t i = 0; i <= lowestCostId; ++i)
+    {
+        toAdvance += buckets[i].count;
+    }
+
+    split = objIds.begin();
+    std::advance(split, toAdvance);
+#else // LKRAY_USE_SAH
     // TODO use SAH instead of midpoints
     float midpoint = (currentNode->bBox[AABBPoint::MIN][longestAxis] + currentNode->bBox[AABBPoint::MAX][longestAxis]) / 2.0f;
 
     // find iterator for split node
-    auto split = std::find_if(objIds.begin(), objIds.end(),
+    split = std::find_if(objIds.begin(), objIds.end(),
     [this, &midpoint, &longestAxis](const uint32_t& objId) {
         return Ptr<T>(mObjects[objId])->GetPosition()[longestAxis] > midpoint;
     });
 
-    // in case splitting by mid point fails, just divide the collection into two halves
+#endif // LKRAY_USE_SAH
+
+    // in case splitting method fails, just divide the collection into two halves
     // and continue
     if (split == objIds.begin() || split == objIds.end())
     {
-        LOGD("Split by halves");
+        LOGD("Split point bad - falling back to split by halves!");
         split = objIds.begin();
         std::advance(split, objIds.size() / 2);
     }
-    else
-    {
-        LOGD("Split by midpoint " << midpoint);
-    }
-
 
     return split;
 }
@@ -165,15 +224,17 @@ void BVH<T>::BuildStep(BVHObjIdCollection& objIds, BVHNode *currentNode)
     mNodeCount++;
 
     // initialize bbox
-    currentNode->bBox[AABBPoint::MIN] = lkCommon::Math::Vector4(INFINITY);
-    currentNode->bBox[AABBPoint::MAX] = lkCommon::Math::Vector4(-INFINITY);
-
-    currentNode->bBox[AABBPoint::MIN][3] = 1.0f;
-    currentNode->bBox[AABBPoint::MAX][3] = 1.0f;
+    currentNode->bBox = Geometry::AABB();
 
     // calculate group BBox
     for (auto& o: objIds)
-        UpdateNodeAABB(currentNode->bBox, o);
+    {
+        Geometry::AABB objBox = Ptr<T>(mObjects[o])->GetBBox();
+        objBox[AABBPoint::MIN] += Ptr<T>(mObjects[o])->GetPosition();
+        objBox[AABBPoint::MAX] += Ptr<T>(mObjects[o])->GetPosition();
+
+        currentNode->bBox.Join(objBox);
+    }
 
     // if only two objects, calculate size, set as leaf and return
     if (objIds.size() <= 2)
@@ -194,7 +255,7 @@ void BVH<T>::BuildStep(BVHObjIdCollection& objIds, BVHNode *currentNode)
 
     auto split = FindSplitPoint(objIds, currentNode);
 
-    // build left node
+    // build sub nodes
     BVHObjIdCollection subObjs(objIds.begin(), split);
     if (subObjs.size() > 0)
     {
@@ -228,6 +289,9 @@ template <typename T>
 void BVH<T>::PrintStep(BVHNode* currentNode, uint32_t depth) const
 {
     using AABBPoint = Geometry::AABBPoint;
+
+    if (depth > 3)
+        return;
 
     std::stringstream p;
     for (uint32_t i = 0; i < depth; ++i)
@@ -329,35 +393,35 @@ int32_t BVH<T>::Traverse(const Geometry::Ray& ray,
         if (node->midData.left == nullptr && node->midData.right == nullptr)
         {
             // we are a leaf node, test intersection with both objects
-            bool collided[2] = { false, false };
             struct _res {
+                bool c;
                 int32_t id;
                 float d;
                 lkCommon::Math::Vector4 n;
 
                 _res()
-                    : id(-1)
+                    : c(false)
+                    , id(-1)
                     , d(INFINITY)
                     , n()
                 {
                 }
             } res[2];
 
-            collided[0] =
+            res[0].c =
                 Ptr<const T>(mObjects[node->leafData.obj[0]])->TestCollision(ray, res[0].d, res[0].n);
-            if (collided[0])
+            if (res[0].c)
                 res[0].id = node->leafData.obj[0];
 
             if (node->leafData.obj[1] != UINT32_MAX)
             {
-                collided[1] =
+                res[1].c =
                     Ptr<const T>(mObjects[node->leafData.obj[1]])->TestCollision(ray, res[1].d, res[1].n);
-                if (collided[1])
+                if (res[1].c)
                     res[1].id = node->leafData.obj[1];
             }
 
-
-            if (collided[0] || collided[1])
+            if (res[0].c || res[1].c)
             {
                 if (res[1].d < res[0].d)
                     std::swap(res[0], res[1]);
@@ -374,12 +438,10 @@ int32_t BVH<T>::Traverse(const Geometry::Ray& ray,
         }
 
         // not a leaf node, traverse further
-        if (node->midData.left &&
-            node->midData.left->bBox.TestCollision(ray, rayDirInv, rayDirSign, tmin, tmax))
+        if (node->midData.left->bBox.TestCollision(ray, rayDirInv, rayDirSign, tmin, tmax))
             stack.Emplace(node->midData.left);
 
-        if (node->midData.right &&
-            node->midData.right->bBox.TestCollision(ray, rayDirInv, rayDirSign, tmin, tmax))
+        if (node->midData.right->bBox.TestCollision(ray, rayDirInv, rayDirSign, tmin, tmax))
             stack.Emplace(node->midData.right);
     }
 

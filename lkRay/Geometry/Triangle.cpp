@@ -62,12 +62,6 @@ AABB Triangle::GetBBox()
 {
     AABB result;
 
-    result[AABBPoint::MIN] = lkCommon::Math::Vector4(INFINITY);
-    result[AABBPoint::MAX] = lkCommon::Math::Vector4(-INFINITY);
-
-    result[AABBPoint::MIN][3] = 1.0f;
-    result[AABBPoint::MAX][3] = 1.0f;
-
     auto minLambda = [](float& src, const float& b) -> void
     {
         if (b < src)
@@ -91,7 +85,6 @@ AABB Triangle::GetBBox()
         maxLambda(result[AABBPoint::MAX][0], point[0]);
         maxLambda(result[AABBPoint::MAX][1], point[1]);
         maxLambda(result[AABBPoint::MAX][2], point[2]);
-
     }
 
     return result;

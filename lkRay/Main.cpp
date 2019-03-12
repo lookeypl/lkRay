@@ -31,7 +31,7 @@ const uint32_t WINDOW_WIDTH = 800;
 const uint32_t WINDOW_HEIGHT = 600;
 const uint32_t MAX_RAY_DEPTH_MOVEMENT = 1;
 const uint32_t MAX_RAY_DEPTH_RENDERING = 4;
-const uint32_t DEFAULT_SCENE = 3;
+const uint32_t DEFAULT_SCENE = 2;
 const uint32_t DEFAULT_THREAD_COUNT = 8;
 const float EXPOSURE_DEFAULT = 1.0f;
 const float EXPOSURE_STEP = 0.1f;
@@ -43,10 +43,10 @@ lkCommon::Math::RingAverage<float, 20> gFrameTime;
 const std::array<std::string, 6> SCENE_CONTAINER = {
     "Data/Scenes/balls.json",
     "Data/Scenes/emptyplane.json",
+    "Data/Scenes/bunny.json",
     "Data/Scenes/room.json",
     "Data/Scenes/plane.json",
     "Data/Scenes/mirrors.json",
-    "Data/Scenes/bunny.json",
 };
 
 
@@ -270,6 +270,12 @@ public:
 
 int main(int argc, char* argv[])
 {
+    std::string rootdir;
+#ifdef LKRAY_ROOT_DIR
+    rootdir = LKRAY_ROOT_DIR;
+#endif // LKRAY_ROOT_DIR
+    lkCommon::Utils::Logger::SetRootPathToStrip(rootdir);
+
     if (!lkCommon::System::FS::SetCWD(
             lkCommon::System::FS::JoinPaths(
                 lkCommon::System::FS::GetParentDir(lkCommon::System::FS::GetExecutablePath()),

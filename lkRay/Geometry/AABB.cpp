@@ -8,7 +8,10 @@ namespace lkRay {
 namespace Geometry {
 
 AABB::AABB()
-    : mPoints()
+    : mPoints {
+        lkCommon::Math::Vector4(INFINITY, INFINITY, INFINITY, INFINITY),
+        lkCommon::Math::Vector4(-INFINITY, -INFINITY, -INFINITY, -INFINITY),
+    }
 {
 }
 
@@ -17,19 +20,45 @@ AABB::AABB(const lkCommon::Math::Vector4& min, const lkCommon::Math::Vector4& ma
 {
 }
 
-lkCommon::Math::Vector4& AABB::operator[](const AABBPoint p)
+void AABB::Join(const AABB& other)
 {
-    return mPoints[static_cast<std::underlying_type<AABBPoint>::type>(p)];
+    auto minLambda = [](float& src, const float& b) -> void
+    {
+        if (b < src)
+            src = b;
+    };
+
+    auto maxLambda = [](float& src, const float& b) -> void
+    {
+        if (b > src)
+            src = b;
+    };
+
+    minLambda(mPoints[0][0], other[AABBPoint::MIN][0]);
+    minLambda(mPoints[0][1], other[AABBPoint::MIN][1]);
+    minLambda(mPoints[0][2], other[AABBPoint::MIN][2]);
+
+    maxLambda(mPoints[1][0], other[AABBPoint::MAX][0]);
+    maxLambda(mPoints[1][1], other[AABBPoint::MAX][1]);
+    maxLambda(mPoints[1][2], other[AABBPoint::MAX][2]);
 }
 
-const lkCommon::Math::Vector4& AABB::operator[](const AABBPoint p) const
+lkCommon::Math::Vector4 AABB::Centre() const
 {
-    return mPoints[static_cast<std::underlying_type<AABBPoint>::type>(p)];
+    return (mPoints[0] + mPoints[1]) * 0.5f;
 }
 
-bool AABB::operator== (const AABB& other) const
+float AABB::Surface() const
 {
-    return (mPoints[0] == other.mPoints[0]) && (mPoints[1] == other.mPoints[1]);
+    if (mPoints[1][0] < mPoints[0][0] ||
+        mPoints[1][1] < mPoints[0][1] ||
+        mPoints[1][2] < mPoints[0][2])
+        return 0.0f;
+
+    const float x = mPoints[1][0] - mPoints[0][0];
+    const float y = mPoints[1][1] - mPoints[0][1];
+    const float z = mPoints[1][2] - mPoints[0][2];
+    return 2.0f * ((x * y) + (y * z) + (x * z));
 }
 
 bool AABB::TestCollision(const Geometry::Ray& ray,
