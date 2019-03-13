@@ -97,7 +97,6 @@ BVHObjIdCollection::iterator BVH<T>::FindSplitPoint(BVHObjIdCollection& objIds,
     // find split point
     BVHObjIdCollection::iterator split;
 
-#ifdef LKRAY_USE_SAH
     struct SAHBucket
     {
         uint32_t count;
@@ -117,8 +116,7 @@ BVHObjIdCollection::iterator BVH<T>::FindSplitPoint(BVHObjIdCollection& objIds,
         const Geometry::AABB& objBox = Ptr<T>(mObjects[objIds[i]])->GetBBox();
         const lkCommon::Math::Vector4& pos = Ptr<T>(mObjects[objIds[i]])->GetPosition();
 
-        float offset = objBox.Centre()[longestAxis] + pos[longestAxis];
-        offset -= currentNode->bBox[AABBPoint::MIN][longestAxis];
+        float offset = objBox.Centre()[longestAxis] + pos[longestAxis] - currentNode->bBox[AABBPoint::MIN][longestAxis];
         offset /= nodeSize[longestAxis];
         uint32_t bucket = static_cast<uint32_t>(BUCKET_COUNT * offset);
 
@@ -173,7 +171,7 @@ BVHObjIdCollection::iterator BVH<T>::FindSplitPoint(BVHObjIdCollection& objIds,
         }
     }
 
-    LOGD("For " << objIds.size() << " objects lowest cost is #" << lowestCostId << ": " << lowestCost);
+    LOGD("For " << objIds.size() << " objects lowest cost is bucket #" << lowestCostId << ": " << lowestCost);
 
     // advance split operator by summed count items
     uint32_t toAdvance = 0;
@@ -184,19 +182,8 @@ BVHObjIdCollection::iterator BVH<T>::FindSplitPoint(BVHObjIdCollection& objIds,
 
     split = objIds.begin();
     std::advance(split, toAdvance);
-#else // LKRAY_USE_SAH
-    // TODO use SAH instead of midpoints
-    float midpoint = (currentNode->bBox[AABBPoint::MIN][longestAxis] + currentNode->bBox[AABBPoint::MAX][longestAxis]) / 2.0f;
 
-    // find iterator for split node
-    split = std::find_if(objIds.begin(), objIds.end(),
-    [this, &midpoint, &longestAxis](const uint32_t& objId) {
-        return Ptr<T>(mObjects[objId])->GetPosition()[longestAxis] > midpoint;
-    });
-
-#endif // LKRAY_USE_SAH
-
-    // in case splitting method fails, just divide the collection into two halves
+    // in case SAH method fails, just divide the collection into two halves
     // and continue
     if (split == objIds.begin() || split == objIds.end())
     {

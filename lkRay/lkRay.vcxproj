@@ -59,7 +59,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>PCH.hpp</PrecompiledHeaderFile>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <PreprocessorDefinitions>LKRAY_ROOT_REL_TO_BIN="../../..";LKRAY_ROOT_DIR=R"($(SolutionDir))";LKRAY_USE_BVH;LKRAY_USE_SAH;_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN32;_UNICODE;UNICODE;_DEBUG%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>LKRAY_ROOT_REL_TO_BIN="../../..";LKRAY_ROOT_DIR=R"($(SolutionDir))";_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN32;_UNICODE;UNICODE;_DEBUG%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ShowIncludes>false</ShowIncludes>
     </ClCompile>
     <Link>
@@ -83,7 +83,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>PCH.hpp</PrecompiledHeaderFile>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <PreprocessorDefinitions>LKRAY_ROOT_REL_TO_BIN="../../..";LKRAY_ROOT_DIR=R"($(SolutionDir))";LKRAY_USE_BVH;LKRAY_USE_SAH;_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN32;_UNICODE;UNICODE;NDEBUG%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>LKRAY_ROOT_REL_TO_BIN="../../..";LKRAY_ROOT_DIR=R"($(SolutionDir))";_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN32;_UNICODE;UNICODE;NDEBUG%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>

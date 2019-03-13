@@ -377,27 +377,7 @@ Renderer::RayCollision Scene::TestCollision(const Geometry::Ray& ray, int skipOb
     float colDistance = std::numeric_limits<float>::max();
     lkCommon::Math::Vector4 colNormal;
 
-#ifdef LKRAY_USE_BVH
     hitID = mBVH.Traverse(ray, colDistance, colNormal);
-#else
-    float testDistance = 0.0f;
-    lkCommon::Math::Vector4 testNormal;
-
-    for (size_t i = 0; i < mBVH.GetObjectCount(); ++i)
-    {
-        if (skipObjID == i)
-            continue;
-
-        if (mBVH.GetObject(i)->TestCollision(ray, testDistance, testNormal) &&
-            testDistance < colDistance)
-        {
-            colDistance = testDistance;
-            colNormal = testNormal;
-            hitID = static_cast<int32_t>(i);
-        }
-    }
-#endif
-
     return Renderer::RayCollision(hitID, colDistance, ray.mOrigin + ray.mDirection * colDistance, colNormal);
 }
 
