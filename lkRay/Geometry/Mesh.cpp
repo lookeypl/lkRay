@@ -32,7 +32,7 @@ Mesh::Mesh(const std::string& name)
 {
 }
 
-Mesh::Mesh(const std::string& name, const lkCommon::Math::Vector4& pos, const std::vector<lkCommon::Math::Vector4>& points,
+Mesh::Mesh(const std::string& name, const lkCommon::Math::Vector4& pos, const Vertices& points,
            const std::vector<Triangle>& indices)
     : Primitive(name, pos)
     , mPoints(points)
@@ -54,13 +54,13 @@ void Mesh::CalculateBBox()
 
     for (const auto& p: mPoints)
     {
-        mBBox[AABBPoint::MIN][0] = minAssign(p[0], mBBox[AABBPoint::MIN][0]);
-        mBBox[AABBPoint::MIN][1] = minAssign(p[1], mBBox[AABBPoint::MIN][1]);
-        mBBox[AABBPoint::MIN][2] = minAssign(p[2], mBBox[AABBPoint::MIN][2]);
+        mBBox[AABBPoint::MIN][0] = minAssign(p.p[0], mBBox[AABBPoint::MIN][0]);
+        mBBox[AABBPoint::MIN][1] = minAssign(p.p[1], mBBox[AABBPoint::MIN][1]);
+        mBBox[AABBPoint::MIN][2] = minAssign(p.p[2], mBBox[AABBPoint::MIN][2]);
 
-        mBBox[AABBPoint::MAX][0] = maxAssign(p[0], mBBox[AABBPoint::MAX][0]);
-        mBBox[AABBPoint::MAX][1] = maxAssign(p[1], mBBox[AABBPoint::MAX][1]);
-        mBBox[AABBPoint::MAX][2] = maxAssign(p[2], mBBox[AABBPoint::MAX][2]);
+        mBBox[AABBPoint::MAX][0] = maxAssign(p.p[0], mBBox[AABBPoint::MAX][0]);
+        mBBox[AABBPoint::MAX][1] = maxAssign(p.p[1], mBBox[AABBPoint::MAX][1]);
+        mBBox[AABBPoint::MAX][2] = maxAssign(p.p[2], mBBox[AABBPoint::MAX][2]);
     }
 
     mBBox[AABBPoint::MIN][3] = 1.0f;
@@ -112,11 +112,11 @@ bool Mesh::LoadFromFile(const std::string& objFilePath)
 
     tinyobj::mesh_t& m = shapes[0].mesh;
 
-    lkCommon::Math::Vector4 v;
+    Vertex v;
     std::vector<tinyobj::real_t>& objv = attrib.vertices;
     for (uint32_t i = 0; i < objv.size(); i += 3)
     {
-        v = lkCommon::Math::Vector4(
+        v.p = lkCommon::Math::Vector4(
             objv[i + 0],
             objv[i + 1],
             objv[i + 2],
@@ -129,6 +129,7 @@ bool Mesh::LoadFromFile(const std::string& objFilePath)
     LOGD("     -> OBJ Mesh has " << mPoints.size() << " vertices.");
 
     std::vector<tinyobj::index_t>& obji = m.indices;
+    std::vector<tinyobj::real_t>& objn = attrib.normals;
     for (uint32_t i = 0; i < obji.size(); i += 3)
     {
         mMeshBVH.EmplaceObject(
@@ -137,6 +138,29 @@ bool Mesh::LoadFromFile(const std::string& objFilePath)
             static_cast<uint32_t>(obji[i + 0].vertex_index),
             static_cast<uint32_t>(obji[i + 1].vertex_index),
             static_cast<uint32_t>(obji[i + 2].vertex_index)
+        );
+
+        uint32_t nIdx0 = obji[i + 0].normal_index;
+        uint32_t nIdx1 = obji[i + 1].normal_index;
+        uint32_t nIdx2 = obji[i + 2].normal_index;
+
+        mPoints[obji[i + 0].vertex_index].n = lkCommon::Math::Vector4(
+            objn[3 * nIdx0 + 0],
+            objn[3 * nIdx0 + 1],
+            objn[3 * nIdx0 + 2],
+            0.0f
+        );
+        mPoints[obji[i + 1].vertex_index].n = lkCommon::Math::Vector4(
+            objn[3 * nIdx1 + 0],
+            objn[3 * nIdx1 + 1],
+            objn[3 * nIdx1 + 2],
+            0.0f
+        );
+        mPoints[obji[i + 2].vertex_index].n = lkCommon::Math::Vector4(
+            objn[3 * nIdx2 + 0],
+            objn[3 * nIdx2 + 1],
+            objn[3 * nIdx2 + 2],
+            0.0f
         );
     }
 
@@ -156,7 +180,7 @@ bool Mesh::ReadParametersFromNode(const rapidjson::Value& value, const Scene::Co
         return false;
     }
 
-    lkCommon::Math::Vector4 vertex;
+    Vertex vertex;
     bool pathFound = false;
     bool objLoaded = false;
     bool verticesFound = false;
@@ -209,16 +233,16 @@ bool Mesh::ReadParametersFromNode(const rapidjson::Value& value, const Scene::Co
                     return false;
                 }
 
-                vertex = lkCommon::Math::Vector4();
+                vertex.p = lkCommon::Math::Vector4();
 
                 uint32_t colIndex = 0;
                 for (auto& c: v.GetArray())
                 {
-                    vertex[colIndex] = c.GetFloat();
+                    vertex.p[colIndex] = c.GetFloat();
                     colIndex++;
                 }
 
-                vertex[3] = 1.0f;
+                vertex.p[3] = 1.0f;
 
                 mPoints.push_back(vertex);
             }

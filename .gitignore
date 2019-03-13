@@ -37,3 +37,4 @@ Makefile
 *.vcxproj.user
 *.pyc
 *.VC.db
+log.txt

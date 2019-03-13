@@ -99,6 +99,9 @@
     <ClCompile Include="Geometry\AABB.cpp">
       <Filter>Geometry</Filter>
     </ClCompile>
+    <ClCompile Include="Geometry\Vertex.cpp">
+      <Filter>Geometry</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PCH.hpp" />
@@ -185,6 +188,9 @@
     </ClInclude>
     <ClInclude Include="Scene\BVHImpl.hpp">
       <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Geometry\Vertex.hpp">
+      <Filter>Geometry</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

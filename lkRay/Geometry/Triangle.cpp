@@ -2,20 +2,20 @@
 #include "Triangle.hpp"
 
 #include "lkCommon/Math/Constants.hpp"
+#include "lkCommon/Math/Utilities.hpp"
+
 
 namespace lkRay {
 namespace Geometry {
 
-Triangle::Triangle(const std::vector<lkCommon::Math::Vector4>& pts,
-                   const lkCommon::Math::Vector4& pos)
+Triangle::Triangle(const Vertices& pts, const lkCommon::Math::Vector4& pos)
     : mPointsRef(pts)
     , mPosRef(pos)
     , mPoints{0, 0, 0}
 {
 }
 
-Triangle::Triangle(const std::vector<lkCommon::Math::Vector4>& pts,
-                   const lkCommon::Math::Vector4& pos,
+Triangle::Triangle(const Vertices& pts, const lkCommon::Math::Vector4& pos,
                    uint32_t a, uint32_t b, uint32_t c)
     : mPointsRef(pts)
     , mPosRef(pos)
@@ -26,9 +26,12 @@ Triangle::Triangle(const std::vector<lkCommon::Math::Vector4>& pts,
 bool Triangle::TestCollision(const Ray& ray, float& distance, lkCommon::Math::Vector4& normal) const
 {
     // MT algorithm
-    const lkCommon::Math::Vector4& p0 = mPointsRef[mPoints[0]];
-    const lkCommon::Math::Vector4& p1 = mPointsRef[mPoints[1]];
-    const lkCommon::Math::Vector4& p2 = mPointsRef[mPoints[2]];
+    const Vertex& v0 = mPointsRef[mPoints[0]];
+    const Vertex& v1 = mPointsRef[mPoints[1]];
+    const Vertex& v2 = mPointsRef[mPoints[2]];
+    const lkCommon::Math::Vector4& p0 = v0.p;
+    const lkCommon::Math::Vector4& p1 = v1.p;
+    const lkCommon::Math::Vector4& p2 = v2.p;
 
     lkCommon::Math::Vector4 E1 = p2 - p0;
     lkCommon::Math::Vector4 E2 = p1 - p0;
@@ -54,11 +57,22 @@ bool Triangle::TestCollision(const Ray& ray, float& distance, lkCommon::Math::Ve
         return false;
 
     distance = d;
-    normal = E2.Cross(E1).Normalize();
+
+    if (v0.n == lkCommon::Math::Vector4())
+    {
+        // do per face shading, no info about normals
+        normal = E2.Cross(E1).Normalize();
+    }
+    else
+    {
+        // interpolate normals, assuming smooth shading
+        normal = v0.n * (1.0f - u - v) + v1.n * v + v2.n * u;
+    }
+
     return true;
 }
 
-AABB Triangle::GetBBox()
+AABB Triangle::GetBBox() const
 {
     AABB result;
 
@@ -76,7 +90,7 @@ AABB Triangle::GetBBox()
 
     for (uint32_t i = 0; i < 3; ++i)
     {
-        const lkCommon::Math::Vector4& point = mPointsRef[mPoints[i]];
+        const lkCommon::Math::Vector4& point = mPointsRef[mPoints[i]].p;
 
         minLambda(result[AABBPoint::MIN][0], point[0]);
         minLambda(result[AABBPoint::MIN][1], point[1]);
