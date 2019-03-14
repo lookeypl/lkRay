@@ -12,10 +12,12 @@ Features
 
 * Multithreaded rendering of scenes using path tracing
 * Scenes and meshes accelerated using Bounding Volume Hierarchy
+  * BVH split using SAH heuristic
 * Support for primitives:
   * Sphere
   * Plane
-  * Mesh (a set of triangles)
+  * Mesh
+  * OBJ Mesh
 * Support for light sources:
   * Point
   * Spot
@@ -24,7 +26,7 @@ Features
   * Matte material
   * Mirror material
 * Scene loading using JSON files
-* Post processing & gamma correction
+* Post processing with gamma correction & exposure adjustments
 
 Scenes
 ------
@@ -33,6 +35,7 @@ Following scenes are available in `Data/Scenes` folder:
 
 1. `balls.json` - Basic empty scene with 8 spheres.
 1. `emptyplane.json` - Scene itself contains only a plane and a directional light. However, in Main.cpp code, scene is filled with 1000 random spheres used for Scene BVH testing.
+1. `bunny.json` - Scene loading a bunny.obj file, used for testing Mesh BVH and OBJ loading.
 1. `room.json` - Closed room with some spheres and a spot light.
 1. `plane.json` - Open space with walls, spheres and a directional light.
 1. `mirrors.json` - "Hall of mirrors" effect scene.
@@ -48,7 +51,7 @@ Control list is as follows:
 * `Z/X` - Decrease/increase camera exposure
 * `C/V` - Decrease/increase ray bounce limit
 * `P` - Print current camera info on console
-* `1-5` - Change current scene
+* `1-6` - Change current scene
 
 Camera in lkRay works in two modes.
 
