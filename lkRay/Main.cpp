@@ -31,8 +31,8 @@ const uint32_t WINDOW_WIDTH = 800;
 const uint32_t WINDOW_HEIGHT = 600;
 const uint32_t MAX_RAY_DEPTH_MOVEMENT = 1;
 const uint32_t MAX_RAY_DEPTH_RENDERING = 4;
-const uint32_t DEFAULT_SCENE = 2;
-const uint32_t DEFAULT_THREAD_COUNT = 8;
+const int32_t DEFAULT_SCENE = 2;
+const int32_t DEFAULT_THREAD_COUNT = static_cast<int32_t>(lkCommon::System::Info::GetCPUCount());
 const float EXPOSURE_DEFAULT = 1.0f;
 const float EXPOSURE_STEP = 0.1f;
 
@@ -177,17 +177,6 @@ protected:
         mCamera.SetAspectRatio(static_cast<float>(width) / static_cast<float>(height));
     }
 
-    bool OnOpen() override
-    {
-        if (!LoadScene(mCurrentScene))
-        {
-            LOGE("Failed to load scene #" << mCurrentScene);
-            return false;
-        }
-
-        return true;
-    }
-
 public:
     lkRayWindow(Renderer::Renderer& renderer, Scene::Camera& camera)
         : mRenderer(renderer)
@@ -291,6 +280,7 @@ int main(int argc, char* argv[])
     int32_t threads = static_cast<int32_t>(lkCommon::System::Info::GetCPUCount());
 
     lkCommon::Utils::ArgParser args;
+    args.Add("s,scene", DEFAULT_SCENE, true, "Number of scene to load");
     args.Add("t,threads", threads, true, "Amount of threads to render at. Defaults to logical CPU count in the system.");
     if (!args.Parse(argc, argv))
     {
@@ -325,6 +315,18 @@ int main(int argc, char* argv[])
     if (!gWindow.Open(300, 300, WINDOW_WIDTH, WINDOW_HEIGHT, "lkRay"))
     {
         LOGE("Failed to open window");
+        return -1;
+    }
+
+    int32_t sceneToLoad = static_cast<int32_t>(DEFAULT_SCENE);
+    if (args.GetValue('s', sceneToLoad))
+    {
+        LOGI("User requested scene " << sceneToLoad);
+    }
+
+    if (!gWindow.LoadScene(static_cast<uint32_t>(sceneToLoad)))
+    {
+        LOGE("Failed to load scene #" << DEFAULT_SCENE);
         return -1;
     }
 
