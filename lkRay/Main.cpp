@@ -277,11 +277,14 @@ int main(int argc, char* argv[])
         return -1;
     }
 
-    int32_t threads = static_cast<int32_t>(lkCommon::System::Info::GetCPUCount());
+    int32_t scene = 0;
+    int32_t threads = 0;
 
     lkCommon::Utils::ArgParser args;
-    args.Add("s,scene", DEFAULT_SCENE, true, "Number of scene to load");
-    args.Add("t,threads", threads, true, "Amount of threads to render at. Defaults to logical CPU count in the system.");
+    args.Add("s,scene", DEFAULT_SCENE, true,
+             "Scene ID to load.");
+    args.Add("t,threads", DEFAULT_THREAD_COUNT, true,
+             "Amount of threads to render at. Defaults to logical CPU count in the system.");
     if (!args.Parse(argc, argv))
     {
         LOGE("Failed to parse args.");
@@ -295,7 +298,8 @@ int main(int argc, char* argv[])
         return -1;
     }
 
-    Renderer::Renderer renderer(WINDOW_WIDTH, WINDOW_HEIGHT, MAX_RAY_DEPTH_RENDERING, static_cast<uint32_t>(threads));
+    Renderer::Renderer renderer(WINDOW_WIDTH, WINDOW_HEIGHT,
+                                MAX_RAY_DEPTH_RENDERING, threads);
     renderer.SetExposure(EXPOSURE_DEFAULT);
 
     Scene::Camera camera(
@@ -318,31 +322,25 @@ int main(int argc, char* argv[])
         return -1;
     }
 
-    int32_t sceneToLoad = static_cast<int32_t>(DEFAULT_SCENE);
-    if (args.GetValue('s', sceneToLoad))
+    args.GetValue('s', scene);
+    if (!gWindow.LoadScene(static_cast<uint32_t>(scene)))
     {
-        LOGI("User requested scene " << sceneToLoad);
-    }
-
-    if (!gWindow.LoadScene(static_cast<uint32_t>(sceneToLoad)))
-    {
-        LOGE("Failed to load scene #" << DEFAULT_SCENE);
+        LOGE("Failed to load scene #" << scene);
         return -1;
     }
 
     lkCommon::Utils::Timer t;
     t.Start();
+    float time = 0.0f;
     while (gWindow.IsOpened())
     {
-        float time = static_cast<float>(t.Stop());
-        t.Start();
-
-        if (time > 0.001f)
-            gFrameTime.Add(time);
-
         gWindow.Update(time);
         renderer.Draw(gWindow.GetScene(), camera);
         gWindow.DisplayImage(0, 0, renderer.GetOutput().GetWindowImage());
+
+        time = static_cast<float>(t.Stop());
+        t.Start();
+        gFrameTime.Add(time);
     }
 
     gWindow.Close();
