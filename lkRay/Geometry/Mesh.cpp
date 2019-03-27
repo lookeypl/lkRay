@@ -9,19 +9,6 @@
 #include <tiny_obj_loader.h>
 
 
-namespace {
-
-bool TestTriCollision(uint32_t objID,
-                      const lkRay::Scene::Containers::Container<lkRay::Scene::Containers::Ptr<lkRay::Geometry::Triangle>>& objs,
-                      const lkRay::Geometry::Ray& ray,
-                      float& distance,
-                      lkCommon::Math::Vector4& normal)
-{
-    return objs[objID]->TestCollision(ray, distance, normal);
-}
-
-} // namespace
-
 namespace lkRay {
 namespace Geometry {
 
@@ -67,10 +54,13 @@ void Mesh::CalculateBBox()
     mBBox[AABBPoint::MAX][3] = 1.0f;
 }
 
-bool Mesh::TestCollision(const Ray& ray, float& distance, lkCommon::Math::Vector4& normal) const
+bool Mesh::TestCollision(const Ray& ray, float& distance, lkCommon::Math::Vector4& normal, UV& uv) const
 {
-    distance = INFINITY;
-    return (mMeshBVH.Traverse(ray, distance, normal) != -1);
+    Renderer::RayCollision collision = mMeshBVH.Traverse(ray);
+    distance = collision.mDistance;
+    normal = collision.mNormal;
+    uv = collision.mUV;
+    return (collision.mHitID != -1);
 }
 
 Types::Primitive Mesh::GetType() const
@@ -144,6 +134,9 @@ bool Mesh::LoadFromFile(const std::string& objFilePath)
         uint32_t nIdx1 = obji[i + 1].normal_index;
         uint32_t nIdx2 = obji[i + 2].normal_index;
 
+        // TODO it's a rather painful hack - assumes that shading is always
+        //      per vertex, which causes some values to be overriden multiple
+        //      times. Consider doing this differently in the future.
         mPoints[obji[i + 0].vertex_index].n = lkCommon::Math::Vector4(
             objn[3 * nIdx0 + 0],
             objn[3 * nIdx0 + 1],

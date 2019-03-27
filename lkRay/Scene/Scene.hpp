@@ -45,7 +45,7 @@ public:
     void Destroy();
 
     lkCommon::Utils::PixelFloat4 SampleLights(const Renderer::RayCollision& collision) const;
-    Renderer::RayCollision TestCollision(const Geometry::Ray& ray, int skipObjID) const;
+    Renderer::RayCollision TestCollision(const Geometry::Ray& ray) const;
 
     Containers::Ptr<Geometry::Primitive> CreatePrimitive(const std::string& name, const Types::Primitive& type);
     Containers::Ptr<Material::Material> CreateMaterial(const std::string& name, const Types::Material& type);

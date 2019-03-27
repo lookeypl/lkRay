@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Geometry/AABB.hpp"
+#include "Renderer/RayCollision.hpp"
 
 #include "Containers.hpp"
 
@@ -62,7 +63,7 @@ public:
 
     void Build();
     void Clean();
-    int32_t Traverse(const Geometry::Ray& ray, float& distance, lkCommon::Math::Vector4& normal) const;
+    Renderer::RayCollision Traverse(const Geometry::Ray& ray) const;
     void Print() const;
 
     LKCOMMON_INLINE void PushObject(T& ptr)
@@ -76,7 +77,7 @@ public:
         mObjects.emplace_back(std::forward<Ts>(args)...);
     }
 
-    LKCOMMON_INLINE const Containers::Primitive& GetPrimitives() const
+    LKCOMMON_INLINE const Containers::Container<T>& GetPrimitives() const
     {
         return mObjects;
     }

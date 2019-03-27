@@ -58,6 +58,10 @@ const std::string MESH_ATTRIBUTE_PATH_NODE_NAME = "path";
 const std::string MESH_ATTRIBUTE_VERTICES_NODE_NAME = "vertices";
 const std::string MESH_ATTRIBUTE_INDICES_NODE_NAME = "indices";
 
+// materials
+const std::string MATTE_ATTRIBUTE_COLOR_NODE_NAME = "color";
+const std::string MATTE_ATTRIBUTE_PATH_NODE_NAME = "path";
+
 // camera
 const std::string CAMERA_ATTRIBUTE_POSITION_NODE_NAME = "position";
 const std::string CAMERA_ATTRIBUTE_ROTATION_NODE_NAME = "rotation";

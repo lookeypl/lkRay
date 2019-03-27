@@ -342,13 +342,11 @@ void BVH<T>::Clean()
 }
 
 template <typename T>
-int32_t BVH<T>::Traverse(const Geometry::Ray& ray,
-                         float& distance,
-                         lkCommon::Math::Vector4& normal) const
+Renderer::RayCollision BVH<T>::Traverse(const Geometry::Ray& ray) const
 {
     BVHNode* node = nullptr;
     float tmin = 0.0f, tmax = 0.0f;
-    int32_t objIDResult = -1;
+    Renderer::RayCollision result;
 
     lkCommon::Math::Vector4 rayDirInv(
         1.0f / ray.mDirection[0],
@@ -362,10 +360,10 @@ int32_t BVH<T>::Traverse(const Geometry::Ray& ray,
         (rayDirInv[2] < 0.0f)
     };
 
-    distance = INFINITY;
+    result.mDistance = INFINITY;
 
     if (!mRootNode->bBox.TestCollision(ray, rayDirInv, rayDirSign, tmin, tmax))
-        return objIDResult;
+        return result;
 
     LKCOMMON_ASSERT(mNodeCount <= STACK_MAX_SIZE, "STACK NOT BIG ENOUGH");
     lkCommon::Utils::StaticStack<BVHNode*, STACK_MAX_SIZE> stack;
@@ -385,25 +383,27 @@ int32_t BVH<T>::Traverse(const Geometry::Ray& ray,
                 int32_t id;
                 float d;
                 lkCommon::Math::Vector4 n;
+                Geometry::UV uv;
 
                 _res()
                     : c(false)
                     , id(-1)
                     , d(INFINITY)
                     , n()
+                    , uv()
                 {
                 }
             } res[2];
 
             res[0].c =
-                Ptr<const T>(mObjects[node->leafData.obj[0]])->TestCollision(ray, res[0].d, res[0].n);
+                Ptr<const T>(mObjects[node->leafData.obj[0]])->TestCollision(ray, res[0].d, res[0].n, res[0].uv);
             if (res[0].c)
                 res[0].id = node->leafData.obj[0];
 
             if (node->leafData.obj[1] != UINT32_MAX)
             {
                 res[1].c =
-                    Ptr<const T>(mObjects[node->leafData.obj[1]])->TestCollision(ray, res[1].d, res[1].n);
+                    Ptr<const T>(mObjects[node->leafData.obj[1]])->TestCollision(ray, res[1].d, res[1].n, res[1].uv);
                 if (res[1].c)
                     res[1].id = node->leafData.obj[1];
             }
@@ -413,11 +413,12 @@ int32_t BVH<T>::Traverse(const Geometry::Ray& ray,
                 if (res[1].d < res[0].d)
                     std::swap(res[0], res[1]);
 
-                if (res[0].d < distance)
+                if (res[0].d < result.mDistance)
                 {
-                    objIDResult = res[0].id;
-                    distance = res[0].d;
-                    normal = res[0].n;
+                    result.mHitID = res[0].id;
+                    result.mDistance = res[0].d;
+                    result.mNormal = res[0].n;
+                    result.mUV = res[0].uv;
                 }
             }
 
@@ -432,7 +433,8 @@ int32_t BVH<T>::Traverse(const Geometry::Ray& ray,
             stack.Emplace(node->midData.right);
     }
 
-    return objIDResult;
+    result.mPoint = ray.mOrigin + ray.mDirection * result.mDistance;
+    return result;
 }
 
 template <typename T>

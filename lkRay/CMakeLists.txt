@@ -15,6 +15,8 @@ SET(LKRAY_SRCS PCH.cpp
                Geometry/Ray.cpp
                Geometry/Sphere.cpp
                Geometry/Triangle.cpp
+               Geometry/UV.cpp
+               Geometry/Vertex.cpp
                Light/DirLight.cpp
                Light/Light.cpp
                Light/PointLight.cpp
@@ -44,6 +46,8 @@ SET(LKRAY_HDRS PCH.hpp
                Geometry/Ray.hpp
                Geometry/Sphere.hpp
                Geometry/Triangle.hpp
+               Geometry/UV.hpp
+               Geometry/Vertex.hpp
                Light/DirLight.hpp
                Light/Light.hpp
                Light/PointLight.hpp
@@ -78,6 +82,11 @@ TARGET_COMPILE_DEFINITIONS(${LKRAY_TARGET}
                            PRIVATE "-DLKRAY_ROOT_REL_TO_BIN=\"../..\""
                            PRIVATE "-DLKRAY_ROOT_DIR=R\"(${LKRAY_ROOT_DIRECTORY}/)\""
                            )
+
+TARGET_COMPILE_OPTIONS(${LKRAY_TARGET}
+                       PRIVATE "-std=c++1y"
+                       PRIVATE "-msse4.1"
+                       )
 
 TARGET_LINK_LIBRARIES(${LKRAY_TARGET} lkCommon ${LKRAY_PKG_DEPS_LIBRARIES})
 

@@ -31,10 +31,11 @@ const uint32_t WINDOW_WIDTH = 800;
 const uint32_t WINDOW_HEIGHT = 600;
 const uint32_t MAX_RAY_DEPTH_MOVEMENT = 1;
 const uint32_t MAX_RAY_DEPTH_RENDERING = 4;
-const int32_t DEFAULT_SCENE = 2;
+const int32_t DEFAULT_SCENE = 0;
 const int32_t DEFAULT_THREAD_COUNT = static_cast<int32_t>(lkCommon::System::Info::GetCPUCount());
 const float EXPOSURE_DEFAULT = 1.0f;
 const float EXPOSURE_STEP = 0.1f;
+const float ADVERT_PERIOD = 5.0f;
 
 using namespace lkRay;
 
@@ -58,6 +59,7 @@ class lkRayWindow: public lkCommon::System::Window
     uint32_t mCurrentScene;
     uint32_t mRayDepthRendering;
     Scene::Scene mScene;
+    float mAdvertTimer;
 
 protected:
     void OnKeyDown(const lkCommon::System::KeyCode key) override
@@ -147,6 +149,21 @@ protected:
 
             mCamera.Update();
         }
+
+        mAdvertTimer += deltaTime;
+        if (mAdvertTimer > ADVERT_PERIOD)
+        {
+            LOGW(' ');
+            LOGW("This is a free version of lkRay. To turn off adverts, please PayPal 10€ to lkostyra11@gmail.com");
+            LOGW(' ');
+            LOGW("!!! ADVERTISEMENT !!!");
+            LOGW("Do you know that with Amazon Prime you also get Twitch Prime and a free subsctiption to any channel on Twitch?");
+            LOGW("You can use it to, for example, support the best speedrunner Linkus7 by subscribing to him for free!");
+            LOGW("  https://twitch.tv/linkus7");
+            LOGW(' ');
+
+            mAdvertTimer -= ADVERT_PERIOD;
+        }
     }
 
     void OnMouseMove(const uint32_t x, const uint32_t y, const int32_t deltaX, const int32_t deltaY) override
@@ -185,6 +202,7 @@ public:
         , mCurrentScene(DEFAULT_SCENE)
         , mRayDepthRendering(MAX_RAY_DEPTH_RENDERING)
         , mScene()
+        , mAdvertTimer(0.0f)
     {
     }
 

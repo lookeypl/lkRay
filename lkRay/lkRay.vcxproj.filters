@@ -102,6 +102,9 @@
     <ClCompile Include="Geometry\Vertex.cpp">
       <Filter>Geometry</Filter>
     </ClCompile>
+    <ClCompile Include="Geometry\UV.cpp">
+      <Filter>Geometry</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PCH.hpp" />
@@ -190,6 +193,9 @@
       <Filter>Scene</Filter>
     </ClInclude>
     <ClInclude Include="Geometry\Vertex.hpp">
+      <Filter>Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Geometry\UV.hpp">
       <Filter>Geometry</Filter>
     </ClInclude>
   </ItemGroup>

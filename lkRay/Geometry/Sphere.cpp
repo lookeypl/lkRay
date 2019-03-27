@@ -31,7 +31,7 @@ void Sphere::CalculateBBox()
     mBBox[AABBPoint::MAX] = lkCommon::Math::Vector4(mRadius, mRadius, mRadius, 1.0f);
 }
 
-bool Sphere::TestCollision(const Ray& ray, float& distance, lkCommon::Math::Vector4& normal) const
+bool Sphere::TestCollision(const Ray& ray, float& distance, lkCommon::Math::Vector4& normal, UV& uv) const
 {
     const lkCommon::Math::Vector4 L = mPosition - ray.mOrigin;
     const float midPoint = L.Dot(ray.mDirection);
@@ -56,6 +56,8 @@ bool Sphere::TestCollision(const Ray& ray, float& distance, lkCommon::Math::Vect
 
     const lkCommon::Math::Vector4 collisionPoint = ray.mOrigin + ray.mDirection * distance;
     normal = (collisionPoint - mPosition).Normalize();
+    uv.u = (1.0f + atan2f(normal[2], normal[0]) / LKCOMMON_PIF) * 0.5f;
+    uv.v = acosf(normal[1]) / LKCOMMON_PIF;
 
     return true;
 }

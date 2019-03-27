@@ -21,7 +21,7 @@ public:
     Plane(const std::string& name, const lkCommon::Math::Vector4& normal, float distance);
     ~Plane() = default;
 
-    bool TestCollision(const Ray& ray, float& distance, lkCommon::Math::Vector4& normal) const override;
+    bool TestCollision(const Ray& ray, float& distance, lkCommon::Math::Vector4& normal, UV& uv) const override;
     void CalculateBBox() override;
     bool ReadParametersFromNode(const rapidjson::Value& value, const Scene::Containers::Material& materials) override;
     Types::Primitive GetType() const override;

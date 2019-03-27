@@ -4,6 +4,7 @@
 
 #include "Ray.hpp"
 #include "AABB.hpp"
+#include "UV.hpp"
 #include "Vertex.hpp"
 
 #include <memory>
@@ -25,7 +26,7 @@ public:
              uint32_t a, uint32_t b, uint32_t c);
     ~Triangle() = default;
 
-    bool TestCollision(const Ray& ray, float& distance, lkCommon::Math::Vector4& normal) const;
+    bool TestCollision(const Ray& ray, float& distance, lkCommon::Math::Vector4& normal, UV& uv) const;
     AABB GetBBox() const;
 
     LKCOMMON_INLINE uint32_t& operator[](const size_t i)

@@ -59,6 +59,10 @@ extern const std::string MESH_ATTRIBUTE_PATH_NODE_NAME;
 extern const std::string MESH_ATTRIBUTE_VERTICES_NODE_NAME;
 extern const std::string MESH_ATTRIBUTE_INDICES_NODE_NAME;
 
+// materials
+extern const std::string MATTE_ATTRIBUTE_COLOR_NODE_NAME;
+extern const std::string MATTE_ATTRIBUTE_PATH_NODE_NAME;
+
 // camera
 extern const std::string CAMERA_ATTRIBUTE_POSITION_NODE_NAME;
 extern const std::string CAMERA_ATTRIBUTE_ROTATION_NODE_NAME;

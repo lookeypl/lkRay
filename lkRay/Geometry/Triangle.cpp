@@ -23,7 +23,7 @@ Triangle::Triangle(const Vertices& pts, const lkCommon::Math::Vector4& pos,
 {
 }
 
-bool Triangle::TestCollision(const Ray& ray, float& distance, lkCommon::Math::Vector4& normal) const
+bool Triangle::TestCollision(const Ray& ray, float& distance, lkCommon::Math::Vector4& normal, UV& uv) const
 {
     // MT algorithm
     const Vertex& v0 = mPointsRef[mPoints[0]];
@@ -69,6 +69,8 @@ bool Triangle::TestCollision(const Ray& ray, float& distance, lkCommon::Math::Ve
         normal = v0.n * (1.0f - u - v) + v1.n * v + v2.n * u;
     }
 
+    uv.u = u;
+    uv.v = v;
     return true;
 }
 

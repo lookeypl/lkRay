@@ -1,5 +1,6 @@
 {
     "name": "Balls",
+    "ambient": [0.3, 0.3, 0.3],
     "camera":
     {
         "position": [-0.6, 1.0, -1.2],
@@ -83,7 +84,7 @@
         "white":
         {
             "type": "matte",
-            "color": [0.9, 0.9, 0.9]
+            "path": "TODO"
         },
         "red":
         {

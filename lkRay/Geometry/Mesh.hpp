@@ -23,7 +23,7 @@ public:
          const std::vector<Triangle>& indices);
     ~Mesh() = default;
 
-    bool TestCollision(const Ray& ray, float& distance, lkCommon::Math::Vector4& normal) const override;
+    bool TestCollision(const Ray& ray, float& distance, lkCommon::Math::Vector4& normal, UV& uv) const override;
     void CalculateBBox() override;
     bool LoadFromFile(const std::string& objFilePath);
     bool ReadParametersFromNode(const rapidjson::Value& value, const Scene::Containers::Material& materials) override;

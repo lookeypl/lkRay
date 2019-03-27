@@ -361,7 +361,7 @@ lkCommon::Utils::PixelFloat4 Scene::SampleLights(const Renderer::RayCollision& c
     {
         lkCommon::Math::Vector4 lightDir = l->GetToLightDir(collision);
         Geometry::Ray shadowRay(collision.mPoint, lightDir.Normalize());
-        Renderer::RayCollision shadowCollision = TestCollision(shadowRay, -1);
+        Renderer::RayCollision shadowCollision = TestCollision(shadowRay);
         // if shadow ray did not hit anything, or it hit an object which is further from light
         if ((shadowCollision.mHitID == -1) || (shadowCollision.mDistance > lightDir.Length()))
             result += l->Sample(collision);
@@ -371,14 +371,9 @@ lkCommon::Utils::PixelFloat4 Scene::SampleLights(const Renderer::RayCollision& c
 }
 
 // -1 if no object hit, otherwise index of hit primitive
-Renderer::RayCollision Scene::TestCollision(const Geometry::Ray& ray, int skipObjID) const
+Renderer::RayCollision Scene::TestCollision(const Geometry::Ray& ray) const
 {
-    int32_t hitID = -1;
-    float colDistance = std::numeric_limits<float>::max();
-    lkCommon::Math::Vector4 colNormal;
-
-    hitID = mBVH.Traverse(ray, colDistance, colNormal);
-    return Renderer::RayCollision(hitID, colDistance, ray.mOrigin + ray.mDirection * colDistance, colNormal);
+    return mBVH.Traverse(ray);
 }
 
 Containers::Ptr<Geometry::Primitive> Scene::CreatePrimitive(const std::string& name, const Types::Primitive& type)

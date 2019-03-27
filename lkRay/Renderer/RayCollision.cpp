@@ -12,16 +12,19 @@ RayCollision::RayCollision()
     , mDistance(0.0f)
     , mPoint()
     , mNormal()
+    , mUV()
     , mSurfaceDistribution(nullptr)
     , mAllocator(nullptr)
 {
 }
 
-RayCollision::RayCollision(int hitID, float distance, const lkCommon::Math::Vector4& point, const lkCommon::Math::Vector4& normal)
+RayCollision::RayCollision(int hitID, float distance, const lkCommon::Math::Vector4& point,
+                           const lkCommon::Math::Vector4& normal, const Geometry::UV& uv)
     : mHitID(hitID)
     , mDistance(distance)
     , mPoint(point)
     , mNormal(normal)
+    , mUV(uv)
     , mSurfaceDistribution(nullptr)
     , mAllocator(nullptr)
 {

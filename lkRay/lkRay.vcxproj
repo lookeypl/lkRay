@@ -116,6 +116,7 @@
     <ClCompile Include="Geometry\Ray.cpp" />
     <ClCompile Include="Geometry\Sphere.cpp" />
     <ClCompile Include="Geometry\Triangle.cpp" />
+    <ClCompile Include="Geometry\UV.cpp" />
     <ClCompile Include="Geometry\Vertex.cpp" />
     <ClCompile Include="Light\DirLight.cpp" />
     <ClCompile Include="Light\Light.cpp" />
@@ -155,6 +156,7 @@
     <ClInclude Include="Geometry\Ray.hpp" />
     <ClInclude Include="Geometry\Sphere.hpp" />
     <ClInclude Include="Geometry\Triangle.hpp" />
+    <ClInclude Include="Geometry\UV.hpp" />
     <ClInclude Include="Geometry\Vertex.hpp" />
     <ClInclude Include="Light\DirLight.hpp" />
     <ClInclude Include="Light\Light.hpp" />

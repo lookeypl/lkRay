@@ -4,6 +4,7 @@
 #include <lkCommon/Utils/ArenaAllocator.hpp>
 
 #include "Prerequisites.hpp"
+#include "Geometry/UV.hpp"
 
 
 namespace lkRay {
@@ -17,6 +18,7 @@ public:
     float mDistance;
     lkCommon::Math::Vector4 mPoint;
     lkCommon::Math::Vector4 mNormal;
+    Geometry::UV mUV;
 
     // to be allocated at a later point
     lkCommon::Utils::ArenaAllocator* mAllocator;
@@ -24,7 +26,8 @@ public:
 
 
     RayCollision();
-    RayCollision(int hitID, float distance, const lkCommon::Math::Vector4& point, const lkCommon::Math::Vector4& normal);
+    RayCollision(int hitID, float distance, const lkCommon::Math::Vector4& point,
+                 const lkCommon::Math::Vector4& normal, const Geometry::UV& uv);
     ~RayCollision();
 };
 
