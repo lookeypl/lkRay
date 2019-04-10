@@ -35,8 +35,10 @@ if NOT "%1" == "" (
     if "%1" == "Rebuild" (
         set target=":Rebuild"
         set rebuild=1
-    ) else if "%1" == "Debug"  (
+    ) else if "%1" == "Debug" (
         set config=Debug
+    ) else if "%1" == "Clean" (
+        set target=":Clean"
     )
 
     shift
