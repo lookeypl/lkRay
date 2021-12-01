@@ -3,7 +3,7 @@
 #include <lkCommon/Math/Vector4.hpp>
 #include <lkCommon/Utils/Image.hpp>
 #include <lkCommon/Utils/ThreadPool.hpp>
-#include <lkCommon/Utils/ArenaAllocator.hpp>
+#include <lkCommon/Allocators/ArenaAllocator.hpp>
 
 #include "Scene/Scene.hpp"
 #include "Scene/Camera.hpp"

@@ -2,7 +2,7 @@
 
 #include <lkCommon/lkCommon.hpp>
 #include <lkCommon/Utils/Pixel.hpp>
-#include <lkCommon/Utils/ArenaAllocator.hpp>
+#include <lkCommon/Allocators/ArenaAllocator.hpp>
 
 #include "Renderer/RayCollision.hpp"
 #include "Distribution/Function.hpp"

@@ -34,7 +34,8 @@ void Matte::SetColor(const lkCommon::Utils::PixelFloat4& color)
 
 void Matte::PopulateDistributionFunctions(Renderer::RayCollision& collision)
 {
-    collision.mSurfaceDistribution = new (*collision.mAllocator) Renderer::SurfaceDistribution(collision.mAllocator);
+    collision.mSurfaceDistribution =
+        new (*collision.mAllocator) Renderer::SurfaceDistribution(collision.mAllocator);
 
     collision.mSurfaceDistribution->AddDistribution(
         new (*collision.mAllocator) Distribution::Lambertian(
@@ -101,7 +102,7 @@ bool Matte::ReadParametersFromNode(const rapidjson::Value& value)
                 colIndex++;
             }
 
-            LOGD("     -> Matte material color " << mColor);
+            LOGD("     -> Matte material color " << color);
 
             SetColor(color);
             return true;

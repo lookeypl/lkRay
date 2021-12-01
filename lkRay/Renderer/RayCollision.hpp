@@ -1,7 +1,8 @@
 #pragma once
 
 #include <lkCommon/Math/Vector4.hpp>
-#include <lkCommon/Utils/ArenaAllocator.hpp>
+#include <lkCommon/Allocators/Memory.hpp>
+#include <lkCommon/Allocators/ArenaAllocator.hpp>
 
 #include "Prerequisites.hpp"
 #include "Geometry/UV.hpp"
@@ -21,7 +22,7 @@ public:
     Geometry::UV mUV;
 
     // to be allocated at a later point
-    lkCommon::Utils::ArenaAllocator* mAllocator;
+    lkCommon::Allocators::Memory<lkCommon::Allocators::ArenaAllocator>* mAllocator;
     Renderer::SurfaceDistribution* mSurfaceDistribution;
 
 

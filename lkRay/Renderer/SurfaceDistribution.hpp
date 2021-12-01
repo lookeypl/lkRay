@@ -2,8 +2,8 @@
 
 #include <lkCommon/Utils/Pixel.hpp>
 #include <lkCommon/Math/Vector4.hpp>
-#include <lkCommon/Utils/ArenaAllocator.hpp>
-#include <lkCommon/Utils/ArenaObject.hpp>
+#include <lkCommon/Allocators/MemoryObject.hpp>
+#include <lkCommon/Allocators/ArenaAllocator.hpp>
 
 #include "Distribution/Function.hpp"
 #include "Types.hpp"
@@ -16,18 +16,17 @@
 
 #define FUNCTION_MAX_COUNT 8
 
-
 namespace lkRay {
 namespace Renderer {
 
-class SurfaceDistribution: public lkCommon::Utils::ArenaObject
+class SurfaceDistribution: public lkCommon::Allocators::MemoryObject<lkCommon::Allocators::ArenaAllocator>
 {
-    lkCommon::Utils::ArenaAllocator* mDistributionAllocator;
+    lkCommon::Allocators::Memory<lkCommon::Allocators::ArenaAllocator>* mDistributionAllocator;
     Distribution::Function* mDistributions[FUNCTION_MAX_COUNT];
     uint32_t mDistributionCount;
 
 public:
-    SurfaceDistribution(lkCommon::Utils::ArenaAllocator* allocator);
+    SurfaceDistribution(lkCommon::Allocators::Memory<lkCommon::Allocators::ArenaAllocator>* allocator);
     ~SurfaceDistribution();
 
     // Returns contribution of surface distribution functions for given collision point, as well as direction of reflected ray.

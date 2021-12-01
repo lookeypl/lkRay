@@ -187,7 +187,7 @@ void Renderer::Draw(const Scene::Scene& scene, const Scene::Camera& camera)
 
     for (auto& td: mThreadData)
     {
-        td.allocator.ClearUnusedChunks();
+        td.allocator.CollectGarbage();
     }
 }
 

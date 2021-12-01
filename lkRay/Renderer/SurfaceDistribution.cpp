@@ -5,7 +5,7 @@
 namespace lkRay {
 namespace Renderer {
 
-SurfaceDistribution::SurfaceDistribution(lkCommon::Utils::ArenaAllocator* allocator)
+SurfaceDistribution::SurfaceDistribution(lkCommon::Allocators::Memory<lkCommon::Allocators::ArenaAllocator>* allocator)
     : mDistributionAllocator(allocator)
     , mDistributions{nullptr,}
     , mDistributionCount(0)

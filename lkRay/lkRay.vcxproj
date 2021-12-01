@@ -62,7 +62,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)lkRay\;$(SolutionDir)Deps\lkCommon\lkCommon\include;$(SolutionDir)Deps\rapidjson\include;$(SolutionDir)Deps\tinyobjloader</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>PCH.hpp</PrecompiledHeaderFile>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <PreprocessorDefinitions>LKRAY_ROOT_REL_TO_BIN="../../..";LKRAY_ROOT_DIR=R"($(SolutionDir))";_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN32;_UNICODE;UNICODE;_DEBUG%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ShowIncludes>false</ShowIncludes>
     </ClCompile>
@@ -71,7 +71,7 @@
       <AdditionalDependencies>lkCommon.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
-      <Command>"$(SolutionDir)Deps\prepare_deps.bat" $(Configuration)</Command>
+      <Command>"$(SolutionDir)Deps\deps_builder.py" -c $(Configuration) --noanim</Command>
       <Message>Preparing project dependencies in $(Configuration) configuration</Message>
     </PreBuildEvent>
     <CustomBuildStep />
@@ -88,7 +88,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)lkRay\;$(SolutionDir)Deps\lkCommon\lkCommon\include;$(SolutionDir)Deps\rapidjson\include;$(SolutionDir)Deps\tinyobjloader</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>PCH.hpp</PrecompiledHeaderFile>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PreprocessorDefinitions>LKRAY_ROOT_REL_TO_BIN="../../..";LKRAY_ROOT_DIR=R"($(SolutionDir))";_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN32;_UNICODE;UNICODE;NDEBUG%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -98,7 +98,7 @@
       <AdditionalDependencies>lkCommon.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
-      <Command>"$(SolutionDir)Deps\prepare_deps.bat" $(Configuration)</Command>
+      <Command>"$(SolutionDir)Deps\deps_builder.py" -c $(Configuration) --noanim</Command>
       <Message>Preparing project dependencies in $(Configuration) configuration</Message>
     </PreBuildEvent>
     <CustomBuildStep />

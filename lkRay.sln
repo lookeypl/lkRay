@@ -1,13 +1,14 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27703.2000
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31911.196
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lkRay", "lkRay\lkRay.vcxproj", "{603E5503-19CD-4A47-AF94-3F934985EF21}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Deps", "Deps", "{A599B856-BAD0-41E8-B295-71C0E3CE5667}"
 	ProjectSection(SolutionItems) = preProject
-		Deps\prepare_deps.bat = Deps\prepare_deps.bat
+		Deps\CMakeLists.txt = Deps\CMakeLists.txt
+		Deps\deps_builder.py = Deps\deps_builder.py
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{A79EDB3B-98F4-4E1E-B056-7392ADF19DA2}"

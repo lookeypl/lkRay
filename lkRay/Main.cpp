@@ -59,7 +59,6 @@ class lkRayWindow: public lkCommon::System::Window
     uint32_t mCurrentScene;
     uint32_t mRayDepthRendering;
     Scene::Scene mScene;
-    float mAdvertTimer;
 
 protected:
     void OnKeyDown(const lkCommon::System::KeyCode key) override
@@ -149,21 +148,6 @@ protected:
 
             mCamera.Update();
         }
-
-        mAdvertTimer += deltaTime;
-        if (mAdvertTimer > ADVERT_PERIOD)
-        {
-            LOGW(' ');
-            LOGW("This is a free version of lkRay. To turn off adverts, please PayPal 10€ to lkostyra11@gmail.com");
-            LOGW(' ');
-            LOGW("!!! ADVERTISEMENT !!!");
-            LOGW("Do you know that with Amazon Prime you also get Twitch Prime and a free subsctiption to any channel on Twitch?");
-            LOGW("You can use it to, for example, support the best speedrunner Linkus7 by subscribing to him for free!");
-            LOGW("  https://twitch.tv/linkus7");
-            LOGW(' ');
-
-            mAdvertTimer -= ADVERT_PERIOD;
-        }
     }
 
     void OnMouseMove(const uint32_t x, const uint32_t y, const int32_t deltaX, const int32_t deltaY) override
@@ -202,7 +186,6 @@ public:
         , mCurrentScene(DEFAULT_SCENE)
         , mRayDepthRendering(MAX_RAY_DEPTH_RENDERING)
         , mScene()
-        , mAdvertTimer(0.0f)
     {
     }
 

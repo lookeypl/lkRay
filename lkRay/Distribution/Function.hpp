@@ -2,7 +2,8 @@
 
 #include <lkCommon/Utils/Pixel.hpp>
 #include <lkCommon/Math/Vector4.hpp>
-#include <lkCommon/Utils/ArenaObject.hpp>
+#include <lkCommon/Allocators/MemoryObject.hpp>
+#include <lkCommon/Allocators/ArenaAllocator.hpp>
 #include <type_traits>
 
 #include "Renderer/PathContext.hpp"
@@ -15,7 +16,7 @@ namespace Distribution {
 
 // Base class for methods of ray distribution on given surface
 // gathers both Reflection and Transmission type of distribution
-class Function: public lkCommon::Utils::ArenaObject
+class Function: public lkCommon::Allocators::MemoryObject<lkCommon::Allocators::ArenaAllocator>
 {
 protected:
     const Types::Distribution mType;
