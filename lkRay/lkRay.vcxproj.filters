@@ -16,9 +16,6 @@
     <Filter Include="Distribution">
       <UniqueIdentifier>{033a7fbe-8b5a-4bbe-8333-b9a6e27d24a8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Light">
-      <UniqueIdentifier>{c1ac6a8d-c03b-4fd4-a25b-ff51ffc10ff1}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
@@ -84,18 +81,6 @@
     <ClCompile Include="Renderer\ThreadData.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="Light\DirLight.cpp">
-      <Filter>Light</Filter>
-    </ClCompile>
-    <ClCompile Include="Light\Light.cpp">
-      <Filter>Light</Filter>
-    </ClCompile>
-    <ClCompile Include="Light\PointLight.cpp">
-      <Filter>Light</Filter>
-    </ClCompile>
-    <ClCompile Include="Light\SpotLight.cpp">
-      <Filter>Light</Filter>
-    </ClCompile>
     <ClCompile Include="Geometry\AABB.cpp">
       <Filter>Geometry</Filter>
     </ClCompile>
@@ -104,6 +89,12 @@
     </ClCompile>
     <ClCompile Include="Geometry\UV.cpp">
       <Filter>Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="Material\Emissive.cpp">
+      <Filter>Material</Filter>
+    </ClCompile>
+    <ClCompile Include="Distribution\Emissive.cpp">
+      <Filter>Distribution</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -171,18 +162,6 @@
       <Filter>Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Prerequisites.hpp" />
-    <ClInclude Include="Light\DirLight.hpp">
-      <Filter>Light</Filter>
-    </ClInclude>
-    <ClInclude Include="Light\Light.hpp">
-      <Filter>Light</Filter>
-    </ClInclude>
-    <ClInclude Include="Light\PointLight.hpp">
-      <Filter>Light</Filter>
-    </ClInclude>
-    <ClInclude Include="Light\SpotLight.hpp">
-      <Filter>Light</Filter>
-    </ClInclude>
     <ClInclude Include="Scene\BVH.hpp">
       <Filter>Scene</Filter>
     </ClInclude>
@@ -197,6 +176,12 @@
     </ClInclude>
     <ClInclude Include="Geometry\UV.hpp">
       <Filter>Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Material\Emissive.hpp">
+      <Filter>Material</Filter>
+    </ClInclude>
+    <ClInclude Include="Distribution\Emissive.hpp">
+      <Filter>Distribution</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

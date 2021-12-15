@@ -18,6 +18,7 @@ const std::string CAMERA_NODE_NAME = "camera";
 const std::string MATERIALS_NODE_NAME = "materials";
 const std::string MATERIAL_MATTE_NODE_NAME = "matte";
 const std::string MATERIAL_MIRROR_NODE_NAME = "mirror";
+const std::string MATERIAL_EMISSIVE_NODE_NAME = "emissive";
 
 const std::string MATERIAL_ATTRIBUTE_TYPE_NODE_NAME = "type";
 
@@ -61,6 +62,7 @@ const std::string MESH_ATTRIBUTE_INDICES_NODE_NAME = "indices";
 // materials
 const std::string MATTE_ATTRIBUTE_COLOR_NODE_NAME = "color";
 const std::string MATTE_ATTRIBUTE_PATH_NODE_NAME = "path";
+const std::string EMISSIVE_ATTRIBUTE_INTENSITY_NODE_NAME = "intensity";
 
 // camera
 const std::string CAMERA_ATTRIBUTE_POSITION_NODE_NAME = "position";

@@ -63,13 +63,6 @@ lkCommon::Utils::PixelFloat4 Renderer::CalculateLightIntensity(PathContext& cont
         return lkCommon::Utils::PixelFloat4(0.0f);
     }
 
-    if (context.beta[0] < 0.1f &&
-        context.beta[1] < 0.1f &&
-        context.beta[2] < 0.1f)
-    {
-        return lkCommon::Utils::PixelFloat4(0.0f);
-    }
-
     const Scene::Scene& scene = context.scene;
     lkCommon::Utils::PixelFloat4 resultColor;
     lkCommon::Utils::PixelFloat4 lightContribution;
@@ -79,7 +72,7 @@ lkCommon::Utils::PixelFloat4 Renderer::CalculateLightIntensity(PathContext& cont
     RayCollision collision = scene.TestCollision(context.ray);
     if (collision.mHitID == -1)
     {
-        return context.beta * scene.GetAmbient();
+        return scene.GetAmbient();
     }
 
     collision.mAllocator = &context.threadData.allocator;
@@ -89,15 +82,14 @@ lkCommon::Utils::PixelFloat4 Renderer::CalculateLightIntensity(PathContext& cont
                                                              context, collision, surfaceSample, reflectedDir);
     if (hasDiffuse)
     {
-        lightContribution = context.beta * scene.SampleLights(collision);
-
         context.ray.mOrigin = collision.mPoint;
         context.ray.mDirection = reflectedDir;
 
         // diffuse surfaces weaken our rays - adjust beta
-        context.beta *= surfaceSample * (context.ray.mDirection.Dot(collision.mNormal));
-        resultColor += lightContribution * surfaceSample + CalculateLightIntensity(context, rayDepth + 1);
-        return resultColor;
+        const float dot = context.ray.mDirection.Dot(collision.mNormal);
+        lkCommon::Utils::PixelFloat4 incoming = CalculateLightIntensity(context, rayDepth + 1);
+
+        resultColor += surfaceSample * incoming * dot;
     }
 
     bool hasSpecular = collision.mSurfaceDistribution->Sample(Types::Distribution::SPECULAR | Types::Distribution::REFLECTION,
@@ -108,10 +100,16 @@ lkCommon::Utils::PixelFloat4 Renderer::CalculateLightIntensity(PathContext& cont
         context.ray.mDirection = reflectedDir;
 
         resultColor += CalculateLightIntensity(context, rayDepth + 1);
-        return resultColor;
     }
 
-    return lkCommon::Utils::PixelFloat4(0.0f);
+    bool hasEmissive = collision.mSurfaceDistribution->Sample(Types::Distribution::EMISSIVE,
+                                                              context, collision, surfaceSample, reflectedDir);
+    if (hasEmissive)
+    {
+        resultColor += surfaceSample;
+    }
+
+    return resultColor;
 }
 
 void Renderer::DrawThread(lkCommon::Utils::ThreadPayload& payload, const Scene::Scene& scene, const Scene::Camera& camera, uint32_t widthPos, uint32_t heightPos, uint32_t xCount, uint32_t yCount)

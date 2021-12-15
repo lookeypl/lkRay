@@ -21,7 +21,7 @@ class Primitive
 protected:
     std::string mName;
     lkCommon::Math::Vector4 mPosition;
-    Material::Material* mMaterial;
+    Scene::Containers::Ptr<Material::Material> mMaterial;
     AABB mBBox;
 
     bool ReadPositionFromNode(const rapidjson::Value& value);
@@ -46,7 +46,7 @@ public:
         mPosition = pos;
     }
 
-    LKCOMMON_INLINE void SetMaterial(Material::Material* material)
+    LKCOMMON_INLINE void SetMaterial(const Scene::Containers::Ptr<Material::Material>& material)
     {
         mMaterial = material;
     }
@@ -57,7 +57,7 @@ public:
         return mPosition;
     }
 
-    LKCOMMON_INLINE Material::Material* GetMaterial() const
+    LKCOMMON_INLINE const Scene::Containers::Ptr<Material::Material> GetMaterial() const
     {
         return mMaterial;
     }

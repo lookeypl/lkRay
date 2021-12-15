@@ -8,12 +8,6 @@ class Primitive;
 
 } // namespace Geometry
 
-namespace Light {
-
-class Light;
-
-} // namespace Scene
-
 namespace Material {
 
 class Material;

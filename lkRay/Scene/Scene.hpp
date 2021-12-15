@@ -26,7 +26,6 @@ namespace Scene {
 class Scene final
 {
 private:
-    Containers::Light mLights;
     Containers::Material mMaterials;
     lkCommon::Utils::PixelFloat4 mAmbient;
     std::string mName;
@@ -34,7 +33,6 @@ private:
 
     bool LoadMaterials(const rapidjson::Value& node);
     bool LoadObjects(const rapidjson::Value& node);
-    bool LoadLights(const rapidjson::Value& node);
 
 public:
     Scene();
@@ -44,12 +42,10 @@ public:
     void BuildBVH();
     void Destroy();
 
-    lkCommon::Utils::PixelFloat4 SampleLights(const Renderer::RayCollision& collision) const;
     Renderer::RayCollision TestCollision(const Geometry::Ray& ray) const;
 
     Containers::Ptr<Geometry::Primitive> CreatePrimitive(const std::string& name, const Types::Primitive& type);
     Containers::Ptr<Material::Material> CreateMaterial(const std::string& name, const Types::Material& type);
-    Containers::Ptr<Light::Light> CreateLight(const std::string& name, const Types::Light& type);
 
 
     LKCOMMON_INLINE void SetAmbient(const lkCommon::Utils::PixelFloat4 ambient)
@@ -61,11 +57,6 @@ public:
     LKCOMMON_INLINE const Containers::Primitive& GetPrimitives() const
     {
         return mBVH.GetPrimitives();
-    }
-
-    LKCOMMON_INLINE const Containers::Light& GetLights() const
-    {
-        return mLights;
     }
 
     LKCOMMON_INLINE const lkCommon::Utils::PixelFloat4& GetAmbient() const

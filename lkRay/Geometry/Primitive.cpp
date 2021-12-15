@@ -76,7 +76,7 @@ bool Primitive::ReadMaterialFromNode(const rapidjson::Value& value, const Scene:
             return false;
         }
 
-        mMaterial = matIt->second.get();
+        mMaterial = matIt->second;
         return true;
     }
 
@@ -92,7 +92,7 @@ bool Primitive::ReadMaterialFromNode(const rapidjson::Value& value, const Scene:
         }
     }
 
-    mMaterial = matIt->second.get();
+    mMaterial = matIt->second;
     return true;
 }
 

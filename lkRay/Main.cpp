@@ -16,6 +16,7 @@
 
 #include "Geometry/Sphere.hpp"
 #include "Material/Matte.hpp"
+#include "Material/Emissive.hpp"
 
 // TODO This is a simple but pesky workaround to "find app root" issue.
 //      Resolve this in the future by proper path searching, by one (or more) of:
@@ -41,13 +42,13 @@ using namespace lkRay;
 
 lkCommon::Math::RingAverage<float, 20> gFrameTime;
 
-const std::array<std::string, 6> SCENE_CONTAINER = {
+const std::array<std::string, 7> SCENE_CONTAINER = {
     "Data/Scenes/balls.json",
     "Data/Scenes/emptyplane.json",
     "Data/Scenes/bunny.json",
     "Data/Scenes/room.json",
     "Data/Scenes/plane.json",
-    "Data/Scenes/mirrors.json",
+    "Data/Scenes/mirrors.json"
 };
 
 
@@ -222,8 +223,13 @@ public:
             std::dynamic_pointer_cast<Material::Matte>(
                 mScene.CreateMaterial("sphereMatte", Types::Material::MATTE)
             );
+            Scene::Containers::Ptr<Material::Emissive> emissive =
+            std::dynamic_pointer_cast<Material::Emissive>(
+                mScene.CreateMaterial("sphereEmissive", Types::Material::EMISSIVE)
+            );
 
             matte->SetColor(lkCommon::Utils::PixelFloat4(0.2f, 0.3f, 0.9f, 1.0f));
+            emissive->SetIntensity(lkCommon::Utils::PixelFloat4(1.0f));
 
             Scene::Containers::Ptr<Geometry::Sphere> sphere;
             for (uint32_t i = 0; i < 1000; ++i)
@@ -242,7 +248,16 @@ public:
                 ));
 
                 sphere->SetRadius(radius);
-                sphere->SetMaterial(matte.get());
+
+                bool isLight = lkCommon::Math::Random::Xorshift() < 0.3f;
+                if (isLight)
+                {
+                    sphere->SetMaterial(emissive);
+                }
+                else
+                {
+                    sphere->SetMaterial(matte);
+                }
             }
         }
 

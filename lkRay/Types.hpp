@@ -19,6 +19,7 @@ enum class Material: unsigned char
     UNKNOWN = 0,
     MATTE,
     MIRROR,
+    EMISSIVE,
 };
 
 enum class Primitive: unsigned char
@@ -26,7 +27,7 @@ enum class Primitive: unsigned char
     UNKNOWN = 0,
     SPHERE,
     PLANE,
-    MESH
+    MESH,
 };
 
 enum class Distribution: unsigned char
@@ -37,7 +38,7 @@ enum class Distribution: unsigned char
     DIFFUSE = 1 << 2,
     GLOSS = 1 << 3,
     SPECULAR = 1 << 4,
-    ALL = SPECULAR | GLOSS | DIFFUSE | TRANSMISSION | REFLECTION,
+    EMISSIVE = 1 << 5,
 };
 
 LKCOMMON_INLINE Distribution operator&(const Distribution a, const Distribution b)

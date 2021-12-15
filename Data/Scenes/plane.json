@@ -1,6 +1,6 @@
 {
     "name": "Test scene - Plane",
-    "ambient": [0.1, 0.2, 0.5],
+    "ambient": [0.03, 0.05, 0.1],
     "camera":
     {
         "position": [-3.2, 8.5, -11.5],
@@ -47,7 +47,7 @@
         {
             "type": "mesh",
             "position": [0.0, 0.0, 0.0],
-            "material": "yellow",
+            "material": "emitting_walls",
             "vertices": [
                 [ 4.0,-1.5, 5.0],
                 [ 4.0, 4.5, 5.0],
@@ -112,15 +112,6 @@
             ]
         }
     },
-    "lights":
-    {
-        "sun":
-        {
-            "type": "dir",
-            "direction": [-2.0,-1.0, 1.0],
-            "color": [0.5, 0.5, 0.5]
-        }
-    },
     "materials":
     {
         "blue":
@@ -151,6 +142,11 @@
         "mirror":
         {
             "type": "mirror"
+        },
+        "emitting_walls":
+        {
+            "type": "emissive",
+            "intensity": [0.9, 0.7, 0.3]
         }
     }
 }

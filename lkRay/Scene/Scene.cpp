@@ -3,14 +3,10 @@
 
 #include "Constants.hpp"
 
-#include "Light/Light.hpp"
-#include "Light/PointLight.hpp"
-#include "Light/DirLight.hpp"
-#include "Light/SpotLight.hpp"
-
 #include "Material/Material.hpp"
 #include "Material/Matte.hpp"
 #include "Material/Mirror.hpp"
+#include "Material/Emissive.hpp"
 
 #include "Geometry/Sphere.hpp"
 #include "Geometry/Plane.hpp"
@@ -73,6 +69,10 @@ bool Scene::LoadMaterials(const rapidjson::Value& node)
                 else if (Constants::MATERIAL_MIRROR_NODE_NAME.compare(a.value.GetString()) == 0)
                 {
                     type = Types::Material::MIRROR;
+                }
+                else if (Constants::MATERIAL_EMISSIVE_NODE_NAME.compare(a.value.GetString()) == 0)
+                {
+                    type = Types::Material::EMISSIVE;
                 }
                 else
                 {
@@ -157,64 +157,6 @@ bool Scene::LoadObjects(const rapidjson::Value& node)
         pPrim->CalculateBBox();
         LOGD("     -> Object BBox: " << pPrim->GetBBox()[Geometry::AABBPoint::MIN] <<
              " " << pPrim->GetBBox()[Geometry::AABBPoint::MAX]);
-    }
-
-    return true;
-}
-
-bool Scene::LoadLights(const rapidjson::Value& node)
-{
-    if (!node.IsObject())
-    {
-        LOGE("Invalid object node");
-        return false;
-    }
-
-    for (auto& o: node.GetObject())
-    {
-        LOGD(" -> Light " << o.name.GetString());
-
-        // read object's type
-        Types::Light type = Types::Light::UNKNOWN;
-        for (auto& a: o.value.GetObject())
-        {
-            if (Constants::OBJECT_ATTRIBUTE_TYPE_NODE_NAME.compare(a.name.GetString()) == 0)
-            {
-                LOGD("     -> Light type " << a.value.GetString());
-
-                if (Constants::LIGHT_POINT_NODE_NAME.compare(a.value.GetString()) == 0)
-                {
-                    type = Types::Light::POINT;
-                }
-                else if (Constants::LIGHT_DIR_NODE_NAME.compare(a.value.GetString()) == 0)
-                {
-                    type = Types::Light::DIR;
-                }
-                else if (Constants::LIGHT_SPOT_NODE_NAME.compare(a.value.GetString()) == 0)
-                {
-                    type = Types::Light::SPOT;
-                }
-                else
-                {
-                    LOGE("Unknown light type read from scene: " << a.value.GetString());
-                }
-            }
-        }
-
-        // create light
-        Containers::Ptr<Light::Light> pLight = CreateLight(o.name.GetString(), type);
-        if (!pLight)
-        {
-            LOGE("Failed to create light");
-            return false;
-        }
-
-        // ask light to read its own parameters
-        if (!pLight->ReadParametersFromNode(o.value))
-        {
-            LOGE("Light failed to read its parameters");
-            return false;
-        }
     }
 
     return true;
@@ -320,21 +262,6 @@ bool Scene::Load(const std::string& path)
         }
     }
 
-    // finally, load lights
-    for (auto& o: sceneDesc.GetObject())
-    {
-        if (Constants::LIGHTS_NODE_NAME.compare(o.name.GetString()) == 0)
-        {
-            LOGD("Loading lights");
-            if (!LoadLights(o.value))
-            {
-                return false;
-            }
-
-            break;
-        }
-    }
-
     LOGI("Scene " << mName << " loaded successfully");
     return true;
 }
@@ -349,25 +276,7 @@ void Scene::Destroy()
 {
     mBVH.Clean();
     mName.clear();
-    mLights.clear();
     mMaterials.clear();
-}
-
-lkCommon::Utils::PixelFloat4 Scene::SampleLights(const Renderer::RayCollision& collision) const
-{
-    lkCommon::Utils::PixelFloat4 result;
-
-    for (const auto& l: mLights)
-    {
-        lkCommon::Math::Vector4 lightDir = l->GetToLightDir(collision);
-        Geometry::Ray shadowRay(collision.mPoint, lightDir.Normalize());
-        Renderer::RayCollision shadowCollision = TestCollision(shadowRay);
-        // if shadow ray did not hit anything, or it hit an object which is further from light
-        if ((shadowCollision.mHitID == -1) || (shadowCollision.mDistance > lightDir.Length()))
-            result += l->Sample(collision);
-    }
-
-    return result;
 }
 
 // -1 if no object hit, otherwise index of hit primitive
@@ -430,6 +339,11 @@ Containers::Ptr<Material::Material> Scene::CreateMaterial(const std::string& nam
         pMat = CreatePtr<Material::Material, Material::Mirror>(name);
         break;
     }
+    case Types::Material::EMISSIVE:
+    {
+        pMat = CreatePtr<Material::Material, Material::Emissive>(name);
+        break;
+    }
     default:
     {
         LOGE("Unknown material type");
@@ -441,37 +355,6 @@ Containers::Ptr<Material::Material> Scene::CreateMaterial(const std::string& nam
     return pMat;
 }
 
-Containers::Ptr<Light::Light> Scene::CreateLight(const std::string& name, const Types::Light& type)
-{
-    Containers::Ptr<Light::Light> pLight;
-
-    switch (type)
-    {
-    case Types::Light::POINT:
-    {
-        pLight = CreatePtr<Light::Light, Light::PointLight>(name);
-        break;
-    }
-    case Types::Light::DIR:
-    {
-        pLight = CreatePtr<Light::Light, Light::DirLight>(name);
-        break;
-    }
-    case Types::Light::SPOT:
-    {
-        pLight = CreatePtr<Light::Light, Light::SpotLight>(name);
-        break;
-    }
-    default:
-    {
-        LOGE("Unknown light type");
-        return nullptr;
-    }
-    }
-
-    mLights.push_back(pLight);
-    return pLight;
-}
 
 } // namespace Scene
 } // namespace lkRay

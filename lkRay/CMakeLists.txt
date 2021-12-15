@@ -17,10 +17,6 @@ SET(LKRAY_SRCS PCH.cpp
                Geometry/Triangle.cpp
                Geometry/UV.cpp
                Geometry/Vertex.cpp
-               Light/DirLight.cpp
-               Light/Light.cpp
-               Light/PointLight.cpp
-               Light/SpotLight.cpp
                Material/Material.cpp
                Material/Matte.cpp
                Material/Mirror.cpp
@@ -48,10 +44,6 @@ SET(LKRAY_HDRS PCH.hpp
                Geometry/Triangle.hpp
                Geometry/UV.hpp
                Geometry/Vertex.hpp
-               Light/DirLight.hpp
-               Light/Light.hpp
-               Light/PointLight.hpp
-               Light/SpotLight.hpp
                Material/Material.hpp
                Material/Matte.hpp
                Material/Mirror.hpp

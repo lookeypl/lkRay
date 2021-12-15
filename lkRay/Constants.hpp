@@ -19,26 +19,9 @@ extern const std::string CAMERA_NODE_NAME;
 extern const std::string MATERIALS_NODE_NAME;
 extern const std::string MATERIAL_MATTE_NODE_NAME;
 extern const std::string MATERIAL_MIRROR_NODE_NAME;
+extern const std::string MATERIAL_EMISSIVE_NODE_NAME;
 
 extern const std::string MATERIAL_ATTRIBUTE_TYPE_NODE_NAME;
-
-// lights
-extern const std::string LIGHTS_NODE_NAME;
-extern const std::string LIGHT_POINT_NODE_NAME;
-extern const std::string LIGHT_DIR_NODE_NAME;
-extern const std::string LIGHT_SPOT_NODE_NAME;
-
-extern const std::string LIGHT_ATTRIBUTE_TYPE_NODE_NAME;
-extern const std::string LIGHT_ATTRIBUTE_POSITION_NODE_NAME;
-extern const std::string LIGHT_ATTRIBUTE_COLOR_NODE_NAME;
-
-extern const std::string POINT_LIGHT_ATTRIBUTE_ATTENUATION_FACTOR_NODE_NAME;
-
-extern const std::string DIR_LIGHT_ATTRIBUTE_DIR_NODE_NAME;
-
-extern const std::string SPOT_LIGHT_ATTRIBUTE_ATTENUATION_FACTOR_NODE_NAME;
-extern const std::string SPOT_LIGHT_ATTRIBUTE_DIR_NODE_NAME;
-extern const std::string SPOT_LIGHT_ATTRIBUTE_CUTOFF_NODE_NAME;
 
 // objects
 extern const std::string OBJECTS_NODE_NAME;
@@ -59,9 +42,10 @@ extern const std::string MESH_ATTRIBUTE_PATH_NODE_NAME;
 extern const std::string MESH_ATTRIBUTE_VERTICES_NODE_NAME;
 extern const std::string MESH_ATTRIBUTE_INDICES_NODE_NAME;
 
-// materials
+// material attributes
 extern const std::string MATTE_ATTRIBUTE_COLOR_NODE_NAME;
 extern const std::string MATTE_ATTRIBUTE_PATH_NODE_NAME;
+extern const std::string EMISSIVE_ATTRIBUTE_INTENSITY_NODE_NAME;
 
 // camera
 extern const std::string CAMERA_ATTRIBUTE_POSITION_NODE_NAME;
