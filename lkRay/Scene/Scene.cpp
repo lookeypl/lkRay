@@ -7,6 +7,7 @@
 #include "Material/Matte.hpp"
 #include "Material/Mirror.hpp"
 #include "Material/Emissive.hpp"
+#include "Material/Glass.hpp"
 
 #include "Geometry/Sphere.hpp"
 #include "Geometry/Plane.hpp"
@@ -73,6 +74,10 @@ bool Scene::LoadMaterials(const rapidjson::Value& node)
                 else if (Constants::MATERIAL_EMISSIVE_NODE_NAME.compare(a.value.GetString()) == 0)
                 {
                     type = Types::Material::EMISSIVE;
+                }
+                else if (Constants::MATERIAL_GLASS_NODE_NAME.compare(a.value.GetString()) == 0)
+                {
+                    type = Types::Material::GLASS;
                 }
                 else
                 {
@@ -342,6 +347,11 @@ Containers::Ptr<Material::Material> Scene::CreateMaterial(const std::string& nam
     case Types::Material::EMISSIVE:
     {
         pMat = CreatePtr<Material::Material, Material::Emissive>(name);
+        break;
+    }
+    case Types::Material::GLASS:
+    {
+        pMat = CreatePtr<Material::Material, Material::Glass>(name);
         break;
     }
     default:

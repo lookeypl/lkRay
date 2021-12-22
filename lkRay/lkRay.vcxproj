@@ -112,6 +112,7 @@
     <ClCompile Include="Distribution\Function.cpp" />
     <ClCompile Include="Distribution\Lambertian.cpp" />
     <ClCompile Include="Distribution\SpecularReflection.cpp" />
+    <ClCompile Include="Distribution\Transmission.cpp" />
     <ClCompile Include="Geometry\AABB.cpp" />
     <ClCompile Include="Geometry\Mesh.cpp" />
     <ClCompile Include="Geometry\Plane.cpp" />
@@ -126,6 +127,7 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">PCH.hpp</PrecompiledHeaderFile>
     </ClCompile>
     <ClCompile Include="Material\Emissive.cpp" />
+    <ClCompile Include="Material\Glass.cpp" />
     <ClCompile Include="Material\Material.cpp" />
     <ClCompile Include="Material\Matte.cpp" />
     <ClCompile Include="Material\Mirror.cpp" />
@@ -150,6 +152,7 @@
     <ClInclude Include="Distribution\Function.hpp" />
     <ClInclude Include="Distribution\Lambertian.hpp" />
     <ClInclude Include="Distribution\SpecularReflection.hpp" />
+    <ClInclude Include="Distribution\Transmission.hpp" />
     <ClInclude Include="Geometry\AABB.hpp" />
     <ClInclude Include="Geometry\Mesh.hpp" />
     <ClInclude Include="Geometry\Plane.hpp" />
@@ -160,6 +163,7 @@
     <ClInclude Include="Geometry\UV.hpp" />
     <ClInclude Include="Geometry\Vertex.hpp" />
     <ClInclude Include="Material\Emissive.hpp" />
+    <ClInclude Include="Material\Glass.hpp" />
     <ClInclude Include="Material\Material.hpp" />
     <ClInclude Include="Material\Matte.hpp" />
     <ClInclude Include="Material\Mirror.hpp" />

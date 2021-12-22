@@ -37,10 +37,10 @@ bool Triangle::TestCollision(const Ray& ray, float& distance, lkCommon::Math::Ve
     lkCommon::Math::Vector4 E2 = p1 - p0;
     lkCommon::Math::Vector4 pv(E2.Cross(ray.mDirection));
     float d = E1.Dot(pv);
-
+    /*
     if (d < LKCOMMON_EPSILON)
         return false; // backface culling
-
+    */
     float invD = 1.0f / d;
 
     lkCommon::Math::Vector4 tv(ray.mOrigin - p0 - mPosRef);

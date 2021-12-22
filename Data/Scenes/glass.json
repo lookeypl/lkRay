@@ -1,0 +1,91 @@
+{
+    "name": "Test scene - Glassy cubes",
+    "ambient": [0.03, 0.05, 0.1],
+    "camera":
+    {
+        "position": [2.5, 1.56, -8.54],
+        "rotation": [-10.74, 354.15]
+    },
+    "objects":
+    {
+        "sphere1":
+        {
+            "type": "sphere",
+            "position": [2.5,-0.5, 2.5],
+            "radius": 1.0,
+            "material": "green"
+        },
+        "sphere2":
+        {
+            "type": "sphere",
+            "position": [1.7, 0.0,-3.0],
+            "radius": 1.5,
+            "material": "glass"
+        },
+        "sphere3":
+        {
+            "type": "sphere",
+            "position": [5.5,-0.5, 0.5],
+            "radius": 1.0,
+            "material": "mirror"
+        },
+        "light":
+        {
+            "type": "sphere",
+            "position": [-3.2, 10.5, -11.5],
+            "radius": 1.9,
+            "material": "light"
+        },
+        "cube":
+        {
+            "type": "mesh",
+            "position": [0.0,-1.5, 0.0],
+            "path": "Data/OBJ/cube.obj",
+            "material": "blue"
+        },
+        "floor":
+        {
+            "type": "plane",
+            "material": "yellow",
+            "normal": [0.0, 1.0, 0.0],
+            "distance": -1.5
+        }
+    },
+    "materials":
+    {
+        "red":
+        {
+            "type": "matte",
+            "color": [0.9, 0.4, 0.2]
+        },
+        "green":
+        {
+            "type": "matte",
+            "color": [0.3, 0.9, 0.5]
+        },
+        "yellow":
+        {
+            "type": "matte",
+            "color": [0.9, 0.7, 0.3]
+        },
+        "blue":
+        {
+            "type": "matte",
+            "color": [0.2, 0.5, 0.8]
+        },
+        "mirror":
+        {
+            "type": "mirror"
+        },
+        "light":
+        {
+            "type": "emissive",
+            "intensity": [10.0, 10.0, 10.0]
+        },
+        "glass":
+        {
+            "type": "glass",
+            "density": 1.2
+        }
+    }
+}

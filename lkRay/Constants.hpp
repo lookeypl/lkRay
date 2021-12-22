@@ -20,6 +20,7 @@ extern const std::string MATERIALS_NODE_NAME;
 extern const std::string MATERIAL_MATTE_NODE_NAME;
 extern const std::string MATERIAL_MIRROR_NODE_NAME;
 extern const std::string MATERIAL_EMISSIVE_NODE_NAME;
+extern const std::string MATERIAL_GLASS_NODE_NAME;
 
 extern const std::string MATERIAL_ATTRIBUTE_TYPE_NODE_NAME;
 
@@ -46,6 +47,7 @@ extern const std::string MESH_ATTRIBUTE_INDICES_NODE_NAME;
 extern const std::string MATTE_ATTRIBUTE_COLOR_NODE_NAME;
 extern const std::string MATTE_ATTRIBUTE_PATH_NODE_NAME;
 extern const std::string EMISSIVE_ATTRIBUTE_INTENSITY_NODE_NAME;
+extern const std::string GLASS_ATTRIBUTE_DENSITY_NODE_NAME;
 
 // camera
 extern const std::string CAMERA_ATTRIBUTE_POSITION_NODE_NAME;

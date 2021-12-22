@@ -96,6 +96,12 @@
     <ClCompile Include="Distribution\Emissive.cpp">
       <Filter>Distribution</Filter>
     </ClCompile>
+    <ClCompile Include="Distribution\Transmission.cpp">
+      <Filter>Distribution</Filter>
+    </ClCompile>
+    <ClCompile Include="Material\Glass.cpp">
+      <Filter>Material</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PCH.hpp" />
@@ -182,6 +188,12 @@
     </ClInclude>
     <ClInclude Include="Distribution\Emissive.hpp">
       <Filter>Distribution</Filter>
+    </ClInclude>
+    <ClInclude Include="Distribution\Transmission.hpp">
+      <Filter>Distribution</Filter>
+    </ClInclude>
+    <ClInclude Include="Material\Glass.hpp">
+      <Filter>Material</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

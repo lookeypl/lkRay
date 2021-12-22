@@ -48,7 +48,8 @@ const std::array<std::string, 7> SCENE_CONTAINER = {
     "Data/Scenes/bunny.json",
     "Data/Scenes/room.json",
     "Data/Scenes/plane.json",
-    "Data/Scenes/mirrors.json"
+    "Data/Scenes/mirrors.json",
+    "Data/Scenes/glass.json"
 };
 
 

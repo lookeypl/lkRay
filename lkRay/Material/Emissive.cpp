@@ -69,7 +69,7 @@ bool Emissive::ReadParametersFromNode(const rapidjson::Value& value)
 
             intensity[colIndex] = 0.0f;
 
-            LOGD("     -> Emissive material intensity" << intensity);
+            LOGD("     -> Emissive material intensity " << intensity);
 
             SetIntensity(intensity);
             return true;

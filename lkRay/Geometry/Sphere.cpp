@@ -45,17 +45,22 @@ bool Sphere::TestCollision(const Ray& ray, float& distance, lkCommon::Math::Vect
         return false; // missed sphere
 
     const float radMinusDist = mRadiusSquare - distFromOriginSquare;
-    if (radMinusDist < 0.0f)
+    if (radMinusDist < LKCOMMON_EPSILON)
         return false;
 
     const float midToIntersection = sqrtf(radMinusDist);
-    const float s0 = midPoint - midToIntersection;
-    const float s1 = midPoint + midToIntersection;
+    float s0 = midPoint - midToIntersection;
+    float s1 = midPoint + midToIntersection;
 
-    distance = s0 < s1 ? s0 : s1;
+    if (s1 < s0)
+        std::swap(s0, s1);
+
+    distance = (s0 < LKCOMMON_EPSILON) ? s1 : s0;
 
     const lkCommon::Math::Vector4 collisionPoint = ray.mOrigin + ray.mDirection * distance;
     normal = (collisionPoint - mPosition).Normalize();
+    if (normal.Dot(ray.mDirection) > 0.0f) // check if ray is inside
+        normal *= -1;
     uv.u = (1.0f + atan2f(normal[2], normal[0]) / LKCOMMON_PIF) * 0.5f;
     uv.v = acosf(normal[1]) / LKCOMMON_PIF;
 

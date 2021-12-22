@@ -58,6 +58,8 @@ bool Mesh::TestCollision(const Ray& ray, float& distance, lkCommon::Math::Vector
 {
     Renderer::RayCollision collision = mMeshBVH.Traverse(ray);
     distance = collision.mDistance;
+
+
     normal = collision.mNormal;
     uv = collision.mUV;
     return (collision.mHitID != -1);
@@ -130,31 +132,34 @@ bool Mesh::LoadFromFile(const std::string& objFilePath)
             static_cast<uint32_t>(obji[i + 2].vertex_index)
         );
 
-        uint32_t nIdx0 = obji[i + 0].normal_index;
-        uint32_t nIdx1 = obji[i + 1].normal_index;
-        uint32_t nIdx2 = obji[i + 2].normal_index;
+        if (objn.size() > 0)
+        {
+            uint32_t nIdx0 = obji[i + 0].normal_index;
+            uint32_t nIdx1 = obji[i + 1].normal_index;
+            uint32_t nIdx2 = obji[i + 2].normal_index;
 
-        // TODO it's a rather painful hack - assumes that shading is always
-        //      per vertex, which causes some values to be overriden multiple
-        //      times. Consider doing this differently in the future.
-        mPoints[obji[i + 0].vertex_index].n = lkCommon::Math::Vector4(
-            objn[3 * nIdx0 + 0],
-            objn[3 * nIdx0 + 1],
-            objn[3 * nIdx0 + 2],
-            0.0f
-        );
-        mPoints[obji[i + 1].vertex_index].n = lkCommon::Math::Vector4(
-            objn[3 * nIdx1 + 0],
-            objn[3 * nIdx1 + 1],
-            objn[3 * nIdx1 + 2],
-            0.0f
-        );
-        mPoints[obji[i + 2].vertex_index].n = lkCommon::Math::Vector4(
-            objn[3 * nIdx2 + 0],
-            objn[3 * nIdx2 + 1],
-            objn[3 * nIdx2 + 2],
-            0.0f
-        );
+            // TODO it's a rather painful hack - assumes that shading is always
+            //      per vertex, which causes some values to be overriden multiple
+            //      times. Consider doing this differently in the future.
+            mPoints[obji[i + 0].vertex_index].n = lkCommon::Math::Vector4(
+                objn[3 * nIdx0 + 0],
+                objn[3 * nIdx0 + 1],
+                objn[3 * nIdx0 + 2],
+                0.0f
+            );
+            mPoints[obji[i + 1].vertex_index].n = lkCommon::Math::Vector4(
+                objn[3 * nIdx1 + 0],
+                objn[3 * nIdx1 + 1],
+                objn[3 * nIdx1 + 2],
+                0.0f
+            );
+            mPoints[obji[i + 2].vertex_index].n = lkCommon::Math::Vector4(
+                objn[3 * nIdx2 + 0],
+                objn[3 * nIdx2 + 1],
+                objn[3 * nIdx2 + 2],
+                0.0f
+            );
+        }
     }
 
     LOGD("     -> OBJ Mesh has " << mMeshBVH.GetObjectCount() << " triangles.");

@@ -20,6 +20,7 @@ enum class Material: unsigned char
     MATTE,
     MIRROR,
     EMISSIVE,
+    GLASS,
 };
 
 enum class Primitive: unsigned char
