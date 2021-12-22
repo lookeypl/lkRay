@@ -14,7 +14,7 @@ public:
     Mirror(const std::string& name);
     ~Mirror() = default;
 
-    void PopulateDistributionFunctions(Renderer::RayCollision& collision) override;
+    void PopulateDistributionFunctions(Renderer::PathContext& context, Renderer::RayCollision& collision) override;
     bool ReadParametersFromNode(const rapidjson::Value& value) override;
 };
 

@@ -13,8 +13,10 @@ Mirror::Mirror(const std::string& name)
 {
 }
 
-void Mirror::PopulateDistributionFunctions(Renderer::RayCollision& collision)
+void Mirror::PopulateDistributionFunctions(Renderer::PathContext& context, Renderer::RayCollision& collision)
 {
+    LKCOMMON_UNUSED(context);
+
     collision.mSurfaceDistribution = new (*collision.mAllocator) Renderer::SurfaceDistribution(collision.mAllocator);
 
     collision.mSurfaceDistribution->AddDistribution(new (*collision.mAllocator) Distribution::SpecularReflection());

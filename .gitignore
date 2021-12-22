@@ -17,6 +17,10 @@ Makefile
 # Visual Studio intermediate projects' directories
 /Obj
 
+# Linux common intermediate/build directories
+/build
+.vscode
+
 # Output dir and files
 /Bin
 /bin

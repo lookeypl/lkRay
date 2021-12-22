@@ -76,7 +76,7 @@ lkCommon::Utils::PixelFloat4 Renderer::CalculateLightIntensity(PathContext& cont
     }
 
     collision.mAllocator = &context.threadData.allocator;
-    scene.GetPrimitives()[collision.mHitID]->GetMaterial()->PopulateDistributionFunctions(collision);
+    scene.GetPrimitives()[collision.mHitID]->GetMaterial()->PopulateDistributionFunctions(context, collision);
 
     bool hasDiffuse = collision.mSurfaceDistribution->Sample(Types::Distribution::DIFFUSE | Types::Distribution::REFLECTION,
                                                              context, collision, surfaceSample, reflectedDir);

@@ -5,9 +5,11 @@ PKG_CHECK_MODULES(LKRAY_PKG_DEPS REQUIRED
 SET(LKRAY_SRCS PCH.cpp
                Constants.cpp
                Main.cpp
+               Distribution/Emissive.cpp
                Distribution/Function.cpp
                Distribution/Lambertian.cpp
                Distribution/SpecularReflection.cpp
+               Distribution/Transmission.cpp
                Geometry/AABB.cpp
                Geometry/Mesh.cpp
                Geometry/Plane.cpp
@@ -17,6 +19,8 @@ SET(LKRAY_SRCS PCH.cpp
                Geometry/Triangle.cpp
                Geometry/UV.cpp
                Geometry/Vertex.cpp
+               Material/Emissive.cpp
+               Material/Glass.cpp
                Material/Material.cpp
                Material/Matte.cpp
                Material/Mirror.cpp
@@ -32,9 +36,11 @@ SET(LKRAY_SRCS PCH.cpp
 
 SET(LKRAY_HDRS PCH.hpp
                Constants.hpp
+               Distribution/Emissive.hpp
                Distribution/Function.hpp
                Distribution/Lambertian.hpp
                Distribution/SpecularReflection.hpp
+               Distribution/Transmission.hpp
                Geometry/AABB.hpp
                Geometry/Mesh.hpp
                Geometry/Plane.hpp
@@ -44,6 +50,8 @@ SET(LKRAY_HDRS PCH.hpp
                Geometry/Triangle.hpp
                Geometry/UV.hpp
                Geometry/Vertex.hpp
+               Material/Emissive.hpp
+               Material/Glass.hpp
                Material/Material.hpp
                Material/Matte.hpp
                Material/Mirror.hpp

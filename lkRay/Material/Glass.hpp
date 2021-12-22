@@ -16,7 +16,7 @@ public:
     ~Glass() = default;
 
     void SetIOR(const float density);
-    void PopulateDistributionFunctions(Renderer::RayCollision& collision) override;
+    void PopulateDistributionFunctions(Renderer::PathContext& context, Renderer::RayCollision& collision) override;
     bool ReadParametersFromNode(const rapidjson::Value& value) override;
 };
 

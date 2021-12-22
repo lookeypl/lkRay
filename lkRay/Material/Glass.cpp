@@ -4,6 +4,7 @@
 #include "Constants.hpp"
 #include "Renderer/SurfaceDistribution.hpp"
 #include "Distribution/Transmission.hpp"
+#include "Distribution/Lambertian.hpp"
 
 
 namespace lkRay {
@@ -26,19 +27,30 @@ void Glass::SetIOR(const float density)
     mIOR = 1.0f / density;
 }
 
-void Glass::PopulateDistributionFunctions(Renderer::RayCollision& collision)
+void Glass::PopulateDistributionFunctions(Renderer::PathContext& context, Renderer::RayCollision& collision)
 {
     collision.mSurfaceDistribution =
         new (*collision.mAllocator) Renderer::SurfaceDistribution(collision.mAllocator);
 
+    // Fresnel equations to determine how much each distribution contributes
+    const lkCommon::Math::Vector4& in = context.ray.mDirection;
+    const lkCommon::Math::Vector4& n = collision.mNormal;
+
+    const float cosOmegaIn = -in.Dot(n);
+    const float sin2OmegaT = (mIOR * mIOR) * (1 - (cosOmegaIn * cosOmegaIn));
+    const float cosOmegaT = sqrtf(1 - sin2OmegaT);
+
     collision.mSurfaceDistribution->AddDistribution(
-        new (*collision.mAllocator) Distribution::Transmission(mIOR)
+        new (*collision.mAllocator) Distribution::Transmission(mIOR, 1.0f)
     );
 
+    /*
     if (mIOR > 1.0f)
     {
-
-    }
+        collision.mSurfaceDistribution->AddDistribution(
+            new (*collision.mAllocator) Distribution::Lambertian(lkCommon::Utils::PixelFloat4(0.03f))
+        );
+    }*/
 }
 
 bool Glass::ReadParametersFromNode(const rapidjson::Value& value)

@@ -12,11 +12,14 @@ namespace Distribution {
 class Transmission: public Function
 {
     float mIOR;
+    float mContribution;
+    float _alignment[2]; // TODO MemoryAllocator has to be fixed for that
 
 public:
-    Transmission(float ior)
+    Transmission(float ior, float contribution)
         : Function(Types::Distribution::TRANSMISSION)
         , mIOR(ior)
+        , mContribution(contribution)
     { }
 
     lkCommon::Utils::PixelFloat4 F(const Renderer::PathContext& context,

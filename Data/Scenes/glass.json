@@ -3,7 +3,7 @@
     "ambient": [0.03, 0.05, 0.1],
     "camera":
     {
-        "position": [2.5, 1.56, -8.54],
+        "position": [2.5, 1.56,-8.54],
         "rotation": [-10.74, 354.15]
     },
     "objects":
@@ -85,7 +85,7 @@
         "glass":
         {
             "type": "glass",
-            "density": 1.2
+            "density": 0.8
         }
     }
 }

@@ -16,7 +16,7 @@ public:
     ~Emissive() = default;
 
     void SetIntensity(const lkCommon::Utils::PixelFloat4& intensity);
-    void PopulateDistributionFunctions(Renderer::RayCollision& collision) override;
+    void PopulateDistributionFunctions(Renderer::PathContext& context, Renderer::RayCollision& collision) override;
     bool ReadParametersFromNode(const rapidjson::Value& value) override;
 };
 

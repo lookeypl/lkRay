@@ -18,7 +18,7 @@ public:
 
     bool LoadTexture(const std::string& path);
     void SetColor(const lkCommon::Utils::PixelFloat4& color);
-    void PopulateDistributionFunctions(Renderer::RayCollision& collision) override;
+    void PopulateDistributionFunctions(Renderer::PathContext& context, Renderer::RayCollision& collision) override;
     bool ReadParametersFromNode(const rapidjson::Value& value) override;
 };
 

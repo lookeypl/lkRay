@@ -32,8 +32,10 @@ void Matte::SetColor(const lkCommon::Utils::PixelFloat4& color)
     mTexture.SetPixel(0, 0, color);
 }
 
-void Matte::PopulateDistributionFunctions(Renderer::RayCollision& collision)
+void Matte::PopulateDistributionFunctions(Renderer::PathContext& context, Renderer::RayCollision& collision)
 {
+    LKCOMMON_UNUSED(context);
+
     collision.mSurfaceDistribution =
         new (*collision.mAllocator) Renderer::SurfaceDistribution(collision.mAllocator);
 

@@ -24,7 +24,7 @@ public:
     Material(const std::string& name);
     ~Material() = default;
 
-    virtual void PopulateDistributionFunctions(Renderer::RayCollision& collision) = 0;
+    virtual void PopulateDistributionFunctions(Renderer::PathContext& context, Renderer::RayCollision& collision) = 0;
     virtual bool ReadParametersFromNode(const rapidjson::Value& value) = 0;
 };
 
