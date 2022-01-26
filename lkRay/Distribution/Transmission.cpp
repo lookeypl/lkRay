@@ -13,11 +13,11 @@ lkCommon::Utils::PixelFloat4 Transmission::F(const Renderer::PathContext& contex
     // n = normal
     // out = transmitted
     const lkCommon::Math::Vector4& i = context.ray.mDirection;
-    const lkCommon::Math::Vector4& n = collision.mNormal;
+    const lkCommon::Math::Vector4 n = collision.mNormal * (collision.mHitInside ? -1.0f : 1.0f);
 
-    const float cosomega = -i.Dot(n);
-    const float sin2omega = (mIOR * mIOR) * (1 - (cosomega * cosomega));
-    out = i * mIOR + n * (mIOR * cosomega - sqrtf(1 - sin2omega));
+    const float cosOmega = -i.Dot(n);
+    const float sin2Omega = (mIOR * mIOR) * (1 - (cosOmega * cosOmega));
+    out = i * mIOR + n * (mIOR * cosOmega - sqrtf(1 - sin2Omega));
 
     return lkCommon::Utils::PixelFloat4(mContribution);
 }

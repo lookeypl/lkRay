@@ -18,7 +18,7 @@
         "sphere2":
         {
             "type": "sphere",
-            "position": [1.7, 0.0,-3.0],
+            "position": [1.7, 0.5,-3.0],
             "radius": 1.5,
             "material": "glass"
         },
@@ -85,7 +85,7 @@
         "glass":
         {
             "type": "glass",
-            "density": 0.8
+            "density": 1.33
         }
     }
 }

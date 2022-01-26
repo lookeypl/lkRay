@@ -99,7 +99,7 @@ lkCommon::Utils::PixelFloat4 Renderer::CalculateLightIntensity(PathContext& cont
         context.ray.mOrigin = collision.mPoint;
         context.ray.mDirection = reflectedDir;
 
-        resultColor += CalculateLightIntensity(context, rayDepth + 1);
+        resultColor += surfaceSample * CalculateLightIntensity(context, rayDepth + 1);
     }
 
     bool hasTransmission = collision.mSurfaceDistribution->Sample(Types::Distribution::TRANSMISSION,
@@ -109,7 +109,7 @@ lkCommon::Utils::PixelFloat4 Renderer::CalculateLightIntensity(PathContext& cont
         context.ray.mOrigin = collision.mPoint;
         context.ray.mDirection = reflectedDir;
 
-        resultColor += CalculateLightIntensity(context, rayDepth + 1);
+        resultColor += surfaceSample * CalculateLightIntensity(context, rayDepth + 1);
     }
 
     bool hasEmissive = collision.mSurfaceDistribution->Sample(Types::Distribution::EMISSIVE,

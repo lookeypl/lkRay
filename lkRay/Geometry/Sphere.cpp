@@ -59,8 +59,6 @@ bool Sphere::TestCollision(const Ray& ray, float& distance, lkCommon::Math::Vect
 
     const lkCommon::Math::Vector4 collisionPoint = ray.mOrigin + ray.mDirection * distance;
     normal = (collisionPoint - mPosition).Normalize();
-    if (normal.Dot(ray.mDirection) > 0.0f) // check if ray is inside
-        normal *= -1;
     uv.u = (1.0f + atan2f(normal[2], normal[0]) / LKCOMMON_PIF) * 0.5f;
     uv.v = acosf(normal[1]) / LKCOMMON_PIF;
 

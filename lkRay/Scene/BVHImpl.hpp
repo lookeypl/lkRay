@@ -434,6 +434,7 @@ Renderer::RayCollision BVH<T>::Traverse(const Geometry::Ray& ray) const
     }
 
     result.mPoint = ray.mOrigin + ray.mDirection * result.mDistance;
+    result.mHitInside = (ray.mDirection.Dot(result.mNormal) > 0.0f);
     return result;
 }
 

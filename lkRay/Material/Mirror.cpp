@@ -19,7 +19,9 @@ void Mirror::PopulateDistributionFunctions(Renderer::PathContext& context, Rende
 
     collision.mSurfaceDistribution = new (*collision.mAllocator) Renderer::SurfaceDistribution(collision.mAllocator);
 
-    collision.mSurfaceDistribution->AddDistribution(new (*collision.mAllocator) Distribution::SpecularReflection());
+    collision.mSurfaceDistribution->AddDistribution(
+        new (*collision.mAllocator) Distribution::SpecularReflection(1.0f)
+    );
 }
 
 bool Mirror::ReadParametersFromNode(const rapidjson::Value& value)

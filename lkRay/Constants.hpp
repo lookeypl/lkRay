@@ -7,6 +7,8 @@ namespace lkRay {
 namespace Constants {
 
 
+extern const uint32_t LKRAY_RAY_DEPTH_LIMIT;
+
 extern const std::string LKRAY_DEFAULT_MATERIAL_NAME;
 
 

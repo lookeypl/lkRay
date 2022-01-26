@@ -10,9 +10,12 @@ namespace Distribution {
 
 class SpecularReflection: public Function
 {
+    float mContribution;
+
 public:
-    SpecularReflection()
+    SpecularReflection(const float contribution)
         : Function(Types::Distribution::SPECULAR | Types::Distribution::REFLECTION)
+        , mContribution(contribution)
     { }
 
     lkCommon::Utils::PixelFloat4 F(const Renderer::PathContext& context,

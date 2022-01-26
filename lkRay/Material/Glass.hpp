@@ -8,14 +8,14 @@ namespace Material {
 
 class Glass : public Material
 {
-    float mIOR;
+    float mDensity;
 
 public:
     Glass(const std::string& name);
     Glass(const std::string& name, const float& density);
     ~Glass() = default;
 
-    void SetIOR(const float density);
+    void SetDensity(const float density);
     void PopulateDistributionFunctions(Renderer::PathContext& context, Renderer::RayCollision& collision) override;
     bool ReadParametersFromNode(const rapidjson::Value& value) override;
 };

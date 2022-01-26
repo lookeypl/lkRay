@@ -20,15 +20,17 @@ public:
     lkCommon::Math::Vector4 mPoint;
     lkCommon::Math::Vector4 mNormal;
     Geometry::UV mUV;
+    bool mHitInside;
 
     // to be allocated at a later point
     lkCommon::Allocators::Memory<lkCommon::Allocators::ArenaAllocator>* mAllocator;
-    Renderer::SurfaceDistribution* mSurfaceDistribution;
+    SurfaceDistribution* mSurfaceDistribution;
 
 
     RayCollision();
     RayCollision(int hitID, float distance, const lkCommon::Math::Vector4& point,
-                 const lkCommon::Math::Vector4& normal, const Geometry::UV& uv);
+                 const lkCommon::Math::Vector4& normal, const Geometry::UV& uv,
+                 const bool hitInside);
     ~RayCollision();
 };
 
