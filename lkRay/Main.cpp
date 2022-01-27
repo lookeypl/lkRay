@@ -1,6 +1,7 @@
 #include "PCH.hpp"
 
 #include <array>
+#include <chrono>
 
 #include <lkCommon/Utils/Logger.hpp>
 #include <lkCommon/Utils/Timer.hpp>
@@ -58,6 +59,8 @@ class lkRayWindow: public lkCommon::System::Window
     Renderer::Renderer& mRenderer;
     Scene::Camera& mCamera;
     float mExposure;
+    bool mStepByStep;
+    bool mNextPass;
     uint32_t mCurrentScene;
     uint32_t mRayDepthRendering;
     Scene::Scene mScene;
@@ -117,6 +120,22 @@ protected:
         {
             mExposure += EXPOSURE_STEP;
             mRenderer.SetExposure(mExposure);
+        }
+
+        if (key == lkCommon::System::KeyCode::B)
+        {
+            mStepByStep ^= true;
+        }
+
+        if (key == lkCommon::System::KeyCode::N)
+        {
+            mNextPass = true;
+        }
+
+        if (key == lkCommon::System::KeyCode::M)
+        {
+            mRenderer.ResetImageBuffer();
+            mNextPass = true;
         }
 
         if (IsKeyPressed(lkCommon::System::KeyCode::P))
@@ -185,6 +204,8 @@ public:
         : mRenderer(renderer)
         , mCamera(camera)
         , mExposure(EXPOSURE_DEFAULT)
+        , mStepByStep(false)
+        , mNextPass(false)
         , mCurrentScene(DEFAULT_SCENE)
         , mRayDepthRendering(MAX_RAY_DEPTH_RENDERING)
         , mScene()
@@ -265,6 +286,21 @@ public:
         mScene.BuildBVH();
 
         return true;
+    }
+
+    void Draw()
+    {
+        if (!mStepByStep || mNextPass)
+        {
+            mRenderer.Draw(mScene, mCamera);
+            DisplayImage(0, 0, mRenderer.GetOutput().GetWindowImage());
+            mNextPass = false;
+        }
+        else
+        {
+            using namespace std::literals::chrono_literals;
+            std::this_thread::sleep_for(10ms);
+        }
     }
 
     LKCOMMON_INLINE const Scene::Scene& GetScene() const
@@ -352,8 +388,7 @@ int main(int argc, char* argv[])
     while (gWindow.IsOpened())
     {
         gWindow.Update(time);
-        renderer.Draw(gWindow.GetScene(), camera);
-        gWindow.DisplayImage(0, 0, renderer.GetOutput().GetWindowImage());
+        gWindow.Draw();
 
         time = static_cast<float>(t.Stop());
         t.Start();
