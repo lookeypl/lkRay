@@ -21,7 +21,8 @@ SurfaceDistribution::~SurfaceDistribution()
     }
 }
 
-bool SurfaceDistribution::Sample(const Types::Distribution type, const PathContext& ctx,
+bool SurfaceDistribution::Sample(const Types::Distribution type,
+                                 const PathContext& context,
                                  const RayCollision& collision,
                                  lkCommon::Utils::PixelFloat4& surfaceSample,
                                  lkCommon::Math::Vector4& outRayDir)
@@ -45,7 +46,7 @@ bool SurfaceDistribution::Sample(const Types::Distribution type, const PathConte
         // sample the distributions and get value of pixel in that place (and out vector)
         for (uint32_t i = 0; i < distCount; ++i)
         {
-            surfaceSample += distributions[i]->F(ctx, collision, outRayDir);
+            surfaceSample += distributions[i]->F(context, collision, outRayDir);
         }
 
         return true;

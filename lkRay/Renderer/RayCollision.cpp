@@ -10,27 +10,30 @@ namespace Renderer {
 RayCollision::RayCollision()
     : mHitID(-1)
     , mDistance(0.0f)
-    , mPoint()
+    , mRay()
     , mNormal()
     , mUV()
-    , mHitInside(false)
+    , mPoint()
     , mSurfaceDistribution(nullptr)
     , mAllocator(nullptr)
 {
 }
 
-RayCollision::RayCollision(int hitID, float distance, const lkCommon::Math::Vector4& point,
-                           const lkCommon::Math::Vector4& normal, const Geometry::UV& uv,
-                           bool hitInside)
+RayCollision::RayCollision(int32_t hitID, float distance, const Geometry::Ray& ray,
+                           const lkCommon::Math::Vector4& normal, const Geometry::UV& uv)
     : mHitID(hitID)
     , mDistance(distance)
-    , mPoint(point)
+    , mRay(ray)
     , mNormal(normal)
     , mUV(uv)
-    , mHitInside(hitInside)
+    , mPoint()
     , mSurfaceDistribution(nullptr)
     , mAllocator(nullptr)
 {
+    if (mNormal.Dot(mRay.mDirection) > 0.0f)
+        mNormal *= -1.0f;
+
+    mPoint = mRay.mOrigin + mRay.mDirection * mDistance;
 }
 
 RayCollision::~RayCollision()

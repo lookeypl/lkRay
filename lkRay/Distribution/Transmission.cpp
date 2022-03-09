@@ -12,8 +12,8 @@ lkCommon::Utils::PixelFloat4 Transmission::F(const Renderer::PathContext& contex
     // i = incoming
     // n = normal
     // out = transmitted
-    const lkCommon::Math::Vector4& i = context.ray.mDirection;
-    const lkCommon::Math::Vector4 n = collision.mNormal * (collision.mHitInside ? -1.0f : 1.0f);
+    const lkCommon::Math::Vector4& i = collision.mRay.mDirection;
+    const lkCommon::Math::Vector4& n = collision.mNormal;
 
     const float cosOmega = -i.Dot(n);
     const float sin2Omega = (mIOR * mIOR) * (1 - (cosOmega * cosOmega));

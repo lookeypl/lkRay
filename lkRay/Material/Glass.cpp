@@ -33,17 +33,15 @@ void Glass::PopulateDistributionFunctions(Renderer::PathContext& context, Render
         new (*collision.mAllocator) Renderer::SurfaceDistribution(collision.mAllocator);
 
     // Fresnel equations to determine how much each distribution contributes
-    const lkCommon::Math::Vector4& in = context.ray.mDirection;
-    const lkCommon::Math::Vector4 n = collision.mNormal * (collision.mHitInside ? -1.0f : 1.0f);
+    const lkCommon::Math::Vector4& in = collision.mRay.mDirection;
+    lkCommon::Math::Vector4 n = collision.mNormal;
 
     float n1 = 1.0f;
     float n2 = mDensity;
-    if (collision.mHitInside)
-        std::swap(n1, n2);
 
     const float ior = n1 / n2;
     const float sinOmegaInCritical = n2 / n1;
-    const float cosOmegaIn = -in.Dot(n);
+    const float cosOmegaIn = -n.Dot(in);
     const float sin2OmegaIn = 1.0f - (cosOmegaIn * cosOmegaIn);
     const float sinOmegaIn = sqrtf(sin2OmegaIn);
     if (sinOmegaIn > sinOmegaInCritical)

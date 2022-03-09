@@ -5,6 +5,7 @@
 #include <lkCommon/Allocators/ArenaAllocator.hpp>
 
 #include "Prerequisites.hpp"
+#include "Geometry/Ray.hpp"
 #include "Geometry/UV.hpp"
 
 
@@ -17,10 +18,10 @@ class RayCollision
 public:
     int32_t mHitID;
     float mDistance;
-    lkCommon::Math::Vector4 mPoint;
+    Geometry::Ray mRay;
     lkCommon::Math::Vector4 mNormal;
     Geometry::UV mUV;
-    bool mHitInside;
+    lkCommon::Math::Vector4 mPoint;
 
     // to be allocated at a later point
     lkCommon::Allocators::Memory<lkCommon::Allocators::ArenaAllocator>* mAllocator;
@@ -28,9 +29,8 @@ public:
 
 
     RayCollision();
-    RayCollision(int hitID, float distance, const lkCommon::Math::Vector4& point,
-                 const lkCommon::Math::Vector4& normal, const Geometry::UV& uv,
-                 const bool hitInside);
+    RayCollision(int hitID, float distance, const Geometry::Ray& ray,
+                 const lkCommon::Math::Vector4& normal, const Geometry::UV& uv);
     ~RayCollision();
 };
 

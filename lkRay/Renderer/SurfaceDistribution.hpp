@@ -31,7 +31,7 @@ public:
 
     // Returns contribution of surface distribution functions for given collision point, as well as direction of reflected ray.
     // If no distributions match type @p type, returns 0.0f and outDir is intact.
-    bool Sample(const Types::Distribution type, const PathContext& ctx,
+    bool Sample(const Types::Distribution type, const PathContext& context,
                 const RayCollision& collision, lkCommon::Utils::PixelFloat4& surfaceSample,
                 lkCommon::Math::Vector4& outRayDir);
 

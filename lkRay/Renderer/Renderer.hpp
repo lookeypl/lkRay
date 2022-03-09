@@ -36,7 +36,7 @@ class Renderer final
                     uint32_t xCount, uint32_t yCount);
     void ConvertImageBufferToOutputThread(lkCommon::Utils::ThreadPayload& payload, uint32_t widthPos, uint32_t heightPos, uint32_t xCount, uint32_t yCount);
 
-    lkCommon::Utils::PixelFloat4 CalculateLightIntensity(PathContext& context, uint32_t rayDepth);
+    lkCommon::Utils::PixelFloat4 CalculateLightIntensity(PathContext& context, const Geometry::Ray& ray, uint32_t rayDepth);
 
 public:
     Renderer(const uint32_t width, const uint32_t height, const uint32_t maxRayDepth, const uint32_t threadCount);

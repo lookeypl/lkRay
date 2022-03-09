@@ -346,7 +346,6 @@ Renderer::RayCollision BVH<T>::Traverse(const Geometry::Ray& ray) const
 {
     BVHNode* node = nullptr;
     float tmin = 0.0f, tmax = 0.0f;
-    Renderer::RayCollision result;
 
     lkCommon::Math::Vector4 rayDirInv(
         1.0f / ray.mDirection[0],
@@ -360,10 +359,35 @@ Renderer::RayCollision BVH<T>::Traverse(const Geometry::Ray& ray) const
         (rayDirInv[2] < 0.0f)
     };
 
-    result.mDistance = INFINITY;
+    struct BVHResult
+    {
+        bool collided;
+        int32_t hitID;
+        float distance;
+        lkCommon::Math::Vector4 normal;
+        Geometry::UV uv;
+
+        BVHResult()
+            : collided(false)
+            , hitID(-1)
+            , distance(INFINITY)
+            , normal()
+            , uv()
+        {
+        }
+
+        LKCOMMON_INLINE void FromCollisionTest(const Geometry::Ray& ray, const Containers::Container<T>& objs, int id)
+        {
+            collided = Ptr<const T>(objs[id])->TestCollision(ray, distance, normal, uv);
+            if (collided)
+                hitID = id;
+        }
+    };
+
+    BVHResult result;
 
     if (!mRootNode->bBox.TestCollision(ray, rayDirInv, rayDirSign, tmin, tmax))
-        return result;
+        return Renderer::RayCollision();
 
     LKCOMMON_ASSERT(mNodeCount <= STACK_MAX_SIZE, "STACK NOT BIG ENOUGH");
     lkCommon::Utils::StaticStack<BVHNode*, STACK_MAX_SIZE> stack;
@@ -378,47 +402,22 @@ Renderer::RayCollision BVH<T>::Traverse(const Geometry::Ray& ray) const
         if (node->midData.left == nullptr && node->midData.right == nullptr)
         {
             // we are a leaf node, test intersection with both objects
-            struct _res {
-                bool c;
-                int32_t id;
-                float d;
-                lkCommon::Math::Vector4 n;
-                Geometry::UV uv;
+            BVHResult res[2];
 
-                _res()
-                    : c(false)
-                    , id(-1)
-                    , d(INFINITY)
-                    , n()
-                    , uv()
-                {
-                }
-            } res[2];
-
-            res[0].c =
-                Ptr<const T>(mObjects[node->leafData.obj[0]])->TestCollision(ray, res[0].d, res[0].n, res[0].uv);
-            if (res[0].c)
-                res[0].id = node->leafData.obj[0];
-
+            res[0].FromCollisionTest(ray, mObjects, node->leafData.obj[0]);
             if (node->leafData.obj[1] != UINT32_MAX)
             {
-                res[1].c =
-                    Ptr<const T>(mObjects[node->leafData.obj[1]])->TestCollision(ray, res[1].d, res[1].n, res[1].uv);
-                if (res[1].c)
-                    res[1].id = node->leafData.obj[1];
+                res[1].FromCollisionTest(ray, mObjects, node->leafData.obj[1]);
             }
 
-            if (res[0].c || res[1].c)
+            if (res[0].collided || res[1].collided)
             {
-                if (res[1].d < res[0].d)
+                if (res[1].distance < res[0].distance)
                     std::swap(res[0], res[1]);
 
-                if (res[0].d < result.mDistance)
+                if (res[0].distance < result.distance)
                 {
-                    result.mHitID = res[0].id;
-                    result.mDistance = res[0].d;
-                    result.mNormal = res[0].n;
-                    result.mUV = res[0].uv;
+                    result = res[0];
                 }
             }
 
@@ -433,9 +432,13 @@ Renderer::RayCollision BVH<T>::Traverse(const Geometry::Ray& ray) const
             stack.Emplace(node->midData.right);
     }
 
-    result.mPoint = ray.mOrigin + ray.mDirection * result.mDistance;
-    result.mHitInside = (ray.mDirection.Dot(result.mNormal) > 0.0f);
-    return result;
+    return Renderer::RayCollision(
+        result.hitID,
+        result.distance,
+        ray,
+        result.normal,
+        result.uv
+    );
 }
 
 template <typename T>

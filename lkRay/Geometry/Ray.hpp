@@ -11,6 +11,12 @@ struct Ray
     lkCommon::Math::Vector4 mOrigin;
     lkCommon::Math::Vector4 mDirection;
 
+    Ray()
+        : mOrigin()
+        , mDirection()
+    {
+    }
+
     Ray(const lkCommon::Math::Vector4& origin, const lkCommon::Math::Vector4& direction)
         : mOrigin(origin)
         , mDirection(direction)

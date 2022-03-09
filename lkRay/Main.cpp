@@ -24,8 +24,7 @@
 //        * Going max 3 directories up, trying to find "Data" and "Bin" folder
 //        * Searching for a predefined file hidden somewhere in "Data" dir?
 #ifndef LKRAY_ROOT_REL_TO_BIN
-#error "Path to root relative to binary not defined. Please define \
-path to app's root as LKRAY_ROOT_REL_TO_BIN variable."
+#error "Path to root relative to binary not defined. Please define path to app's root as LKRAY_ROOT_REL_TO_BIN variable."
 #endif
 
 

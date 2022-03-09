@@ -14,12 +14,10 @@ struct PathContext
 {
     ThreadData& threadData;
     const Scene::Scene& scene;
-    Geometry::Ray ray;
 
-    PathContext(ThreadData& threadData, const Scene::Scene& scene, const Geometry::Ray& ray)
+    PathContext(ThreadData& threadData, const Scene::Scene& scene)
         : threadData(threadData)
         , scene(scene)
-        , ray(ray)
     { }
 };
 

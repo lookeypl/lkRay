@@ -10,8 +10,8 @@ lkCommon::Utils::PixelFloat4 SpecularReflection::F(const Renderer::PathContext& 
                                                    lkCommon::Math::Vector4& out)
 {
     // a regular, perfect reflection equation
-    const lkCommon::Math::Vector4 n = collision.mNormal * (collision.mHitInside ? -1.0f : 1.0f);
-    out = context.ray.mDirection - (n * context.ray.mDirection.Dot(n) * 2.0f);
+    const lkCommon::Math::Vector4& n = collision.mNormal;
+    out = collision.mRay.mDirection - (n * collision.mRay.mDirection.Dot(n) * 2.0f);
 
     return lkCommon::Utils::PixelFloat4(mContribution);
 }

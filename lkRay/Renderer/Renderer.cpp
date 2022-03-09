@@ -56,7 +56,7 @@ lkCommon::Utils::PixelFloat4 Renderer::PostProcess(const lkCommon::Utils::PixelF
     return out;
 }
 
-lkCommon::Utils::PixelFloat4 Renderer::CalculateLightIntensity(PathContext& context, uint32_t rayDepth)
+lkCommon::Utils::PixelFloat4 Renderer::CalculateLightIntensity(PathContext& context, const Geometry::Ray& ray, uint32_t rayDepth)
 {
     if (rayDepth > mMaxRayDepth)
     {
@@ -65,11 +65,10 @@ lkCommon::Utils::PixelFloat4 Renderer::CalculateLightIntensity(PathContext& cont
 
     const Scene::Scene& scene = context.scene;
     lkCommon::Utils::PixelFloat4 resultColor;
-    lkCommon::Utils::PixelFloat4 lightContribution;
     lkCommon::Utils::PixelFloat4 surfaceSample;
     lkCommon::Math::Vector4 reflectedDir;
 
-    RayCollision collision = scene.TestCollision(context.ray);
+    RayCollision collision = scene.TestCollision(ray);
     if (collision.mHitID == -1)
     {
         return scene.GetAmbient();
@@ -78,42 +77,47 @@ lkCommon::Utils::PixelFloat4 Renderer::CalculateLightIntensity(PathContext& cont
     collision.mAllocator = &context.threadData.allocator;
     scene.GetPrimitives()[collision.mHitID]->GetMaterial()->PopulateDistributionFunctions(context, collision);
 
-    bool hasDiffuse = collision.mSurfaceDistribution->Sample(Types::Distribution::DIFFUSE | Types::Distribution::REFLECTION,
-                                                             context, collision, surfaceSample, reflectedDir);
+    SurfaceDistribution* surfDist = collision.mSurfaceDistribution;
+
+    bool hasDiffuse = surfDist->Sample(Types::Distribution::DIFFUSE | Types::Distribution::REFLECTION,
+                                       context, collision, surfaceSample, reflectedDir);
     if (hasDiffuse)
     {
-        context.ray.mOrigin = collision.mPoint;
-        context.ray.mDirection = reflectedDir;
+        Geometry::Ray newRay(collision.mPoint, reflectedDir);
 
         // diffuse surfaces weaken our rays - adjust beta
-        const float dot = context.ray.mDirection.Dot(collision.mNormal);
-        lkCommon::Utils::PixelFloat4 incoming = CalculateLightIntensity(context, rayDepth + 1);
+        const float dot = -ray.mDirection.Dot(collision.mNormal);
+        lkCommon::Utils::PixelFloat4 incoming = CalculateLightIntensity(context, newRay, rayDepth + 1);
 
         resultColor += surfaceSample * incoming * dot;
     }
 
-    bool hasSpecular = collision.mSurfaceDistribution->Sample(Types::Distribution::SPECULAR | Types::Distribution::REFLECTION,
-                                                              context, collision, surfaceSample, reflectedDir);
+    bool hasSpecular = surfDist->Sample(Types::Distribution::SPECULAR | Types::Distribution::REFLECTION,
+                                        context, collision, surfaceSample, reflectedDir);
     if (hasSpecular)
     {
-        context.ray.mOrigin = collision.mPoint;
-        context.ray.mDirection = reflectedDir;
+        Geometry::Ray newRay(collision.mPoint, reflectedDir);
 
-        resultColor += surfaceSample * CalculateLightIntensity(context, rayDepth + 1);
+        const float dot = -ray.mDirection.Dot(collision.mNormal);
+        lkCommon::Utils::PixelFloat4 incoming = CalculateLightIntensity(context, newRay, rayDepth + 1);
+
+        resultColor += surfaceSample * incoming * dot;
     }
 
-    bool hasTransmission = collision.mSurfaceDistribution->Sample(Types::Distribution::TRANSMISSION,
-                                                                  context, collision, surfaceSample, reflectedDir);
+    bool hasTransmission = surfDist->Sample(Types::Distribution::TRANSMISSION,
+                                            context, collision, surfaceSample, reflectedDir);
     if (hasTransmission)
     {
-        context.ray.mOrigin = collision.mPoint;
-        context.ray.mDirection = reflectedDir;
+        Geometry::Ray newRay(collision.mPoint, reflectedDir);
 
-        resultColor += surfaceSample * CalculateLightIntensity(context, rayDepth + 1);
+        const float dot = -ray.mDirection.Dot(collision.mNormal);
+        lkCommon::Utils::PixelFloat4 incoming = CalculateLightIntensity(context, newRay, rayDepth + 1);
+
+        resultColor += surfaceSample * incoming * dot;
     }
 
-    bool hasEmissive = collision.mSurfaceDistribution->Sample(Types::Distribution::EMISSIVE,
-                                                              context, collision, surfaceSample, reflectedDir);
+    bool hasEmissive = surfDist->Sample(Types::Distribution::EMISSIVE,
+                                        context, collision, surfaceSample, reflectedDir);
     if (hasEmissive)
     {
         resultColor += surfaceSample;
@@ -157,13 +161,14 @@ void Renderer::DrawThread(lkCommon::Utils::ThreadPayload& payload, const Scene::
             lkCommon::Math::Vector4 rayDir((rayTarget - camera.GetPosition()).Normalize());
 
             // form a context and start calculating
-            PathContext ctx(*threadData, scene, Geometry::Ray(camera.GetPosition(), rayDir));
+            PathContext ctx(*threadData, scene);
+            Geometry::Ray ray(camera.GetPosition(), rayDir);
 
             lkCommon::Utils::PixelFloat4 pixel;
             mImageBuffer.GetPixel(x, y, pixel);
 
             // get the value
-            pixel += CalculateLightIntensity(ctx, 0);
+            pixel += CalculateLightIntensity(ctx, ray, 0);
 
             // save current pixel value for later
             mImageBuffer.SetPixel(x, y, pixel);
