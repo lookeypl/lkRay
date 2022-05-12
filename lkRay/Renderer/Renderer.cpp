@@ -98,10 +98,10 @@ lkCommon::Utils::PixelFloat4 Renderer::CalculateLightIntensity(PathContext& cont
     {
         Geometry::Ray newRay(collision.mPoint, reflectedDir);
 
-        const float dot = -ray.mDirection.Dot(collision.mNormal);
+        //const float dot = -ray.mDirection.Dot(collision.mNormal);
         lkCommon::Utils::PixelFloat4 incoming = CalculateLightIntensity(context, newRay, rayDepth + 1);
 
-        resultColor += surfaceSample * incoming * dot;
+        resultColor += surfaceSample * incoming;// * dot;
     }
 
     bool hasTransmission = surfDist->Sample(Types::Distribution::TRANSMISSION,
@@ -110,10 +110,10 @@ lkCommon::Utils::PixelFloat4 Renderer::CalculateLightIntensity(PathContext& cont
     {
         Geometry::Ray newRay(collision.mPoint, reflectedDir);
 
-        const float dot = -ray.mDirection.Dot(collision.mNormal);
+        //const float dot = -ray.mDirection.Dot(collision.mNormal);
         lkCommon::Utils::PixelFloat4 incoming = CalculateLightIntensity(context, newRay, rayDepth + 1);
 
-        resultColor += surfaceSample * incoming * dot;
+        resultColor += surfaceSample * incoming;
     }
 
     bool hasEmissive = surfDist->Sample(Types::Distribution::EMISSIVE,
